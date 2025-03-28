@@ -9,6 +9,9 @@ import { createStackNavigator } from "@react-navigation/stack"; // Đảm bảo 
 import LoginScreen from "../screens/Auth/Login";
 // import {useTheme} from '../contexts/ThemeContext';
 import MainTabNavigator from "./BottomTab";
+import RegisterScreen from "../screens/Auth/Register";
+import ChatScreen from "../screens/chat/Chat";
+import ChatDetailScreen from "../screens/chat/detail/ChatDetail";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -22,6 +25,7 @@ export type RootStackParamList = {
   Profile: undefined;
   Match: undefined;
   Chat: undefined;
+  ChatDetail: { name: string; avatar: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -30,17 +34,30 @@ const AppNavigator: React.FC = () => {
   // const {theme} = useTheme();
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} />
-        {/* <Stack.Screen name="Register" component={RegisterScreen} /> */}
+      <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen
-          name="Main"
+          name='Login'
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='Register'
+          component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='Main'
           component={MainTabNavigator}
           options={{ headerShown: false }}
         />
-        {/*  <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Match" component={MatchScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen} /> */}
+        {/* <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Match" component={MatchScreen} /> */}
+        <Stack.Screen name='Chat' component={ChatScreen} />
+        <Stack.Screen
+          name='ChatDetail'
+          component={ChatDetailScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,17 +1,17 @@
 // src/screens/Auth/MapsScreen.tsx
-import React from 'react';
-import {View, Text, Button} from 'react-native';
-import {StackNavigationProp} from '@react-navigation/stack';
+import React from "react";
+import { View, Text, Button } from "react-native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const MapsScreen: React.FC = ({}) => {
   const handleHome = () => {
-    console.log('Login');
+    console.log("Login");
   };
 
   return (
-    <View>
-      <Text>Home Screen</Text>
-      <Button title="Click" onPress={handleHome} />
+    <View className='flex-1 justify-center items-center'>
+      <Text>Map Screen</Text>
+      <Button title='Click' onPress={handleHome} />
     </View>
   );
 };
