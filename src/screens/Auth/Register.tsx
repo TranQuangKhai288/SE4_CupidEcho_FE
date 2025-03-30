@@ -31,11 +31,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate("Login");
   };
   return (
-    <View className='flex-1 bg-white px-6 pt-20'>
-      <TouchableOpacity className='mb-6'>
+    <View className='flex-1 bg-white px-6 pt-12'>
+      <TouchableOpacity className='mb-14'>
         <MaterialIcons name='arrow-back' size={24} color='black' />
       </TouchableOpacity>
-      {/* Logo */}
       <View className='items-center'>
         <Image
           className='object-cover'
@@ -81,8 +80,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           <Text className='text-gray-500 font-semibold'>Remember me</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Sign In Button */}
       <TouchableOpacity
         onPress={handleRegister}
         className='bg-purple-600 py-4 rounded-3xl'

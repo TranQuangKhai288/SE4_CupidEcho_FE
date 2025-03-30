@@ -12,6 +12,8 @@ import MainTabNavigator from "./BottomTab";
 import RegisterScreen from "../screens/Auth/Register";
 import ChatScreen from "../screens/chat/Chat";
 import ChatDetailScreen from "../screens/chat/detail/ChatDetail";
+import Splash from "../screens/Splash";
+import OnboardingScreen from "../screens/onboarding/Onboarding";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -26,6 +28,8 @@ export type RootStackParamList = {
   Match: undefined;
   Chat: undefined;
   ChatDetail: { name: string; avatar: string };
+  Splash: undefined;
+  Onboarding: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -34,7 +38,16 @@ const AppNavigator: React.FC = () => {
   // const {theme} = useTheme();
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
+      <Stack.Navigator
+        initialRouteName='Splash'
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name='Splash' component={Splash} />
+        <Stack.Screen
+          name='Onboarding'
+          component={OnboardingScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name='Login'
           component={LoginScreen}

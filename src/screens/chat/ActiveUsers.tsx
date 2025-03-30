@@ -25,9 +25,8 @@ const ActiveUserList = () => {
         className='flex-row mt-3'
       >
         {activeUsers.map((user) => (
-          <View className='flex mr-3 items-center'>
+          <View className='flex mr-3 items-center' key={user.id}>
             <Image
-              key={user.id}
               source={{ uri: user.avatar }}
               className='w-20 h-20 rounded-full border-none '
             />

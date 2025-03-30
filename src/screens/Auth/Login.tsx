@@ -36,8 +36,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View className='flex-1 bg-white px-6 pt-20'>
-      <TouchableOpacity className='mb-6'>
+    <View className='flex-1 bg-white px-6  pt-12'>
+      <TouchableOpacity className='mb-14'>
         <MaterialIcons name='arrow-back' size={24} color='black' />
       </TouchableOpacity>
       {/* Logo */}
