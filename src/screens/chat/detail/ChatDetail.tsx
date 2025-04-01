@@ -60,7 +60,7 @@ const ChatDetailScreen: React.FC = () => {
   };
 
   return (
-    <View className='flex-1 bg-white pt-14'>
+    <View className='flex-1 bg-white pt-6'>
       <View className='flex-row items-center justify-between px-4 py-3 '>
         <View className='flex-row items-center gap-4'>
           <TouchableOpacity onPress={handleBackPress}>
@@ -81,7 +81,7 @@ const ChatDetailScreen: React.FC = () => {
         </View>
       </View>
 
-      <ScrollView className='flex-1 px-4 py-2'>
+      <ScrollView className='flex-1 px-4 py-2 mt-4'>
         {messages.map((msg) => (
           <MessageBubble key={msg.id} {...msg} />
         ))}

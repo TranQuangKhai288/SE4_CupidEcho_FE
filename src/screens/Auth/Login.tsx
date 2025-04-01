@@ -4,7 +4,6 @@ import {
   MaterialIcons,
   Feather,
   FontAwesome,
-  Fontisto,
   Ionicons,
 } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
@@ -23,23 +22,22 @@ interface Props {
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { dispatch } = useAuth();
   const [isChecked, setChecked] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false); // State để xử lý hiển thị mật khẩu
 
   const handleLogin = () => {
-    // dispatch({
-    //   type: 'LOGIN',
-    //   payload: {user: {id: 1, name: 'User'}, token: 'abc123'},
-    // });
     navigation.navigate("Main");
   };
+
   const handleSignUp = () => {
     navigation.navigate("Register");
   };
 
   return (
-    <View className='flex-1 bg-white px-6  pt-12'>
+    <View className='flex-1 bg-white px-6 pt-6'>
       <TouchableOpacity className='mb-14'>
         <MaterialIcons name='arrow-back' size={24} color='black' />
       </TouchableOpacity>
+
       {/* Logo */}
       <View className='items-center'>
         <Image
@@ -48,10 +46,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           style={{ width: 80, height: 80 }}
         />
       </View>
+
       <Text className='text-3xl font-bold text-center my-8'>
         Login to Your Account
       </Text>
 
+      {/* Email Input */}
       <View className='flex-row items-center bg-gray-100 px-4 py-3 rounded-lg mb-4'>
         <MaterialIcons name='email' size={20} color='gray' />
         <TextInput
@@ -61,17 +61,25 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         />
       </View>
 
+      {/* Password Input */}
       <View className='flex-row items-center bg-gray-100 px-4 py-3 rounded-lg mb-4'>
         <MaterialIcons name='lock' size={20} color='gray' />
         <TextInput
           placeholder='Password'
           className='flex-1 ml-3 text-base'
-          secureTextEntry
+          secureTextEntry={!passwordVisible}
         />
-        <Feather name='eye-off' size={20} color='gray' />
+        <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+          <Feather
+            name={passwordVisible ? "eye" : "eye-off"} 
+            size={20}
+            color='gray'
+          />
+        </TouchableOpacity>
       </View>
 
-      <View className=' items-center mb-6'>
+      {/* Remember Me */}
+      <View className='items-center mb-6'>
         <TouchableOpacity
           onPress={() => setChecked(!isChecked)}
           className='flex-row items-center'
@@ -90,16 +98,17 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       {/* Sign In Button */}
       <TouchableOpacity
         onPress={handleLogin}
-        className='bg-purple-600 py-4 rounded-3xl'
+        className='bg-primary-main py-4 rounded-3xl'
       >
         <Text className='text-white text-center text-lg font-bold'>
           Sign in
         </Text>
       </TouchableOpacity>
 
-      <View className=' items-center my-6'>
-        <TouchableOpacity>
-          <Text className='text-purple-500 font-bold'>
+      {/* Forgot Password */}
+      <View className='items-center my-6'>
+        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
+          <Text className='text-purple-600 font-bold'>
             Forgot the password?
           </Text>
         </TouchableOpacity>
@@ -114,7 +123,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
       {/* Social Login */}
       <View className='flex-row items-center justify-center gap-4 space-x-4'>
-        <TouchableOpacity className='px-6 py-3  bg-gray-100 rounded-lg'>
+        <TouchableOpacity className='px-6 py-3 bg-gray-100 rounded-lg'>
           <FontAwesome name='facebook' size={20} color='#1877F2' />
         </TouchableOpacity>
         <TouchableOpacity className='px-6 py-3 bg-gray-100 rounded-lg'>
@@ -132,7 +141,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <View className='flex-row justify-center mt-8'>
         <Text className='text-gray-500'>Don't have an account? </Text>
         <TouchableOpacity onPress={handleSignUp}>
-          <Text className='text-purple-500 font-bold'>Sign up</Text>
+          <Text className='text-purple-600 font-bold'>Sign up</Text>
         </TouchableOpacity>
       </View>
     </View>

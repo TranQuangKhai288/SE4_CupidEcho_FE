@@ -23,6 +23,7 @@ interface Props {
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const { dispatch } = useAuth();
   const [isChecked, setChecked] = useState(false);
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
 
   const handleRegister = () => {
     navigation.navigate("Login");
@@ -31,7 +32,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate("Login");
   };
   return (
-    <View className='flex-1 bg-white px-6 pt-12'>
+    <View className='flex-1 bg-white px-6 pt-6'>
       <TouchableOpacity className='mb-14'>
         <MaterialIcons name='arrow-back' size={24} color='black' />
       </TouchableOpacity>
@@ -60,9 +61,17 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         <TextInput
           placeholder='Password'
           className='flex-1 ml-3 text-base'
-          secureTextEntry
+          secureTextEntry={!isPasswordVisible} // Ẩn/hiện mật khẩu
         />
-        <Feather name='eye-off' size={20} color='gray' />
+        <TouchableOpacity
+          onPress={() => setPasswordVisible(!isPasswordVisible)}
+        >
+          <Feather
+            name={isPasswordVisible ? "eye" : "eye-off"}
+            size={20}
+            color='gray'
+          />
+        </TouchableOpacity>
       </View>
 
       <View className=' items-center mb-6'>
@@ -72,7 +81,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         >
           <View
             className={`w-6 h-6 border-2 rounded-md mr-3 flex items-center justify-center ${
-              isChecked ? "bg-purple-600 border-purple-600" : "border-gray-400"
+              isChecked
+                ? "bg-primary-main border-purple-600"
+                : "border-gray-400"
             }`}
           >
             {isChecked && <Ionicons name='checkmark' size={16} color='white' />}
@@ -82,7 +93,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       </View>
       <TouchableOpacity
         onPress={handleRegister}
-        className='bg-purple-600 py-4 rounded-3xl'
+        className='bg-primary-main py-4 rounded-3xl'
       >
         <Text className='text-white text-center text-lg font-bold'>
           Sign up
@@ -114,7 +125,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       <View className='flex-row justify-center mt-8'>
         <Text className='text-gray-500'>Already have an account?</Text>
         <TouchableOpacity onPress={handleSignIn}>
-          <Text className='text-purple-500 font-bold ml-2'>Sign in</Text>
+          <Text className='text-purple-600 font-bold ml-2'>Sign in</Text>
         </TouchableOpacity>
       </View>
     </View>

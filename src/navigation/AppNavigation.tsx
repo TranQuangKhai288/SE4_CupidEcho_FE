@@ -14,6 +14,9 @@ import ChatScreen from "../screens/chat/Chat";
 import ChatDetailScreen from "../screens/chat/detail/ChatDetail";
 import Splash from "../screens/Splash";
 import OnboardingScreen from "../screens/onboarding/Onboarding";
+import ForgotPasswordScreen from "../screens/forgotPass/ForgotPassword";
+import verifyCodeScreen from "../screens/forgotPass/verifyCode";
+import CreateNewPasswordScreen from "../screens/forgotPass/CreateNewPassword";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -30,6 +33,11 @@ export type RootStackParamList = {
   ChatDetail: { name: string; avatar: string };
   Splash: undefined;
   Onboarding: undefined;
+
+  //forgot password
+  ForgotPassword: undefined;
+  VerifyCode: undefined;
+  CreateNewPassword: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -70,6 +78,13 @@ const AppNavigator: React.FC = () => {
           name='ChatDetail'
           component={ChatDetailScreen}
           options={{ headerShown: false }}
+        />
+
+        <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+        <Stack.Screen name='VerifyCode' component={verifyCodeScreen} />
+        <Stack.Screen
+          name='CreateNewPassword'
+          component={CreateNewPasswordScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
