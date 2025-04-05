@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/Home";
 import MapsScreen from "../screens/Maps";
-import MatchScreen from "../screens/Match";
+import MatchScreen from "../screens/match/Match";
 import ChatScreen from "../screens/chat/Chat";
 import ProfileScreen from "../screens/Profile/Profile";
 

@@ -106,14 +106,14 @@ const ChatScreen: React.FC = ({}) => {
   ];
 
   return (
-    <View className='flex-1 bg-white pt-6 px-4'>
-      <View className='flex-row justify-between items-center px-4 py-3 '>
+    <View className='flex-1 bg-white pt-6 px-6'>
+      <View className='flex-row justify-between items-center py-3 '>
         <View className='flex-row gap-3 items-center'>
           <Image
             source={require("../../../assets/Logo.png")}
-            style={{ width: 20, height: 20 }}
+            style={{ width: 28, height: 28 }}
           />
-          <Text className='text-2xl font-bold'>Chats</Text>
+          <Text className='text-3xl font-bold'>Chats</Text>
         </View>
 
         <View className='flex-row gap-5 items-center'>
@@ -125,7 +125,7 @@ const ChatScreen: React.FC = ({}) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView className='px-4 ' showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <ActiveUserList />
         {chatData.map((chat) => (
           <ChatItem key={chat.id} {...chat} />

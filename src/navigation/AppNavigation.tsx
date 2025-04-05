@@ -17,6 +17,7 @@ import OnboardingScreen from "../screens/onboarding/Onboarding";
 import ForgotPasswordScreen from "../screens/forgotPass/ForgotPassword";
 import verifyCodeScreen from "../screens/forgotPass/verifyCode";
 import CreateNewPasswordScreen from "../screens/forgotPass/CreateNewPassword";
+import NewMatchList from '../screens/match/NewMatchList';
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -28,7 +29,7 @@ export type RootStackParamList = {
   Register: undefined;
   Home: undefined;
   Profile: undefined;
-  Match: undefined;
+  NewMatch: undefined;
   Chat: undefined;
   ChatDetail: { name: string; avatar: string };
   Splash: undefined;
@@ -71,8 +72,8 @@ const AppNavigator: React.FC = () => {
           component={MainTabNavigator}
           options={{ headerShown: false }}
         />
-        {/* <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Match" component={MatchScreen} /> */}
+        {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
+        <Stack.Screen name='NewMatch' component={NewMatchList} />
         <Stack.Screen name='Chat' component={ChatScreen} />
         <Stack.Screen
           name='ChatDetail'

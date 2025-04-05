@@ -14,7 +14,7 @@ const ActiveUserList = () => {
   return (
     <View className='py-4 border-b border-gray-200'>
       <View className='flex-row justify-between items-center mb-2'>
-        <Text className='text-lg font-bold'>Now Active</Text>
+        <Text className='text-xl font-bold'>Now Active</Text>
         <TouchableOpacity>
           <Text className='text-primary-main font-bold'>See All</Text>
         </TouchableOpacity>
