@@ -5,12 +5,11 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { FontAwesome, Feather } from "@expo/vector-icons";
 import NewMatch from "./NewMatch";
 import YourMatch from "./YourMatch";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../navigation/AppNavigation";
 
 const MatchScreen: React.FC = ({}) => {
-  const handleHome = () => {
-    console.log("Login");
-  };
-
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   return (
     <View className='flex-1 bg-white pt-6 px-6'>
       <View className='flex-row justify-between items-center  py-3 '>
@@ -25,7 +24,7 @@ const MatchScreen: React.FC = ({}) => {
           <TouchableOpacity>
             <Feather name='search' size={20} color='black' />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("FindAMatch")}>
             <Feather name='more-horizontal' size={20} color='black' />
           </TouchableOpacity>
         </View>

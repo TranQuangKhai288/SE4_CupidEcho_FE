@@ -19,6 +19,7 @@ import verifyCodeScreen from "../screens/forgotPass/verifyCode";
 import CreateNewPasswordScreen from "../screens/forgotPass/CreateNewPassword";
 import NewMatchList from "../screens/match/NewMatchList";
 import SettingsScreen from "../screens/Profile/Settings";
+import FindAMatch from "../screens/match/FindAMatch";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -42,6 +43,7 @@ export type RootStackParamList = {
   CreateNewPassword: undefined;
 
   Settings: undefined;
+  FindAMatch: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -51,50 +53,51 @@ const AppNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Splash"
+        initialRouteName='Splash'
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name='Splash' component={Splash} />
         <Stack.Screen
-          name="Onboarding"
+          name='Onboarding'
           component={OnboardingScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Login"
+          name='Login'
           component={LoginScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Register"
+          name='Register'
           component={RegisterScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Main"
+          name='Main'
           component={MainTabNavigator}
           options={{ headerShown: false }}
         />
         {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
-        <Stack.Screen name="NewMatch" component={NewMatchList} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
+        <Stack.Screen name='NewMatch' component={NewMatchList} />
+        <Stack.Screen name='Chat' component={ChatScreen} />
         <Stack.Screen
-          name="ChatDetail"
+          name='ChatDetail'
           component={ChatDetailScreen}
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="VerifyCode" component={verifyCodeScreen} />
+        <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+        <Stack.Screen name='VerifyCode' component={verifyCodeScreen} />
         <Stack.Screen
-          name="CreateNewPassword"
+          name='CreateNewPassword'
           component={CreateNewPasswordScreen}
         />
+        <Stack.Screen name='FindAMatch' component={FindAMatch} />
 
         <Stack.Screen
-          name="Settings"
+          name='Settings'
           component={SettingsScreen}
-          options={{ title: "Settings",headerShown: true }}
+          options={{ title: "Settings", headerShown: true }}
         />
       </Stack.Navigator>
     </NavigationContainer>
