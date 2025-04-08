@@ -96,6 +96,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const bootstrapAsync = async () => {
       try {
+        // loading = true
+
         const token = await AsyncStorage.getItem("token");
         const refreshToken = await AsyncStorage.getItem("refreshToken");
         const userString = await AsyncStorage.getItem("user");
