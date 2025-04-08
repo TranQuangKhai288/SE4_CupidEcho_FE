@@ -20,6 +20,7 @@ import CreateNewPasswordScreen from "../screens/forgotPass/CreateNewPassword";
 import NewMatchList from "../screens/match/NewMatchList";
 import SettingsScreen from "../screens/Profile/Settings";
 import FindAMatch from "../screens/match/FindAMatch";
+import HelpCenterScreen from "../screens/Profile/Help";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -43,6 +44,7 @@ export type RootStackParamList = {
   CreateNewPassword: undefined;
 
   Settings: undefined;
+  HelpCenter: undefined;
   FindAMatch: undefined;
 };
 
@@ -94,10 +96,18 @@ const AppNavigator: React.FC = () => {
         />
         <Stack.Screen name='FindAMatch' component={FindAMatch} />
 
+        {/* Profile */}
+
+
         <Stack.Screen
           name='Settings'
           component={SettingsScreen}
-          options={{ title: "Settings", headerShown: true }}
+          options={{ title: "Settings", headerShown: true,headerBackTitle:"" }}
+        />
+        <Stack.Screen
+          name='HelpCenter'
+          component={HelpCenterScreen}
+          options={{ title: "HelpCenter", headerShown: true,headerBackTitle:"" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

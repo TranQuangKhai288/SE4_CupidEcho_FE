@@ -8,7 +8,6 @@ import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 
 const ProfileScreen: React.FC = ({}) => {
-  
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
@@ -60,7 +59,11 @@ const ProfileScreen: React.FC = ({}) => {
           text="Settings"
         />
         <MenuItem icon={<Moon size={24} color="black" />} text="Dark Mode" />
-        <MenuItem icon={<Users size={24} color="black" />} text="Help Center" />
+        <MenuItem
+          icon={<Users size={24} color="black" />}
+          text="Help Center"
+          onPress={() => navigation.navigate("HelpCenter")}
+        />
         <MenuItem
           icon={<Users size={24} color="black" />}
           text="Invite Friends"
