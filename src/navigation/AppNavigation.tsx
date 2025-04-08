@@ -9,6 +9,17 @@ import { createStackNavigator } from "@react-navigation/stack"; // Đảm bảo 
 import LoginScreen from "../screens/Auth/Login";
 // import {useTheme} from '../contexts/ThemeContext';
 import MainTabNavigator from "./BottomTab";
+import RegisterScreen from "../screens/Auth/Register";
+import ChatScreen from "../screens/chat/Chat";
+import ChatDetailScreen from "../screens/chat/detail/ChatDetail";
+import Splash from "../screens/Splash";
+import OnboardingScreen from "../screens/onboarding/Onboarding";
+import ForgotPasswordScreen from "../screens/forgotPass/ForgotPassword";
+import verifyCodeScreen from "../screens/forgotPass/verifyCode";
+import CreateNewPasswordScreen from "../screens/forgotPass/CreateNewPassword";
+import NewMatchList from "../screens/match/NewMatchList";
+import SettingsScreen from "../screens/Profile/Settings";
+import FindAMatch from "../screens/match/FindAMatch";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -20,8 +31,19 @@ export type RootStackParamList = {
   Register: undefined;
   Home: undefined;
   Profile: undefined;
-  Match: undefined;
+  NewMatch: undefined;
   Chat: undefined;
+  ChatDetail: { name: string; avatar: string };
+  Splash: undefined;
+  Onboarding: undefined;
+
+  //forgot password
+  ForgotPassword: undefined;
+  VerifyCode: undefined;
+  CreateNewPassword: undefined;
+
+  Settings: undefined;
+  FindAMatch: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -30,17 +52,53 @@ const AppNavigator: React.FC = () => {
   // const {theme} = useTheme();
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} />
-        {/* <Stack.Screen name="Register" component={RegisterScreen} /> */}
+      <Stack.Navigator
+        initialRouteName='Splash'
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name='Splash' component={Splash} />
         <Stack.Screen
-          name="Main"
+          name='Onboarding'
+          component={OnboardingScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='Login'
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='Register'
+          component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='Main'
           component={MainTabNavigator}
           options={{ headerShown: false }}
         />
-        {/*  <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Match" component={MatchScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen} /> */}
+        {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
+        <Stack.Screen name='NewMatch' component={NewMatchList} />
+        <Stack.Screen name='Chat' component={ChatScreen} />
+        <Stack.Screen
+          name='ChatDetail'
+          component={ChatDetailScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+        <Stack.Screen name='VerifyCode' component={verifyCodeScreen} />
+        <Stack.Screen
+          name='CreateNewPassword'
+          component={CreateNewPasswordScreen}
+        />
+        <Stack.Screen name='FindAMatch' component={FindAMatch} />
+
+        <Stack.Screen
+          name='Settings'
+          component={SettingsScreen}
+          options={{ title: "Settings", headerShown: true }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
