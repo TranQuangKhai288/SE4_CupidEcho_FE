@@ -67,6 +67,7 @@ const ProfileScreen: React.FC = ({}) => {
         <MenuItem
           icon={<Users size={24} color="black" />}
           text="Invite Friends"
+          onPress={() => navigation.navigate("InviteFriend")}
         />
         <MenuItem
           icon={<LogOut size={24} color="red" />}

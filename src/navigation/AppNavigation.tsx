@@ -21,6 +21,7 @@ import NewMatchList from "../screens/match/NewMatchList";
 import SettingsScreen from "../screens/Profile/Settings";
 import FindAMatch from "../screens/match/FindAMatch";
 import HelpCenterScreen from "../screens/Profile/Help";
+import InviteFriendsScreen from "../screens/Profile/InviteFriend";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -45,6 +46,7 @@ export type RootStackParamList = {
 
   Settings: undefined;
   HelpCenter: undefined;
+  InviteFriend: undefined;
   FindAMatch: undefined;
 };
 
@@ -108,6 +110,11 @@ const AppNavigator: React.FC = () => {
           name='HelpCenter'
           component={HelpCenterScreen}
           options={{ title: "HelpCenter", headerShown: true,headerBackTitle:"" }}
+        />
+        <Stack.Screen
+          name='InviteFriend'
+          component={InviteFriendsScreen}
+          options={{ title: "InviteFriend", headerShown: true,headerBackTitle:"" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
