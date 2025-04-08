@@ -34,7 +34,6 @@ const ProfileScreen: React.FC = () => {
     setLogoutModalVisible(false);
     console.log("User logged out successfully!"); // Log to console
   };
-
   return (
     <View className="flex-1 bg-white">
       <ScrollView>
