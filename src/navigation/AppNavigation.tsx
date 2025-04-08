@@ -1,11 +1,13 @@
 // src/navigation/AppNavigator.tsx
 import React from "react";
+import { ActivityIndicator, View } from "react-native";
 import {
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack"; // Đảm bảo import từ đây
+import { useAuth } from "../contexts/AuthContext";
 import LoginScreen from "../screens/Auth/Login";
 // import {useTheme} from '../contexts/ThemeContext';
 import MainTabNavigator from "./BottomTab";
@@ -49,53 +51,62 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator: React.FC = () => {
+  const { state } = useAuth();
+  if (state.isLoading) {
+    console.log("Loading state is true, showing loading indicator");
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#3498db" />
+      </View>
+    );
+  }
   // const {theme} = useTheme();
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Splash'
+        initialRouteName="Splash"
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name='Splash' component={Splash} />
+        <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen
-          name='Onboarding'
+          name="Onboarding"
           component={OnboardingScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name='Login'
+          name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name='Register'
+          name="Register"
           component={RegisterScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name='Main'
+          name="Main"
           component={MainTabNavigator}
           options={{ headerShown: false }}
         />
         {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
-        <Stack.Screen name='NewMatch' component={NewMatchList} />
-        <Stack.Screen name='Chat' component={ChatScreen} />
+        <Stack.Screen name="NewMatch" component={NewMatchList} />
+        <Stack.Screen name="Chat" component={ChatScreen} />
         <Stack.Screen
-          name='ChatDetail'
+          name="ChatDetail"
           component={ChatDetailScreen}
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
-        <Stack.Screen name='VerifyCode' component={verifyCodeScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="VerifyCode" component={verifyCodeScreen} />
         <Stack.Screen
-          name='CreateNewPassword'
+          name="CreateNewPassword"
           component={CreateNewPasswordScreen}
         />
-        <Stack.Screen name='FindAMatch' component={FindAMatch} />
+        <Stack.Screen name="FindAMatch" component={FindAMatch} />
 
         <Stack.Screen
-          name='Settings'
+          name="Settings"
           component={SettingsScreen}
           options={{ title: "Settings", headerShown: true }}
         />

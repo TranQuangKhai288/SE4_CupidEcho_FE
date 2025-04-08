@@ -6,11 +6,14 @@ import { Bell, Moon, Settings, LogOut, Users } from "lucide-react-native";
 import MenuItem from "./detail/MenuItem";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
-
+import { useAuth } from "../../contexts/AuthContext";
 const ProfileScreen: React.FC = ({}) => {
-  
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-
+  const { logout } = useAuth();
+  const handleLogout = async () => {
+    await logout();
+    navigation.navigate("Login");
+  };
   return (
     <ScrollView className="flex-1 bg-white">
       {/* Header */}
@@ -69,6 +72,7 @@ const ProfileScreen: React.FC = ({}) => {
           icon={<LogOut size={24} color="red" />}
           text="Logout"
           isLogout
+          onPress={handleLogout}
         />
       </View>
     </ScrollView>
