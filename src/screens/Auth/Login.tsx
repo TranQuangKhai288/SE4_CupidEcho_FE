@@ -32,7 +32,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     try {
       const response = await UserAPI.loginUser({ email, password });
       const { access_token, refresh_token, data: user } = response;
-      console.log("Login response: ", response);
       if (response.status !== "OK") {
         console.log("Login failed", response.message);
         return;

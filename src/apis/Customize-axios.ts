@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const instance = axios.create({
-  baseURL: `http://172.16.16.99:5000/api`,
+  baseURL: `${process.env.EXPO_PUBLIC_API_URL}/api`,
   timeout: 50000,
 });
 
@@ -11,6 +11,7 @@ export default instance;
 // gọi API luôn có sẵn token trong header
 instance.interceptors.request.use(
   async (config: any) => {
+    // console.log("Calling API", config.url);
     const token = await AsyncStorage.getItem("token");
     if (token) {
       config.headers.authorization = `Bearer ${token}`;
