@@ -1,81 +1,161 @@
-// src/screens/Auth/ProfileScreen.tsx
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
-import { Bell, Moon, Settings, LogOut, Users } from "lucide-react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+} from "react-native";
+import { Ellipsis, Moon, Settings, LogOut, Users } from "lucide-react-native";
 import MenuItem from "./detail/MenuItem";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 
-const ProfileScreen: React.FC = ({}) => {
+const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
+  // State to control the logout modal visibility
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+
+  // Function to open the modal
+  const handleLogoutPress = () => {
+    setLogoutModalVisible(true);
+  };
+
+  // Function to close the modal
+  const handleCancelLogout = () => {
+    setLogoutModalVisible(false);
+  };
+
+  // Function to handle logout confirmation (logs to console)
+  const handleConfirmLogout = () => {
+    setLogoutModalVisible(false);
+    console.log("User logged out successfully!"); // Log to console
+  };
+
   return (
-    <ScrollView className="flex-1 bg-white">
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-6 pt-12">
-        <View className="flex-row justify-center">
-          <Image
-            style={{ marginRight: 10 }}
-            source={require("../../../assets/Logo.png")}
-            className="w-10 h-10"
-          />
-          <Text className="text-2xl font-bold">Profile</Text>
-        </View>
-        <Bell size={24} color="#000" />
-      </View>
-
-      {/* Avatar */}
-      <View className="items-center mt-6">
-        <Image
-          source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
-          className="w-24 h-24 rounded-full"
-        />
-      </View>
-
-      {/* VIP Card */}
-      <View className="mx-6 mt-6 bg-purple-500 p-4 rounded-2xl shadow-lg">
-        <Text className="text-white text-lg font-bold">
-          Enjoy All Benefits!
-        </Text>
-        <Text className="text-white text-sm mt-1">
-          Enjoy unlimited swiping without restrictions & without ads
-        </Text>
-        <View className="mt-3 flex-row items-center justify-between">
-          <TouchableOpacity className="bg-white px-4 py-2 rounded-lg">
-            <Text className="text-purple-600 font-bold">Get VIP</Text>
+    <View className="flex-1 bg-white">
+      <ScrollView>
+        {/* Header */}
+        <View className="flex-row items-center justify-between px-6 pt-12">
+          <View className="flex-row justify-center">
+            <Image
+              style={{ marginRight: 10 }}
+              source={require("../../../assets/Logo.png")}
+              className="w-10 h-10"
+            />
+            <Text className="text-2xl font-bold">Profile</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("MyProfile");
+            }}
+          >
+            <Ellipsis size={24} color="#000" />
           </TouchableOpacity>
+        </View>
+
+        {/* Avatar */}
+        <View className="items-center mt-6">
           <Image
-            source={require("../../../assets/Logo.png")}
-            className="w-10 h-10"
+            source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
+            className="w-24 h-24 rounded-full"
           />
         </View>
-      </View>
-      {/* Menu Items */}
-      <View className="mt-6">
-        <MenuItem
-          icon={<Settings size={24} color="black" />}
-          onPress={() => navigation.navigate("Settings")}
-          text="Settings"
-        />
-        <MenuItem icon={<Moon size={24} color="black" />} text="Dark Mode" />
-        <MenuItem
-          icon={<Users size={24} color="black" />}
-          text="Help Center"
-          onPress={() => navigation.navigate("HelpCenter")}
-        />
-        <MenuItem
-          icon={<Users size={24} color="black" />}
-          text="Invite Friends"
-          onPress={() => navigation.navigate("InviteFriend")}
-        />
-        <MenuItem
-          icon={<LogOut size={24} color="red" />}
-          text="Logout"
-          isLogout
-        />
-      </View>
-    </ScrollView>
+
+        {/* VIP Card */}
+        <View className="mx-6 mt-6 bg-purple-500 p-4 rounded-2xl shadow-lg">
+          <Text className="text-white text-lg font-bold">
+            Enjoy All Benefits!
+          </Text>
+          <Text className="text-white text-sm mt-1">
+            Enjoy unlimited swiping without restrictions & without ads
+          </Text>
+          <View className="mt-3 flex-row items-center justify-between">
+            <TouchableOpacity className="bg-white px-4 py-2 rounded-lg">
+              <Text className="text-purple-600 font-bold">Get VIP</Text>
+            </TouchableOpacity>
+            <Image
+              source={require("../../../assets/Logo.png")}
+              className="w-10 h-10"
+            />
+          </View>
+        </View>
+
+        {/* Menu Items */}
+        <View className="mt-6">
+          <MenuItem
+            icon={<Settings size={24} color="black" />}
+            onPress={() => navigation.navigate("Settings")}
+            text="Settings"
+          />
+          <MenuItem icon={<Moon size={24} color="black" />} text="Dark Mode" />
+          <MenuItem
+            icon={<Users size={24} color="black" />}
+            text="Help Center"
+            onPress={() => navigation.navigate("HelpCenter")}
+          />
+          <MenuItem
+            icon={<Users size={24} color="black" />}
+            text="Invite Friends"
+            onPress={() => navigation.navigate("InviteFriend")}
+          />
+          <MenuItem
+            icon={<LogOut size={24} color="red" />}
+            text="Logout"
+            isLogout
+            onPress={handleLogoutPress} // Open modal on logout press
+          />
+        </View>
+      </ScrollView>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        transparent={true}
+        visible={isLogoutModalVisible}
+        animationType="slide"
+        onRequestClose={handleCancelLogout} // Close modal on back press (Android)
+      >
+        <View className="flex-1 justify-end bg-black/50">
+          <View className="bg-white rounded-t-2xl p-6">
+            {/* Drag Handle */}
+            <View className="w-12 h-1 bg-gray-300 rounded-full self-center mb-4" />
+
+            {/* Title */}
+            <Text className="text-xl font-bold text-black text-center">
+              Logout
+            </Text>
+
+            {/* Message */}
+            <Text className="text-base text-gray-600 text-center mt-2">
+              Are you sure you want to log out?
+            </Text>
+
+            {/* Buttons */}
+            <View className="flex-row justify-between mt-6">
+              <TouchableOpacity
+                onPress={handleCancelLogout}
+                className="flex-1 bg-gray-200 py-3 rounded-lg mr-2"
+              >
+                <Text className="text-black text-center font-semibold">
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleConfirmLogout}
+                className="flex-1 bg-purple-600 py-3 rounded-lg ml-2"
+              >
+                <Text className="text-white text-center font-semibold">
+                  Yes, Logout
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
