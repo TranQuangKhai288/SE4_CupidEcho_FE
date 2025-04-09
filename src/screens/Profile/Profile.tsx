@@ -9,7 +9,8 @@ import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useAuth } from "../../contexts/AuthContext";
 const ProfileScreen: React.FC = ({}) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const { logout } = useAuth();
+  const { logout, state } = useAuth();
+  const { user } = state;
   const handleLogout = async () => {
     await logout();
     navigation.navigate("Login");
@@ -32,7 +33,7 @@ const ProfileScreen: React.FC = ({}) => {
       {/* Avatar */}
       <View className="items-center mt-6">
         <Image
-          source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
+          source={{ uri: user?.avatar }}
           className="w-24 h-24 rounded-full"
         />
       </View>

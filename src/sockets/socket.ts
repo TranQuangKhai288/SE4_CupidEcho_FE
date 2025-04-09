@@ -28,7 +28,7 @@ class SocketService {
 
     this.socket.on("disconnect", () => {
       console.log("Ngắt kết nối khỏi WebSocket server");
-      this.handleReconnect(token);
+      // this.handleReconnect(token);
     });
 
     this.socket.on("connect_error", (error: any) => {

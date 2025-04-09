@@ -8,7 +8,7 @@ const instance = axios.create({
 
 export default instance;
 
-// gọi API luôn có sẵn token trong header
+// gọi API luôn có sẵn token trong header trừ API đăng nhập và đăng ký
 instance.interceptors.request.use(
   async (config: any) => {
     // console.log("Calling API", config.url);
@@ -18,6 +18,7 @@ instance.interceptors.request.use(
     }
     return config;
   },
+
   (error) => {
     return Promise.reject(error);
   }

@@ -21,7 +21,7 @@ import * as ConvAPI from "../../../apis/ConversationAPI";
 import { useSocketEvents, Message } from "../../../hooks/useSocketEvents";
 import { set } from "date-fns";
 import { useAuth } from "../../../contexts/AuthContext";
-
+import { v4 as uuidv4 } from "uuid"; // Thêm thư viện này vào
 type RootStackParamList = {
   ChatDetail: { _id: string; name: string; avatar: string };
 };
@@ -68,69 +68,68 @@ const ChatDetailScreen: React.FC = () => {
 
   const { sendMessage, isConnected } = useSocketEvents({
     onNewMessage: (message: Message) => {
-      if (message.convId === _id) {
+      if (message.conversationId === _id) {
         setMessages((prev) => {
-          if (prev.some((msg) => msg._id === message._id)) {
-            return prev;
+          // Tìm tin nhắn tạm thời đã gửi
+          const tempIndex = prev.findIndex(
+            (msg) =>
+              msg.status === "sending" &&
+              msg.content === message.content &&
+              msg.senderId === message.senderId
+          );
+
+          if (tempIndex !== -1) {
+            const updated = [...prev];
+            updated[tempIndex] = {
+              ...message,
+              status: "sent",
+            };
+            return updated;
+          } else {
+            return [...prev, { ...message, status: "sent" }];
           }
-          return [...prev, message];
         });
-        // Cuộn xuống cuối khi có tin nhắn mới
+
         scrollViewRef.current?.scrollToEnd({ animated: true });
       }
     },
+
     onNewNotification: (notification) => {
       console.log("Thông báo mới:", notification);
     },
-    // onError: (error: any) => {
-    //   Alert.alert("Lỗi", error.message);
-    // },
   });
 
   const handleSendMessage = () => {
-    if (!newMessage.trim()) {
-      // Alert.alert("Lỗi", "Tin nhắn không được để trống");
-      return;
-    }
+    if (!newMessage.trim()) return;
 
     if (!isConnected) {
       Alert.alert("Lỗi", "Không thể gửi tin nhắn: Socket chưa kết nối");
       return;
     }
 
-    sendMessage(_id, newMessage, (response) => {
-      setMessages((prev) => {
-        //tạo một tin nhắn mới với trạng thái "sending"
-        const sendingMessage: Message = {
-          _id: `temp-${Date.now()}`, // Temporary unique ID
-          convId: _id,
-          senderId: user?._id || "", // ID của người gửi (có thể là ID của người dùng hiện tại)
-          content: newMessage,
-          createdAt: new Date(),
-          status: "sending",
-        };
+    const tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 10000)}`; // ID tạm
 
-        return [...prev, sendingMessage];
-      });
+    const sendingMessage: Message = {
+      _id: tempId,
+      conversationId: _id,
+      senderId: user?._id || "",
+      content: newMessage,
+      createdAt: new Date(),
+      status: "sending",
+    };
+
+    setMessages((prev) => [...prev, sendingMessage]);
+
+    sendMessage(_id, newMessage, (response) => {
       if (response.status === "OK") {
-        setNewMessage(""); // Xóa input sau khi gửi thành công
-        //sửa trạng thái tin nhắn thành "sent"
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg._id === `temp-${Date.now()}` ? { ...msg, status: "sent" } : msg
-          )
-        );
-      } else if (response.status === "ERROR") {
-        //sửa trạng thái tin nhắn thành "failed"
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg._id === `temp-${Date.now()}`
-              ? { ...msg, status: "failed" }
-              : msg
-          )
-        );
-        Alert.alert("Lỗi", response.message || "Không thể gửi tin nhắn");
+        setNewMessage("");
+        // Tin nhắn thực sẽ được xử lý tại onNewMessage
       } else {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === tempId ? { ...msg, status: "failed" } : msg
+          )
+        );
         Alert.alert("Lỗi", response.message || "Không thể gửi tin nhắn");
       }
     });

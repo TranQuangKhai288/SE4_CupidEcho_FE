@@ -5,7 +5,7 @@ import { socketService } from "../sockets/socket";
 
 export interface Message {
   _id: string;
-  convId: string;
+  conversationId: string;
   senderId: string;
   content: string;
   createdAt: Date;
