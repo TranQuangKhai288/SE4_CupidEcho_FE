@@ -7,9 +7,10 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as UserAPI from "../apis/UserAPI"; // Giả sử bạn đã có UserAPI
+import { socketService } from "../sockets/socket";
 
 interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   avatar?: string;
@@ -22,6 +23,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   refreshToken: string | null;
+  isSocketConnected: boolean;
 }
 
 type AuthAction =
@@ -37,7 +39,8 @@ type AuthAction =
       type: "LOGIN";
       payload: { token: string; user: User; refreshToken: string };
     }
-  | { type: "LOGOUT" };
+  | { type: "LOGOUT" }
+  | { type: "SET_SOCKET_CONNECTED"; payload: boolean };
 
 const initialState: AuthState = {
   isLoading: true,
@@ -45,6 +48,7 @@ const initialState: AuthState = {
   user: null,
   token: null,
   refreshToken: null,
+  isSocketConnected: false,
 };
 
 const AuthContext = createContext<{
@@ -82,6 +86,11 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         ...initialState,
         isLoading: false,
       };
+    case "SET_SOCKET_CONNECTED":
+      return {
+        ...state,
+        isSocketConnected: action.payload,
+      };
     default:
       return state;
   }
@@ -92,25 +101,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Restore token + refresh nếu cần khi app mở
   useEffect(() => {
     const bootstrapAsync = async () => {
       try {
-        // loading = true
-
+        console.log("Restoring token...");
         const token = await AsyncStorage.getItem("token");
         const refreshToken = await AsyncStorage.getItem("refreshToken");
         const userString = await AsyncStorage.getItem("user");
         const user = userString ? JSON.parse(userString) : null;
 
         if (token && user) {
-          // Token hợp lệ → restore
           dispatch({
             type: "RESTORE_TOKEN",
             payload: { token, refreshToken, user },
           });
         } else if (refreshToken) {
-          // Không có access_token → thử làm mới token
           try {
             const res = await UserAPI.refreshToken(refreshToken);
             const {
@@ -119,7 +124,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
               user: refreshedUser,
             } = res.data;
 
-            // Lưu mới vào AsyncStorage
             await AsyncStorage.setItem("token", access_token);
             await AsyncStorage.setItem("refreshToken", newRefreshToken);
             await AsyncStorage.setItem("user", JSON.stringify(refreshedUser));
@@ -154,6 +158,59 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     bootstrapAsync();
   }, []);
 
+  useEffect(() => {
+    if (state.token) {
+      const socket = socketService.connect(state.token);
+
+      socket.on("connect", () => {
+        dispatch({ type: "SET_SOCKET_CONNECTED", payload: true });
+      });
+
+      socket.on("disconnect", () => {
+        dispatch({ type: "SET_SOCKET_CONNECTED", payload: false });
+      });
+
+      socket.on("connect_error", async (error: any) => {
+        if (error.code === "TOKEN_EXPIRED" && state.refreshToken) {
+          try {
+            const res = await UserAPI.refreshToken(state.refreshToken);
+            const {
+              access_token,
+              refresh_token: newRefreshToken,
+              user: refreshedUser,
+            } = res.data;
+
+            await AsyncStorage.setItem("token", access_token);
+            await AsyncStorage.setItem("refreshToken", newRefreshToken);
+            await AsyncStorage.setItem("user", JSON.stringify(refreshedUser));
+
+            dispatch({
+              type: "LOGIN",
+              payload: {
+                token: access_token,
+                refreshToken: newRefreshToken,
+                user: refreshedUser,
+              },
+            });
+          } catch (err) {
+            console.log("Token refresh failed. Logging out.");
+            await logout();
+          }
+        } else if (error.code === "INVALID_TOKEN") {
+          console.log("Token không hợp lệ. Logging out.");
+          await logout();
+        }
+      });
+
+      return () => {
+        socket.off("connect");
+        socket.off("disconnect");
+        socket.off("connect_error");
+        socketService.disconnect();
+      };
+    }
+  }, [state.token, state.refreshToken]);
+
   const login = async ({
     token,
     user,
@@ -172,6 +229,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const logout = async () => {
     await AsyncStorage.multiRemove(["token", "refreshToken", "user"]);
     dispatch({ type: "LOGOUT" });
+    socketService.disconnect();
   };
 
   return (

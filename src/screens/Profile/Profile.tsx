@@ -12,6 +12,7 @@ import { Ellipsis, Moon, Settings, LogOut, Users } from "lucide-react-native";
 import MenuItem from "./detail/MenuItem";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -29,10 +30,15 @@ const ProfileScreen: React.FC = () => {
     setLogoutModalVisible(false);
   };
 
+  const { logout, state } = useAuth();
+  const { user } = state;
+
   // Function to handle logout confirmation (logs to console)
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout = async () => {
     setLogoutModalVisible(false);
     console.log("User logged out successfully!"); // Log to console
+    await logout();
+    navigation.navigate("Login");
   };
   return (
     <View className="flex-1 bg-white">
@@ -59,7 +65,7 @@ const ProfileScreen: React.FC = () => {
         {/* Avatar */}
         <View className="items-center mt-6">
           <Image
-            source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
+            source={{ uri: user?.avatar }}
             className="w-24 h-24 rounded-full"
           />
         </View>
