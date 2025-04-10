@@ -25,6 +25,7 @@ import FindAMatch from "../screens/match/FindAMatch";
 import HelpCenterScreen from "../screens/Profile/Help";
 import InviteFriendsScreen from "../screens/Profile/InviteFriend";
 import MyProfileScreen from "../screens/Profile/MyProfile";
+import AllMatchListScreen from '../screens/match/AllMatchList';
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -37,6 +38,7 @@ export type RootStackParamList = {
   Home: undefined;
   Profile: undefined;
   NewMatch: undefined;
+  AllMatchList: undefined;
   Chat: undefined;
   ChatDetail: { name: string; avatar: string };
   Splash: undefined;
@@ -70,69 +72,85 @@ const AppNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Splash"
+        initialRouteName='Splash'
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name='Splash' component={Splash} />
         <Stack.Screen
-          name="Onboarding"
+          name='Onboarding'
           component={OnboardingScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Login"
+          name='Login'
           component={LoginScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Register"
+          name='Register'
           component={RegisterScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Main"
+          name='Main'
           component={MainTabNavigator}
           options={{ headerShown: false }}
         />
         {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
-        <Stack.Screen name="NewMatch" component={NewMatchList} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
+        <Stack.Screen name='AllMatchList' component={AllMatchListScreen} />
+        <Stack.Screen name='NewMatch' component={NewMatchList} />
+        <Stack.Screen name='Chat' component={ChatScreen} />
         <Stack.Screen
-          name="ChatDetail"
+          name='ChatDetail'
           component={ChatDetailScreen}
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="VerifyCode" component={verifyCodeScreen} />
+        <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+        <Stack.Screen name='VerifyCode' component={verifyCodeScreen} />
         <Stack.Screen
-          name="CreateNewPassword"
+          name='CreateNewPassword'
           component={CreateNewPasswordScreen}
         />
-        <Stack.Screen name="FindAMatch" component={FindAMatch} />
+        <Stack.Screen name='FindAMatch' component={FindAMatch} />
 
         {/* Profile */}
 
-
         <Stack.Screen
-          name="Settings"
+          name='Settings'
           component={SettingsScreen}
-          options={{ title: "Settings", headerShown: true,headerBackTitle:"" }}
+          options={{
+            title: "Settings",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
         />
         <Stack.Screen
           name='HelpCenter'
           component={HelpCenterScreen}
-          options={{ title: "HelpCenter", headerShown: true,headerBackTitle:"" }}
+          options={{
+            title: "HelpCenter",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
         />
         <Stack.Screen
           name='InviteFriend'
           component={InviteFriendsScreen}
-          options={{ title: "InviteFriend", headerShown: true,headerBackTitle:"" }}
+          options={{
+            title: "InviteFriend",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
         />
         <Stack.Screen
           name='MyProfile'
           component={MyProfileScreen}
-          options={{ title: "MyProfile", headerShown: true,headerBackTitle:"" }}
+          options={{
+            title: "MyProfile",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

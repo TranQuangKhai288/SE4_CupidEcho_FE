@@ -156,7 +156,7 @@ const ChatScreen: React.FC = ({}) => {
   }, [pagination.page, pagination.limit]);
 
   return (
-    <View className="flex-1 bg-white pt-6 px-6">
+    <View className="flex-1 bg-white pt-10 px-6">
       <View className="flex-row justify-between items-center py-3 ">
         <View className="flex-row gap-3 items-center">
           <Image

@@ -2,35 +2,44 @@
 import React from "react";
 import { View, Text, Button, Image, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { FontAwesome, Feather } from "@expo/vector-icons";
-import NewMatch from "./NewMatch";
-import YourMatch from "./YourMatch";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
+import { useAuth } from "../../contexts/AuthContext";
+import { LayoutPanelLeft, SlidersHorizontal } from "lucide-react-native";
+import SwipeCard from "../../components/SwipeCard";
 
 const MatchScreen: React.FC = ({}) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const { state } = useAuth();
+  const { user } = state;
   return (
-    <View className='flex-1 bg-white pt-6 px-6'>
-      <View className='flex-row justify-between items-center  py-3 '>
-        <View className='flex-row gap-3 items-center'>
+    <View className='flex-1 bg-white pt-10 px-6'>
+      <View className='flex-row justify-between items-center py-3'>
+        <View className='flex-row items-center gap-2'>
           <Image
-            source={require("../../../assets/Logo.png")}
-            style={{ width: 28, height: 28 }}
+            source={{ uri: user?.avatar }}
+            className='w-14 h-14 rounded-full'
           />
-          <Text className='text-3xl font-bold'>Match</Text>
+          <View>
+            <Text className='text-gray-500 text-base'>Good Morning 👋</Text>
+            <Text className='text-lg font-bold text-black'>{user?.name}</Text>
+          </View>
         </View>
-        <View className='flex-row gap-5 items-center'>
-          <TouchableOpacity>
-            <Feather name='search' size={20} color='black' />
+        <View className='flex-row gap-1 items-center'>
+          <TouchableOpacity className='p-2 '>
+            <SlidersHorizontal size={20} color='#000' />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("FindAMatch")}>
-            <Feather name='more-horizontal' size={20} color='black' />
+          <TouchableOpacity
+            className='p-2 '
+            onPress={() => navigation.navigate("AllMatchList")}
+          >
+            <LayoutPanelLeft size={20} color='#000' />
           </TouchableOpacity>
         </View>
       </View>
-      <NewMatch />
-      <YourMatch />
+      <View className='flex-1'>
+        <SwipeCard />
+      </View>
     </View>
   );
 };
