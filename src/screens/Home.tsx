@@ -11,6 +11,9 @@ import { useAuth } from "../contexts/AuthContext";
 import { FontAwesome, Feather } from "@expo/vector-icons";
 import { Heart, MessageCircle, Share2 } from "lucide-react-native";
 import PostCard from "../components/PostCard";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/AppNavigation";
 
 export const mockPosts = [
   {
@@ -61,6 +64,7 @@ export const mockPosts = [
 const HomeScreen: React.FC = ({}) => {
   const { state } = useAuth();
   const { user } = state;
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
     <View className='flex-1 bg-white pt-10 px-6'>
@@ -74,7 +78,9 @@ const HomeScreen: React.FC = ({}) => {
         </View>
 
         <View className='flex-row gap-5 items-center'>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("CreateNewPost")}
+          >
             <Feather name='plus-circle' size={20} color='black' />
           </TouchableOpacity>
           <TouchableOpacity>
@@ -93,6 +99,7 @@ const HomeScreen: React.FC = ({}) => {
         {mockPosts.map((post) => (
           <PostCard
             key={post.id}
+            id={post.id}
             username={post.username}
             avatarUrl={post.avatarUrl}
             timeAgo={post.timeAgo}
