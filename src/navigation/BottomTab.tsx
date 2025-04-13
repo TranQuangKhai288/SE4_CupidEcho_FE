@@ -5,7 +5,7 @@ import { View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/Home";
-import MapsScreen from "../screens/Explore";
+import MapsScreen from "../screens/explore/Explore";
 import MatchScreen from "../screens/match/Match";
 import ChatScreen from "../screens/chat/Chat";
 import ProfileScreen from "../screens/Profile/Profile";

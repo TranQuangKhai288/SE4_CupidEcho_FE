@@ -28,6 +28,8 @@ import MyProfileScreen from "../screens/Profile/MyProfile";
 import AllMatchListScreen from "../screens/match/AllMatchList";
 import CreateNewPost from "../screens/post/CreateNewPost";
 import PostDetail from "../screens/post/PostDetail";
+import RandomMatch from "../screens/match/RandomMatch";
+import ExploreDetail from "../screens/explore/ExploreDetail";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -41,8 +43,10 @@ export type RootStackParamList = {
   Profile: undefined;
   NewMatch: undefined;
   AllMatchList: undefined;
+  RandomMatch: undefined;
+  ExploreDetail: { title: string };
   Chat: undefined;
-  ChatDetail: { name: string; avatar: string };
+  ChatDetail: { _id: string; name: string; avatar: string };
   Splash: undefined;
   Onboarding: undefined;
 
@@ -104,6 +108,8 @@ const AppNavigator: React.FC = () => {
         {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
         <Stack.Screen name='AllMatchList' component={AllMatchListScreen} />
         <Stack.Screen name='NewMatch' component={NewMatchList} />
+        <Stack.Screen name='RandomMatch' component={RandomMatch} />
+        <Stack.Screen name='ExploreDetail' component={ExploreDetail} />
         <Stack.Screen name='Chat' component={ChatScreen} />
         <Stack.Screen
           name='ChatDetail'
