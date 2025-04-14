@@ -67,27 +67,27 @@ const HomeScreen: React.FC = ({}) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
-    <View className="flex-1 bg-white pt-10 px-6">
-      <View className="flex-row justify-between items-center py-3 ">
-        <View className="flex-row gap-3 items-center">
+    <View className='flex-1 bg-white pt-10 px-6'>
+      <View className='flex-row justify-between items-center py-3 '>
+        <View className='flex-row gap-3 items-center'>
           <Image
             source={require("../../assets/Logo.png")}
             style={{ width: 28, height: 28 }}
           />
-          <Text className="text-3xl font-bold">CupidEcho</Text>
+          <Text className='text-3xl font-bold'>CupidEcho</Text>
         </View>
 
-        <View className="flex-row gap-5 items-center">
+        <View className='flex-row gap-5 items-center'>
           <TouchableOpacity
             onPress={() => navigation.navigate("CreateNewPost")}
           >
-            <Feather name="plus-circle" size={20} color="black" />
+            <Feather name='plus-circle' size={20} color='black' />
           </TouchableOpacity>
           <TouchableOpacity>
-            <View className="relative">
-              <Feather name="heart" size={20} color="black" />
-              <View className="absolute bottom-4 left-4">
-                <Text className="bg-red-600 text-white text-xs rounded-full px-1">
+            <View className='relative'>
+              <Feather name='heart' size={20} color='black' />
+              <View className='absolute bottom-4 left-4'>
+                <Text className='bg-red-600 text-white text-xs rounded-full px-1'>
                   5
                 </Text>
               </View>
