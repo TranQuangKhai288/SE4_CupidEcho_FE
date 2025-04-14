@@ -25,6 +25,11 @@ import FindAMatch from "../screens/match/FindAMatch";
 import HelpCenterScreen from "../screens/Profile/Help";
 import InviteFriendsScreen from "../screens/Profile/InviteFriend";
 import MyProfileScreen from "../screens/Profile/MyProfile";
+import AllMatchListScreen from "../screens/match/AllMatchList";
+import CreateNewPost from "../screens/post/CreateNewPost";
+import PostDetail from "../screens/post/PostDetail";
+import RandomMatch from "../screens/match/RandomMatch";
+import ExploreDetail from "../screens/explore/ExploreDetail";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -37,8 +42,11 @@ export type RootStackParamList = {
   Home: undefined;
   Profile: undefined;
   NewMatch: undefined;
+  AllMatchList: undefined;
+  RandomMatch: undefined;
+  ExploreDetail: { title: string };
   Chat: undefined;
-  ChatDetail: { name: string; avatar: string };
+  ChatDetail: { _id: string; name: string; avatar: string };
   Splash: undefined;
   Onboarding: undefined;
 
@@ -50,8 +58,11 @@ export type RootStackParamList = {
   Settings: undefined;
   HelpCenter: undefined;
   InviteFriend: undefined;
-  MyProfile:undefined;
+  MyProfile: undefined;
   FindAMatch: undefined;
+  // Post
+  CreateNewPost: undefined;
+  PostDetail: { postId: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -62,7 +73,7 @@ const AppNavigator: React.FC = () => {
     console.log("Loading state is true, showing loading indicator");
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#3498db" />
+        <ActivityIndicator size='large' color='#3498db' />
       </View>
     );
   }
@@ -70,69 +81,91 @@ const AppNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Splash"
+        initialRouteName='Splash'
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name='Splash' component={Splash} />
         <Stack.Screen
-          name="Onboarding"
+          name='Onboarding'
           component={OnboardingScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Login"
+          name='Login'
           component={LoginScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Register"
+          name='Register'
           component={RegisterScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Main"
+          name='Main'
           component={MainTabNavigator}
           options={{ headerShown: false }}
         />
         {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
-        <Stack.Screen name="NewMatch" component={NewMatchList} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
+        <Stack.Screen name='AllMatchList' component={AllMatchListScreen} />
+        <Stack.Screen name='NewMatch' component={NewMatchList} />
+        <Stack.Screen name='RandomMatch' component={RandomMatch} />
+        <Stack.Screen name='ExploreDetail' component={ExploreDetail} />
+        <Stack.Screen name='Chat' component={ChatScreen} />
         <Stack.Screen
-          name="ChatDetail"
+          name='ChatDetail'
           component={ChatDetailScreen}
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="VerifyCode" component={verifyCodeScreen} />
+        <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+        <Stack.Screen name='VerifyCode' component={verifyCodeScreen} />
         <Stack.Screen
-          name="CreateNewPassword"
+          name='CreateNewPassword'
           component={CreateNewPasswordScreen}
         />
-        <Stack.Screen name="FindAMatch" component={FindAMatch} />
+        <Stack.Screen name='FindAMatch' component={FindAMatch} />
+
+        {/* Post */}
+        <Stack.Screen name='CreateNewPost' component={CreateNewPost} />
+        <Stack.Screen name='PostDetail' component={PostDetail} />
 
         {/* Profile */}
 
-
         <Stack.Screen
-          name="Settings"
+          name='Settings'
           component={SettingsScreen}
-          options={{ title: "Settings", headerShown: true,headerBackTitle:"" }}
+          options={{
+            title: "Settings",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
         />
         <Stack.Screen
           name='HelpCenter'
           component={HelpCenterScreen}
-          options={{ title: "HelpCenter", headerShown: true,headerBackTitle:"" }}
+          options={{
+            title: "HelpCenter",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
         />
         <Stack.Screen
           name='InviteFriend'
           component={InviteFriendsScreen}
-          options={{ title: "InviteFriend", headerShown: true,headerBackTitle:"" }}
+          options={{
+            title: "InviteFriend",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
         />
         <Stack.Screen
           name='MyProfile'
           component={MyProfileScreen}
-          options={{ title: "MyProfile", headerShown: true,headerBackTitle:"" }}
+          options={{
+            title: "MyProfile",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -5,14 +5,14 @@ import { View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/Home";
-import MapsScreen from "../screens/Maps";
+import MapsScreen from "../screens/explore/Explore";
 import MatchScreen from "../screens/match/Match";
 import ChatScreen from "../screens/chat/Chat";
 import ProfileScreen from "../screens/Profile/Profile";
 
 type TabParamList = {
   Home: undefined;
-  Maps: undefined;
+  Explore: undefined;
   Match: undefined;
   Chat: undefined;
   Profile: undefined;
@@ -30,8 +30,8 @@ const MainTabNavigator: React.FC = () => {
             case "Home":
               iconName = "home";
               break;
-            case "Maps":
-              iconName = "map";
+            case "Explore":
+              iconName = "explore";
               break;
             case "Match":
               iconName = "favorite";
@@ -57,7 +57,7 @@ const MainTabNavigator: React.FC = () => {
       })}
     >
       <Tab.Screen name='Home' component={HomeScreen} />
-      <Tab.Screen name='Maps' component={MapsScreen} />
+      <Tab.Screen name='Explore' component={MapsScreen} />
       <Tab.Screen name='Match' component={MatchScreen} />
       <Tab.Screen name='Chat' component={ChatScreen} />
       <Tab.Screen name='Profile' component={ProfileScreen} />
