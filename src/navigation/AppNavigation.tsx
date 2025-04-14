@@ -25,7 +25,11 @@ import FindAMatch from "../screens/match/FindAMatch";
 import HelpCenterScreen from "../screens/Profile/Help";
 import InviteFriendsScreen from "../screens/Profile/InviteFriend";
 import MyProfileScreen from "../screens/Profile/MyProfile";
-import AllMatchListScreen from '../screens/match/AllMatchList';
+import AllMatchListScreen from "../screens/match/AllMatchList";
+import CreateNewPost from "../screens/post/CreateNewPost";
+import PostDetail from "../screens/post/PostDetail";
+import RandomMatch from "../screens/match/RandomMatch";
+import ExploreDetail from "../screens/explore/ExploreDetail";
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -39,8 +43,10 @@ export type RootStackParamList = {
   Profile: undefined;
   NewMatch: undefined;
   AllMatchList: undefined;
+  RandomMatch: undefined;
+  ExploreDetail: { title: string };
   Chat: undefined;
-  ChatDetail: { name: string; avatar: string };
+  ChatDetail: { _id: string; name: string; avatar: string };
   Splash: undefined;
   Onboarding: undefined;
 
@@ -52,8 +58,11 @@ export type RootStackParamList = {
   Settings: undefined;
   HelpCenter: undefined;
   InviteFriend: undefined;
-  MyProfile:undefined;
+  MyProfile: undefined;
   FindAMatch: undefined;
+  // Post
+  CreateNewPost: undefined;
+  PostDetail: { postId: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -64,7 +73,7 @@ const AppNavigator: React.FC = () => {
     console.log("Loading state is true, showing loading indicator");
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#3498db" />
+        <ActivityIndicator size='large' color='#3498db' />
       </View>
     );
   }
@@ -99,6 +108,8 @@ const AppNavigator: React.FC = () => {
         {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
         <Stack.Screen name='AllMatchList' component={AllMatchListScreen} />
         <Stack.Screen name='NewMatch' component={NewMatchList} />
+        <Stack.Screen name='RandomMatch' component={RandomMatch} />
+        <Stack.Screen name='ExploreDetail' component={ExploreDetail} />
         <Stack.Screen name='Chat' component={ChatScreen} />
         <Stack.Screen
           name='ChatDetail'
@@ -113,6 +124,10 @@ const AppNavigator: React.FC = () => {
           component={CreateNewPasswordScreen}
         />
         <Stack.Screen name='FindAMatch' component={FindAMatch} />
+
+        {/* Post */}
+        <Stack.Screen name='CreateNewPost' component={CreateNewPost} />
+        <Stack.Screen name='PostDetail' component={PostDetail} />
 
         {/* Profile */}
 

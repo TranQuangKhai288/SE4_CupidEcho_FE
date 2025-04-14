@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Heart, MessageCircle } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/AppNavigation";
 
 interface PostCardProps {
+  id: string;
   username: string;
   avatarUrl: string;
   timeAgo: string;
@@ -13,6 +17,7 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({
+  id,
   username,
   avatarUrl,
   timeAgo,
@@ -22,7 +27,7 @@ const PostCard: React.FC<PostCardProps> = ({
   comments,
 }) => {
   const [liked, setLiked] = useState(false);
-
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   return (
     <View className='bg-gray-50 px-4 py-3 shadow-gray-400 shadow-lg rounded-lg my-4'>
       {/* Header */}
@@ -67,7 +72,10 @@ const PostCard: React.FC<PostCardProps> = ({
               {liked ? likes + 1 : likes}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity className='flex-row items-center'>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("PostDetail", { postId: id })}
+            className='flex-row items-center'
+          >
             <MessageCircle size={20} color='#000' />
             <Text className='text-black text-sm ml-1'>{comments}</Text>
           </TouchableOpacity>
