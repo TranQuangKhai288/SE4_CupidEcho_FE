@@ -61,7 +61,7 @@ const PostDetail: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialIcons name='arrow-back' size={20} color='black' />
         </TouchableOpacity>
-        <Text className='text-xl font-bold'>Post Details</Text>
+        <Text className='text-2xl font-bold'>Post Details</Text>
         <View className='w-2' />
       </View>
 

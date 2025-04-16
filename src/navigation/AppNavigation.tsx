@@ -30,6 +30,11 @@ import CreateNewPost from "../screens/post/CreateNewPost";
 import PostDetail from "../screens/post/PostDetail";
 import RandomMatch from "../screens/match/RandomMatch";
 import ExploreDetail from "../screens/explore/ExploreDetail";
+import InitialProfile from "../screens/initialCustomInfo/initialProfile";
+import InitialBestPhotos from "../screens/initialCustomInfo/initialBestPhotos";
+import InitialInterest from "../screens/initialCustomInfo/initialInterest";
+import InitialIdealMatch from "../screens/initialCustomInfo/initialIdealMatch";
+
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
 // import ChatScreen from '../screens/ChatScreen';
@@ -63,6 +68,12 @@ export type RootStackParamList = {
   // Post
   CreateNewPost: undefined;
   PostDetail: { postId: string };
+
+  //InitialCustomInfo
+  InitialProfile: undefined;
+  InitialImage: undefined;
+  InitialInterest: undefined;
+  InitialIdealMatch: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -128,6 +139,12 @@ const AppNavigator: React.FC = () => {
         {/* Post */}
         <Stack.Screen name='CreateNewPost' component={CreateNewPost} />
         <Stack.Screen name='PostDetail' component={PostDetail} />
+
+        {/* InitialCustomInfo */}
+        <Stack.Screen name='InitialProfile' component={InitialProfile} />
+        <Stack.Screen name='InitialImage' component={InitialBestPhotos} />
+        <Stack.Screen name='InitialInterest' component={InitialInterest} />
+        <Stack.Screen name='InitialIdealMatch' component={InitialIdealMatch} />
 
         {/* Profile */}
 

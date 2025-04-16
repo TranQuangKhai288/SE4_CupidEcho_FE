@@ -51,7 +51,7 @@ const CreateNewPost: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialIcons name='arrow-back' size={20} color='black' />
         </TouchableOpacity>
-        <Text className='text-xl font-bold'>Create a new Post</Text>
+        <Text className='text-2xl font-bold'>Create a new Post</Text>
         <TouchableOpacity onPress={handlePost}>
           <Text className='text-purple-600 text-lg font-semibold'>POST</Text>
         </TouchableOpacity>
