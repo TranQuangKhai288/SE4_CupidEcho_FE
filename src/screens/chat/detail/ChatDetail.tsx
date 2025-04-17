@@ -24,6 +24,8 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { v4 as uuidv4 } from "uuid"; // Thêm thư viện này vào
 type RootStackParamList = {
   ChatDetail: { _id: string; name: string; avatar: string };
+  VoiceCall: undefined;
+  VideoCall: undefined;
 };
 
 type ChatDetailRouteProp = RouteProp<RootStackParamList, "ChatDetail">;
@@ -141,30 +143,30 @@ const ChatDetailScreen: React.FC = () => {
   }, [messages]);
 
   return (
-    <View className="flex-1 bg-white pt-6">
-      <View className="flex-row items-center justify-between px-4 py-3">
-        <View className="flex-row items-center gap-4">
-          <TouchableOpacity onPress={handleBackPress} className="mr-2">
-            <MaterialIcons name="arrow-back" size={20} color="black" />
+    <View className='flex-1 bg-white pt-6'>
+      <View className='flex-row items-center justify-between px-4 py-3'>
+        <View className='flex-row items-center gap-4'>
+          <TouchableOpacity onPress={handleBackPress} className='mr-2'>
+            <MaterialIcons name='arrow-back' size={20} color='black' />
           </TouchableOpacity>
-          <Image source={{ uri: avatar }} className="w-10 h-10 rounded-full" />
-          <Text className="text-2xl font-bold">{name}</Text>
+          <Image source={{ uri: avatar }} className='w-10 h-10 rounded-full' />
+          <Text className='text-2xl font-bold'>{name}</Text>
         </View>
-        <View className="flex-row gap-6">
-          <TouchableOpacity>
-            <Ionicons name="call-outline" size={20} color="black" />
+        <View className='flex-row gap-6'>
+          <TouchableOpacity onPress={() => navigation.navigate("VoiceCall")}>
+            <Ionicons name='call-outline' size={20} color='black' />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("VideoCall")}>
+            <Ionicons name='videocam-outline' size={20} color='black' />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Ionicons name="videocam-outline" size={20} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Feather name="more-horizontal" size={20} color="black" />
+            <Feather name='more-horizontal' size={20} color='black' />
           </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView
-        className="flex-1 px-4 py-2 mt-4"
+        className='flex-1 px-4 py-2 mt-4'
         ref={scrollViewRef}
         onContentSizeChange={() => {
           scrollViewRef.current?.scrollToEnd({ animated: true });

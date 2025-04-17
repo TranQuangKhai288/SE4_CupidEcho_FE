@@ -34,6 +34,8 @@ import InitialProfile from "../screens/initialCustomInfo/initialProfile";
 import InitialBestPhotos from "../screens/initialCustomInfo/initialBestPhotos";
 import InitialInterest from "../screens/initialCustomInfo/initialInterest";
 import InitialIdealMatch from "../screens/initialCustomInfo/initialIdealMatch";
+import VoiceCallScreen from '../screens/call/VoiceCall';
+import VideoCallScreen from '../screens/call/VideoCall';
 
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
@@ -74,6 +76,10 @@ export type RootStackParamList = {
   InitialImage: undefined;
   InitialInterest: undefined;
   InitialIdealMatch: undefined;
+
+  //Call
+  VoiceCall: undefined;
+  VideoCall: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -146,8 +152,11 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name='InitialInterest' component={InitialInterest} />
         <Stack.Screen name='InitialIdealMatch' component={InitialIdealMatch} />
 
-        {/* Profile */}
+        {/* Call */}
+        <Stack.Screen name="VoiceCall" component={VoiceCallScreen} />
+        <Stack.Screen name="VideoCall" component={VideoCallScreen} />
 
+        {/* Profile */}
         <Stack.Screen
           name='Settings'
           component={SettingsScreen}
