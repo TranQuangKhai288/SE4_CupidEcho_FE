@@ -1,5 +1,9 @@
 // sockets/socket.ts
 import { io, Socket } from "socket.io-client";
+import { useAuth } from "../contexts/AuthContext";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/AppNavigation";
 
 const SOCKET_URL = `${process.env.EXPO_PUBLIC_API_URL}`; // Thay bằng URL của BE server của bạn
 
@@ -47,7 +51,10 @@ class SocketService {
     return this.socket;
   }
 
-  private handleReconnect(token: string) {
+  private async handleReconnect(token: string) {
+    const { logout } = useAuth();
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       console.log(
@@ -57,7 +64,9 @@ class SocketService {
         this.connect(token);
       }, this.reconnectInterval);
     } else {
-      console.error("Đã vượt quá số lần thử kết nối lại tối đa");
+      // đăng xuất người dùng, xoá token
+      await logout();
+      navigation.navigate("Login");
     }
   }
 
