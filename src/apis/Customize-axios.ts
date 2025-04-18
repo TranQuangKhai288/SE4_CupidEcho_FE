@@ -8,11 +8,11 @@ const instance = axios.create({
 
 export default instance;
 
-// gọi API luôn có sẵn token trong header trừ API đăng nhập và đăng ký
 instance.interceptors.request.use(
   async (config: any) => {
     // console.log("Calling API", config.url);
     const token = await AsyncStorage.getItem("token");
+
     if (token) {
       config.headers.authorization = `Bearer ${token}`;
     }
@@ -20,6 +20,7 @@ instance.interceptors.request.use(
   },
 
   (error) => {
+    console.log("Error in request interceptor", error);
     return Promise.reject(error);
   }
 );
@@ -40,7 +41,7 @@ instance.interceptors.response.use(
         console.log(result, "result refresh token");
         //console.log("Refresh token result", result.access_token);
         const access_token = result.access_token;
-        originalRequest.headers["token"] = `Bearer ${access_token}`;
+        originalRequest.headers["authorization"] = `Bearer ${access_token}`;
         return instance(originalRequest);
       } catch (error) {
         console.log("Refresh token failed", error);
@@ -50,6 +51,10 @@ instance.interceptors.response.use(
         `error in customize-axios when call API ${originalRequest.url}`,
         error
       );
+      console.log("Error response data", error.response.data);
+      console.log("Error response status", error.response.status);
+      return error.response.data;
+      // return Promise.reject(error);
     }
   }
 );
