@@ -26,3 +26,15 @@ export const getConvDetails = async (
   );
   return res;
 };
+
+export const accessConv = async (participants: string[]) => {
+  const res: Response = await baseURL.post("/conv/", {
+    participants,
+  });
+  return res;
+};
+
+export const deleteConv = async (id: string) => {
+  const res: Response = await baseURL.delete(`/conv/${id}`);
+  return res;
+};

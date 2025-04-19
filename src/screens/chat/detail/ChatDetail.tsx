@@ -96,9 +96,9 @@ const ChatDetailScreen: React.FC = () => {
       }
     },
 
-    onNewNotification: (notification) => {
-      console.log("Thông báo mới:", notification);
-    },
+    // onNewNotification: (notification) => {
+    //   console.log("Thông báo mới:", notification);
+    // },
   });
 
   const handleSendMessage = () => {

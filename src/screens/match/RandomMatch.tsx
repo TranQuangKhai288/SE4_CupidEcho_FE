@@ -6,12 +6,15 @@ import {
   Dimensions,
   TouchableOpacity,
   Easing,
+  Modal,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { startMatching, stopMatching } from "../../apis/MatchingAPI";
+import { useSocketEvents } from "../../hooks/useSocketEvents";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 60;
@@ -35,65 +38,127 @@ const RandomMatch = () => {
     { id: "10", uri: "https://i.pravatar.cc/150?img=10" },
   ];
 
-  // Giảm số lần lặp để tối ưu hiệu suất
-  const avatars = [...originalAvatars, ...originalAvatars];
+  const setupInfiniteAvatars = () => {
+    // Thêm một số phần tử từ đầu vào cuối và ngược lại để tạo hiệu ứng liền mạch
+    const prefix = originalAvatars.slice(-3); // Lấy 3 phần tử cuối cùng
+    const suffix = originalAvatars.slice(0, 3); // Lấy 3 phần tử đầu tiên
+
+    // Mảng mới: [...3 cuối, ...original, ...3 đầu]
+    return [...prefix, ...originalAvatars, ...suffix].map((item, index) => ({
+      ...item,
+      key: `${item.id}-${index}`, // Tạo key unique
+    }));
+  };
+  const infiniteAvatars = setupInfiniteAvatars();
+  // Nhân bản mảng nhiều lần để tạo cảm giác vô hạn
+  const avatars = Array(10).fill(originalAvatars).flat();
 
   const scrollX = useRef(new Animated.Value(0)).current;
-  const scrollPos = useRef(0);
-  const [selectedAvatar, setSelectedAvatar] = useState<any>(null);
+  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+  const totalWidth = avatars.length * TOTAL_ITEM_WIDTH;
 
   useEffect(() => {
-    const listener = scrollX.addListener(({ value }) => {
-      scrollPos.current = value;
-    });
+    // Tính toán vị trí reset
+    const resetPosition = originalAvatars.length * TOTAL_ITEM_WIDTH;
 
-    const randomIndex = Math.floor(Math.random() * originalAvatars.length);
-
-    const finalOffset = TOTAL_ITEM_WIDTH * randomIndex;
-
+    // Tạo animation chạy từ vị trí 0 đến cuối danh sách gốc
     const animation = Animated.timing(scrollX, {
-      toValue: finalOffset,
-      duration: 10000,
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      toValue: resetPosition,
+      duration: originalAvatars.length * 500, // 1.5 giây cho mỗi vòng lặp đầy đủ
+      easing: Easing.linear,
       useNativeDriver: true,
     });
 
-    animation.start(() => {
-      const selected = originalAvatars[randomIndex];
-      setSelectedAvatar(selected);
-      // Điều hướng sang ChatDetailScreen
-      navigation.navigate("ChatDetail", {
-        _id: selected.id,
-        name: `User ${selected.id}`, // Tạo name mặc định, có thể thay bằng dữ liệu thực
-        avatar: selected.uri,
-      });
+    // Listener để tạo hiệu ứng vòng tròn vô hạn
+    const listener = scrollX.addListener(({ value }) => {
+      if (value >= resetPosition - 1) {
+        // Reset về đầu nhưng không gây hiệu ứng giật
+        scrollX.setValue(0);
+
+        // Restart animation ngay lập tức
+        if (animationRef.current) {
+          animationRef.current.stop();
+          animation.start();
+        }
+      }
     });
+
+    // Lưu và khởi động animation
+    animationRef.current = animation;
+    animation.start();
+
     return () => {
       scrollX.removeListener(listener);
-      animation.stop();
+      if (animationRef.current) {
+        animationRef.current.stop();
+      }
+    };
+  }, []);
+  useSocketEvents({
+    onMatchSuccess(match) {
+      // Xử lý sự kiện ghép đôi thành công ở đây
+      // Hiển thị thông báo đã ghép được đối tượng
+      // Điều hướng đến trang Blind Chat
+      console.log("navigate to Blind Chat");
+      navigation.navigate("BlindChat", {
+        partnerId: match.partnerId,
+        conversationId: match.conversationId,
+      });
+    },
+  });
+
+  // Chạy API vào queue
+  const runQueue = async () => {
+    const res = await startMatching();
+    if (res.status === "OK") {
+      console.log("Queue started successfully:", res);
+    } else {
+      console.error("Error starting queue:", res.message);
+    }
+  };
+
+  const stopQueue = async () => {
+    const res = await stopMatching();
+    if (res.status === "OK") {
+      console.log("Queue stopped successfully:", res);
+    } else {
+      console.error("Error stopping queue:", res.message);
+    }
+  };
+
+  useEffect(() => {
+    runQueue(); // chạy khi component mounted
+
+    return () => {
+      stopQueue(); // cleanup khi component unmounted
     };
   }, []);
 
   return (
-    <View className='flex-1 bg-[#14002B] pt-10 px-4'>
+    <View className="flex-1 bg-[#14002B] pt-10 px-4">
       {/* Header */}
-      <View className='flex-row justify-between items-center mb-6'>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name='arrow-back' size={20} color='white' />
+      <View className="flex-row justify-between items-center mb-6">
+        <TouchableOpacity
+          className=""
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          <MaterialIcons name="arrow-back" size={20} color="white" />
         </TouchableOpacity>
-        <Text className='text-white text-lg font-semibold'>
+        <Text className="text-white text-lg font-semibold">
           Random Matching
         </Text>
         <View />
       </View>
 
       {/* Intro */}
-      <Text className='text-white text-base font-semibold text-center mb-1'>
+      <Text className="text-white text-base font-semibold text-center mb-1">
         Welcome to Random Matching
       </Text>
-      <Text className='text-center text-white/80 text-sm mb-6'>
+      <Text className="text-center text-white/80 text-sm mb-6">
         With the ultimate match, you can view the other person's profile and{" "}
-        <Text className='font-semibold text-white'>
+        <Text className="font-semibold text-white">
           chat without any time limit.
         </Text>
       </Text>
@@ -122,7 +187,7 @@ const RandomMatch = () => {
 
             return (
               <Animated.View
-                key={index}
+                key={`${avatar.id}-${index}`}
                 style={{
                   width: TOTAL_ITEM_WIDTH,
                   alignItems: "center",
@@ -147,21 +212,15 @@ const RandomMatch = () => {
       </View>
 
       {/* Status message */}
-      <Text className='text-center text-pink-400 font-semibold text-xl mt-6 mb-2'>
-        {selectedAvatar ? "🎉 Matched!" : "🔄 Connecting..."}
+      <Text className="text-center text-pink-400 font-semibold text-xl mt-6 mb-2">
+        🔄 Connecting...
       </Text>
-      <Text className='text-center text-white text-sm mb-2'>
-        {selectedAvatar ? (
-          `You've matched with avatar ID: ${selectedAvatar.id}`
-        ) : (
-          <>
-            You are currently in queue at position{" "}
-            <Text className='font-bold'>5</Text>. Please wait about some minutes
-          </>
-        )}
+      <Text className="text-center text-white text-sm mb-2">
+        You are currently in queue at position{" "}
+        <Text className="font-bold">5</Text>. Please wait about some minutes
       </Text>
-      <Text className='text-center text-pink-400 text-sm mt-1'>
-        You have <Text className='font-bold'>9 match attempts</Text> left today.
+      <Text className="text-center text-pink-400 text-sm mt-1">
+        You have <Text className="font-bold">9 match attempts</Text> left today.
       </Text>
     </View>
   );

@@ -31,15 +31,18 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       const response = await UserAPI.loginUser({ email, password });
-      const { access_token, refresh_token, data: user } = response;
-      if (response.status !== "OK") {
-        console.log("Login failed", response.message);
+      if (response?.status !== "OK") {
+        console.log("Login failed", response?.message);
         return;
       }
-      if (!access_token || !refresh_token) {
+      if (!response?.access_token || !response?.refresh_token) {
         throw new Error("Missing tokens");
       }
-      await login({ token: access_token, user, refreshToken: refresh_token });
+      await login({
+        token: response.access_token,
+        user: response.data,
+        refreshToken: response.refresh_token,
+      });
 
       navigation.navigate("Main"); // hoặc tên màn hình chính
     } catch (error) {
