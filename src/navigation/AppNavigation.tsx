@@ -21,7 +21,7 @@ import ForgotPasswordScreen from "../screens/forgotPass/ForgotPassword";
 import verifyCodeScreen from "../screens/forgotPass/verifyCode";
 import CreateNewPasswordScreen from "../screens/forgotPass/CreateNewPassword";
 import NewMatchList from "../screens/match/NewMatchList";
-import SettingsScreen from "../screens/Profile/Settings";
+import SettingsScreen from "../screens/Profile/Setting/Settings";
 import FindAMatch from "../screens/match/FindAMatch";
 import HelpCenterScreen from "../screens/Profile/Help";
 import InviteFriendsScreen from "../screens/Profile/InviteFriend";
@@ -35,8 +35,10 @@ import InitialProfile from "../screens/initialCustomInfo/initialProfile";
 import InitialBestPhotos from "../screens/initialCustomInfo/initialBestPhotos";
 import InitialInterest from "../screens/initialCustomInfo/initialInterest";
 import InitialIdealMatch from "../screens/initialCustomInfo/initialIdealMatch";
-import VoiceCallScreen from '../screens/call/VoiceCall';
-import VideoCallScreen from '../screens/call/VideoCall';
+import VoiceCallScreen from "../screens/call/VoiceCall";
+import VideoCallScreen from "../screens/call/VideoCall";
+import PersonalInformation from "../screens/Profile/Setting/PersonalInformation";
+import DiscoverySetting from "../screens/Profile/Setting/DiscoverySetting";
 
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
@@ -64,11 +66,6 @@ export type RootStackParamList = {
   VerifyCode: undefined;
   CreateNewPassword: undefined;
 
-  Settings: undefined;
-  HelpCenter: undefined;
-  InviteFriend: undefined;
-  MyProfile: undefined;
-  FindAMatch: undefined;
   // Post
   CreateNewPost: undefined;
   PostDetail: { postId: string };
@@ -82,6 +79,15 @@ export type RootStackParamList = {
   //Call
   VoiceCall: undefined;
   VideoCall: undefined;
+
+  //Profile
+  Settings: { title: String };
+  HelpCenter: undefined;
+  InviteFriend: undefined;
+  MyProfile: undefined;
+  FindAMatch: undefined;
+  PersonalInfo: undefined;
+  DiscoverySetting: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -154,10 +160,10 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="PostDetail" component={PostDetail} />
 
         {/* InitialCustomInfo */}
-        <Stack.Screen name='InitialProfile' component={InitialProfile} />
-        <Stack.Screen name='InitialImage' component={InitialBestPhotos} />
-        <Stack.Screen name='InitialInterest' component={InitialInterest} />
-        <Stack.Screen name='InitialIdealMatch' component={InitialIdealMatch} />
+        <Stack.Screen name="InitialProfile" component={InitialProfile} />
+        <Stack.Screen name="InitialImage" component={InitialBestPhotos} />
+        <Stack.Screen name="InitialInterest" component={InitialInterest} />
+        <Stack.Screen name="InitialIdealMatch" component={InitialIdealMatch} />
 
         {/* Call */}
         <Stack.Screen name="VoiceCall" component={VoiceCallScreen} />
@@ -196,6 +202,24 @@ const AppNavigator: React.FC = () => {
           component={MyProfileScreen}
           options={{
             title: "MyProfile",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
+        />
+        <Stack.Screen
+          name="PersonalInfo"
+          component={PersonalInformation}
+          options={{
+            title: "PersonalInfo",
+            headerShown: true,
+            headerBackTitle: "",
+          }}
+        />
+        <Stack.Screen
+          name="DiscoverySetting"
+          component={DiscoverySetting}
+          options={{
+            title: "PersonalInfo",
             headerShown: true,
             headerBackTitle: "",
           }}

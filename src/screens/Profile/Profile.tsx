@@ -9,7 +9,7 @@ import {
   Modal,
 } from "react-native";
 import { Ellipsis, Moon, Settings, LogOut, Users } from "lucide-react-native";
-import MenuItem from "./detail/MenuItem";
+import ProfileItem from "./detail/ProfileItem";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useAuth } from "../../contexts/AuthContext";
@@ -91,23 +91,25 @@ const ProfileScreen: React.FC = () => {
 
         {/* Menu Items */}
         <View className="mt-6">
-          <MenuItem
+          <ProfileItem
             icon={<Settings size={24} color="black" />}
-            onPress={() => navigation.navigate("Settings")}
+            onPress={() =>
+              navigation.navigate("Settings", { title: "Settings" })
+            }
             text="Settings"
           />
-          <MenuItem icon={<Moon size={24} color="black" />} text="Dark Mode" />
-          <MenuItem
+          <ProfileItem icon={<Moon size={24} color="black" />} text="Dark Mode" />
+          <ProfileItem
             icon={<Users size={24} color="black" />}
             text="Help Center"
             onPress={() => navigation.navigate("HelpCenter")}
           />
-          <MenuItem
+          <ProfileItem
             icon={<Users size={24} color="black" />}
             text="Invite Friends"
             onPress={() => navigation.navigate("InviteFriend")}
           />
-          <MenuItem
+          <ProfileItem
             icon={<LogOut size={24} color="red" />}
             text="Logout"
             isLogout

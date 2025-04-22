@@ -12,11 +12,11 @@ import {
   Globe,
   Info,
 } from "lucide-react-native";
+import SettingItem from "../detail/SettingItem";
 
-// Define navigation param list
 type RootStackParamList = {
   PersonalInfo: undefined;
-  DiscoverySettings: undefined;
+  DiscoverySetting: undefined;
   PrivacyPermissions: undefined;
   Notifications: undefined;
   Security: undefined;
@@ -26,7 +26,12 @@ type RootStackParamList = {
   AboutHume: undefined;
 };
 
-interface SettingItem {
+// Định nghĩa kiểu cho navigation
+type NavigationProp = {
+  navigate: (screen: keyof RootStackParamList) => void;
+};
+
+interface SettingItemData {
   id: string;
   title: string;
   icon: React.ComponentType<any>;
@@ -35,7 +40,7 @@ interface SettingItem {
   iconColor: string;
 }
 
-const settingsData: SettingItem[] = [
+const settingsData: SettingItemData[] = [
   {
     id: "1",
     title: "Personal Information",
@@ -47,7 +52,7 @@ const settingsData: SettingItem[] = [
     id: "2",
     title: "Discovery Settings",
     icon: Search,
-    screen: "DiscoverySettings",
+    screen: "DiscoverySetting",
     iconColor: "#F59E0B",
   }, // Orange
   {
@@ -103,26 +108,14 @@ const settingsData: SettingItem[] = [
 ];
 
 const SettingsScreen: React.FC = () => {
-  const renderItem = ({ item }: { item: SettingItem }) => (
-    <TouchableOpacity className="flex-row items-center py-4 px-4 border-b border-gray-200">
-      {/* Icon Container */}
-      <View className="w-10 h-10 rounded-full bg-gray-200 justify-center items-center mr-4">
-        <item.icon color={item.iconColor} size={24} />
-      </View>
+  const navigation = useNavigation<NavigationProp>();
 
-      {/* Title and Extra Text */}
-      <View className="flex-1">
-        <Text className="text-base font-medium text-black">{item.title}</Text>
-        {item.extra && (
-          <Text className="text-sm text-gray-500">{item.extra}</Text>
-        )}
-      </View>
+  const handleItemPress = (screen: keyof RootStackParamList) => {
+    navigation.navigate(screen);
+  };
 
-      {/* Right Arrow */}
-      <View className="w-6 h-6 justify-center items-center">
-        <Text className="text-black text-xl">{">"}</Text>
-      </View>
-    </TouchableOpacity>
+  const renderItem = ({ item }: { item: SettingItemData }) => (
+    <SettingItem {...item} onPress={() => handleItemPress(item.screen)} />
   );
 
   return (
