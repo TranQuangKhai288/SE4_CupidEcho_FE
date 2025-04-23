@@ -79,7 +79,10 @@ const ProfileScreen: React.FC = () => {
             Enjoy unlimited swiping without restrictions & without ads
           </Text>
           <View className="mt-3 flex-row items-center justify-between">
-            <TouchableOpacity className="bg-white px-4 py-2 rounded-lg">
+            <TouchableOpacity
+              className="bg-white px-4 py-2 rounded-lg"
+              onPress={() => navigation.navigate("SubscribeVIP")}
+            >
               <Text className="text-purple-600 font-bold">Get VIP</Text>
             </TouchableOpacity>
             <Image
@@ -98,7 +101,10 @@ const ProfileScreen: React.FC = () => {
             }
             text="Settings"
           />
-          <ProfileItem icon={<Moon size={24} color="black" />} text="Dark Mode" />
+          <ProfileItem
+            icon={<Moon size={24} color="black" />}
+            text="Dark Mode"
+          />
           <ProfileItem
             icon={<Users size={24} color="black" />}
             text="Help Center"

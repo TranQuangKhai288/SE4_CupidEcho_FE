@@ -39,6 +39,8 @@ import VoiceCallScreen from "../screens/call/VoiceCall";
 import VideoCallScreen from "../screens/call/VideoCall";
 import PersonalInformation from "../screens/Profile/Setting/PersonalInformation";
 import DiscoverySetting from "../screens/Profile/Setting/DiscoverySetting";
+import SubscribeVIP from "../screens/Profile/SubscribeVIP/SubscribeVIP";
+import PaymentScreen from "../screens/Profile/SubscribeVIP/Payment";
 
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
@@ -88,6 +90,8 @@ export type RootStackParamList = {
   FindAMatch: undefined;
   PersonalInfo: undefined;
   DiscoverySetting: undefined;
+  SubscribeVIP: undefined;
+  Payment: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -224,6 +228,8 @@ const AppNavigator: React.FC = () => {
             headerBackTitle: "",
           }}
         />
+        <Stack.Screen name="SubscribeVIP" component={SubscribeVIP} />
+        <Stack.Screen name="Payment" component={PaymentScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -12,7 +12,6 @@ import {
   Globe,
   Info,
 } from "lucide-react-native";
-import SettingItem from "../detail/SettingItem";
 
 type RootStackParamList = {
   PersonalInfo: undefined;
