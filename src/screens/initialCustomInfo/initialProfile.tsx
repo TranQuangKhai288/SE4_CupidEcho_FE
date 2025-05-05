@@ -5,7 +5,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-// import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Button from "../../components/Button";
 
 const InitialProfile = () => {
@@ -80,18 +80,18 @@ const InitialProfile = () => {
       </TouchableOpacity>
 
       {/* Date Picker Modal */}
-      {/* <DateTimePickerModal
+      <DateTimePickerModal
         isVisible={showDatePicker}
-        mode="date"
+        mode='date'
         date={dateOfBirth}
         onConfirm={handleConfirmDate}
         onCancel={handleCancelDate}
         maximumDate={new Date()}
-        locale="vi-VN" // Vietnamese locale
-        confirmTextIOS="Xác nhận"
-        cancelTextIOS="Hủy"
-        textColor="#000000" // Đặt màu chữ để tránh lỗi hiển thị
-      /> */}
+        locale='vi-VN' // Vietnamese locale
+        confirmTextIOS='Xác nhận'
+        cancelTextIOS='Hủy'
+        textColor='#000000' // Đặt màu chữ để tránh lỗi hiển thị
+      />
 
       {/* Gender Picker */}
       <View className='bg-gray-100 px-4 rounded-2xl mb-4'>

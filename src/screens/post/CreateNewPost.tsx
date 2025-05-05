@@ -13,6 +13,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { FontAwesome, Feather, MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
+import * as ImagePicker from "expo-image-picker";
+import axios from "axios";
+import { createPost, MediaItem } from "../../apis/PostAPI";
 
 const CreateNewPost: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -21,27 +24,76 @@ const CreateNewPost: React.FC = () => {
   const { state } = useAuth();
   const { user } = state;
 
-  const handlePost = () => {
+  const handleSelectImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImageUrl(result.assets[0].uri);
+    }
+  };
+
+  const uploadToCloudinary = async (uri: string): Promise<string | null> => {
+    const data = new FormData();
+
+    const file = {
+      uri,
+      type: "image/jpeg",
+      name: `post_${Date.now()}.jpg`,
+    };
+
+    data.append("file", file as any);
+    data.append("upload_preset", "eBook_project");
+    data.append("cloud_name", "ddzqupaez");
+
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/ddzqupaez/image/upload",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const result = await res.json();
+      return result.secure_url;
+    } catch (err) {
+      console.error("Upload error:", err);
+      return null;
+    }
+  };
+
+  const handlePost = async () => {
     if (!caption.trim()) {
       Alert.alert("Lỗi", "Vui lòng nhập nội dung bài viết!");
       return;
     }
-    // Ở đây bạn có thể gọi API để đăng bài
-    Alert.alert("Thành công", "Bài viết đã được đăng!");
-    setCaption("");
-    setImageUrl(null);
-    navigation.goBack(); // Quay lại HomeScreen sau khi đăng
-  };
 
-  // Hàm giả lập chọn ảnh (thay bằng react-native-image-picker nếu cần)
-  const handleSelectImage = () => {
-    setImageUrl("https://images.unsplash.com/photo-1600585154340-be6161a56a0c");
-    // Thực tế: tích hợp react-native-image-picker
-    // Ví dụ:
-    // import * as ImagePicker from 'react-native-image-picker';
-    // ImagePicker.launchImageLibrary({}, (response) => {
-    //   if (response.uri) setImageUrl(response.uri);
-    // });
+    let uploadedImageUrl: string | null = null;
+
+    if (imageUrl) {
+      uploadedImageUrl = await uploadToCloudinary(imageUrl);
+      if (!uploadedImageUrl) {
+        Alert.alert("Lỗi", "Tải ảnh lên thất bại!");
+        return;
+      }
+    }
+
+    const media: MediaItem[] = uploadedImageUrl
+      ? [{ type: "image", URL: uploadedImageUrl }]
+      : [];
+
+    try {
+      await createPost({ content: caption, media });
+      Alert.alert("Thành công", "Bài viết đã được đăng!");
+      setCaption("");
+      setImageUrl(null);
+      navigation.goBack();
+    } catch (err) {
+      Alert.alert("Lỗi", "Đăng bài thất bại!");
+    }
   };
 
   return (
