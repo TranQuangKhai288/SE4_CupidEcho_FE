@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,8 @@ import {
   ScrollView,
   StatusBar,
 } from "react-native";
-
+import { useAuth } from "../../contexts/AuthContext";
+import * as UserAPI from "../../apis/UserAPI";
 type ProfileProps = {
   name: string;
   age: number;
@@ -30,6 +31,29 @@ const MyProfileScreen: React.FC<ProfileProps> = ({
   profileImage,
   interests,
 }) => {
+  const { state } = useAuth();
+  const user = state.user;
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        if (user?._id) {
+          const response = await UserAPI.getDetailsUser(user._id.toString());
+          // Bạn có thể lưu dữ liệu vào state nếu cần, hoặc xử lý thêm ở đây
+          console.log("User detail fetched:", response.data);
+        } else {
+          console.warn("User ID not found");
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    if (user) {
+      fetchUserDetails(); // Gọi API nếu user đã có
+    }
+  }, [user]); // Chạy lại khi `user` thay đổi
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />

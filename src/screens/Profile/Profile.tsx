@@ -15,6 +15,7 @@ import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useAuth } from "../../contexts/AuthContext";
 
 const ProfileScreen: React.FC = () => {
+  
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   // State to control the logout modal visibility
@@ -55,6 +56,7 @@ const ProfileScreen: React.FC = () => {
           </View>
           <TouchableOpacity
             onPress={() => {
+              console.log(user?.name)
               navigation.navigate("MyProfile");
             }}
           >
