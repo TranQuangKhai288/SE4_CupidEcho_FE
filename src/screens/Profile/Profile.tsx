@@ -9,12 +9,13 @@ import {
   Modal,
 } from "react-native";
 import { Ellipsis, Moon, Settings, LogOut, Users } from "lucide-react-native";
-import MenuItem from "./detail/MenuItem";
+import ProfileItem from "./detail/ProfileItem";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useAuth } from "../../contexts/AuthContext";
 
 const ProfileScreen: React.FC = () => {
+  
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   // State to control the logout modal visibility
@@ -55,6 +56,7 @@ const ProfileScreen: React.FC = () => {
           </View>
           <TouchableOpacity
             onPress={() => {
+              console.log(user?.name)
               navigation.navigate("MyProfile");
             }}
           >
@@ -79,7 +81,10 @@ const ProfileScreen: React.FC = () => {
             Enjoy unlimited swiping without restrictions & without ads
           </Text>
           <View className="mt-3 flex-row items-center justify-between">
-            <TouchableOpacity className="bg-white px-4 py-2 rounded-lg">
+            <TouchableOpacity
+              className="bg-white px-4 py-2 rounded-lg"
+              onPress={() => navigation.navigate("SubscribeVIP")}
+            >
               <Text className="text-purple-600 font-bold">Get VIP</Text>
             </TouchableOpacity>
             <Image
@@ -91,23 +96,28 @@ const ProfileScreen: React.FC = () => {
 
         {/* Menu Items */}
         <View className="mt-6">
-          <MenuItem
+          <ProfileItem
             icon={<Settings size={24} color="black" />}
-            onPress={() => navigation.navigate("Settings")}
+            onPress={() =>
+              navigation.navigate("Settings", { title: "Settings" })
+            }
             text="Settings"
           />
-          <MenuItem icon={<Moon size={24} color="black" />} text="Dark Mode" />
-          <MenuItem
+          <ProfileItem
+            icon={<Moon size={24} color="black" />}
+            text="Dark Mode"
+          />
+          <ProfileItem
             icon={<Users size={24} color="black" />}
             text="Help Center"
             onPress={() => navigation.navigate("HelpCenter")}
           />
-          <MenuItem
+          <ProfileItem
             icon={<Users size={24} color="black" />}
             text="Invite Friends"
             onPress={() => navigation.navigate("InviteFriend")}
           />
-          <MenuItem
+          <ProfileItem
             icon={<LogOut size={24} color="red" />}
             text="Logout"
             isLogout
