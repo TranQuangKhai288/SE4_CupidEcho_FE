@@ -4,6 +4,12 @@ import { Heart, MessageCircle } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigation";
+import { Video } from "expo-av";
+
+interface MediaItem {
+  type: "image" | "video";
+  URL: string;
+}
 
 interface PostCardProps {
   id: string;
@@ -11,7 +17,7 @@ interface PostCardProps {
   avatarUrl: string;
   timeAgo: string;
   caption: string;
-  imageUrl: string;
+  media: MediaItem[];
   likes: number;
   comments: number;
 }
@@ -22,12 +28,13 @@ const PostCard: React.FC<PostCardProps> = ({
   avatarUrl,
   timeAgo,
   caption,
-  imageUrl,
+  media,
   likes,
   comments,
 }) => {
   const [liked, setLiked] = useState(false);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
   return (
     <View className='bg-gray-50 px-4 py-3 shadow-gray-400 shadow-lg rounded-lg my-4'>
       {/* Header */}
@@ -45,20 +52,32 @@ const PostCard: React.FC<PostCardProps> = ({
       {/* Caption */}
       <Text className='text-black text-sm mb-3'>{caption}</Text>
 
-      {/* Image */}
+      {/* Media (Image or Video) */}
       <View>
-        <View className='mb-3 mt-1'>
-          <Image
-            source={{ uri: imageUrl }}
-            className='w-full h-72 rounded-lg'
-            resizeMode='cover'
-          />
-        </View>
+        {Array.isArray(media) &&
+          media.map((item, index) => (
+            <View key={index} className='mb-3 mt-1'>
+              {item.type === "image" ? (
+                <Image
+                  source={{ uri: item.URL }}
+                  className='w-full h-72 rounded-lg'
+                  resizeMode='cover'
+                />
+              ) : (
+                <Video
+                  source={{ uri: item.URL }}
+                  className='w-full h-72 rounded-lg'
+                  useNativeControls
+                  isLooping
+                />
+              )}
+            </View>
+          ))}
       </View>
 
+      {/* Actions */}
       <View className='flex-row justify-between mt-4'>
         <View className='flex-row gap-4'>
-          {/* Heart toggle */}
           <TouchableOpacity
             className='flex-row items-center'
             onPress={() => setLiked(!liked)}

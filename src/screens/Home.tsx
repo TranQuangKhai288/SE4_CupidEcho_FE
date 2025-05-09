@@ -14,6 +14,8 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigation";
 import { getAllPosts, Post } from "../apis/PostAPI";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const HomeScreen: React.FC = () => {
   const { state } = useAuth();
@@ -22,21 +24,23 @@ const HomeScreen: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const data = await getAllPosts();
-        // console.log("DATA FROM API:", JSON.stringify(data, null, 2));
-        setPosts(data);
-      } catch (err) {
-        console.error("Failed to fetch posts", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPosts = async () => {
+        try {
+          const data = await getAllPosts();
+          // console.log("DATA FROM API:", JSON.stringify(data, null, 2));
+          setPosts(data);
+        } catch (err) {
+          console.error("Failed to fetch posts", err);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchPosts();
-  }, []);
+      fetchPosts();
+    }, [])
+  );
 
   return (
     <View className='flex-1 bg-white pt-10 px-6'>
@@ -82,7 +86,8 @@ const HomeScreen: React.FC = () => {
               avatarUrl='https://cdn-icons-png.flaticon.com/512/149/149071.png'
               timeAgo={new Date(post.createdAt).toLocaleString()}
               caption={post.content}
-              imageUrl={post.media?.[0]?.URL || ""}
+              // imageUrl={post.media?.[0]?.URL || ""}
+              media={post.media ?? []}
               likes={post.likes?.length ?? 0}
               comments={0}
             />
