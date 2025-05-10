@@ -41,7 +41,8 @@ import PersonalInformation from "../screens/Profile/Setting/PersonalInformation"
 import DiscoverySetting from "../screens/Profile/Setting/DiscoverySetting";
 import SubscribeVIP from "../screens/Profile/SubscribeVIP/SubscribeVIP";
 import PaymentScreen from "../screens/Profile/SubscribeVIP/Payment";
-import EditProfileScreen from "../screens/Profile/EditProfile";
+import EditProfileScreen from "../screens/Profile/EditProfile/EditProfile";
+import EditInterestScreen from "../screens/Profile/EditProfile/EditInterest";
 
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
@@ -94,6 +95,7 @@ export type RootStackParamList = {
   SubscribeVIP: undefined;
   Payment: undefined;
   EditProfile: undefined;
+  EditInterest:undefined
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -185,6 +187,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="SubscribeVIP" component={SubscribeVIP} />
         <Stack.Screen name="Payment" component={PaymentScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen name="EditInterest" component={EditInterestScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

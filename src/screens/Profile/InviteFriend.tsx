@@ -118,7 +118,7 @@ const InviteFriendsScreen: React.FC = () => {
         <TouchableOpacity onPress={navigation.goBack}>
           <ChevronLeft size={24} color="#000" />
         </TouchableOpacity>
-        <Text className="text-lg font-medium ml-4">Personal Information</Text>
+        <Text className="text-lg font-medium ml-4">Invite Friend</Text>
       </View>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       {/* Friend List */}

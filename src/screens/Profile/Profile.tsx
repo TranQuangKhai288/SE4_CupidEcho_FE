@@ -76,7 +76,6 @@ const ProfileScreen: React.FC = () => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              console.log(user?.name);
               navigation.navigate("MyProfile");
             }}
           >
