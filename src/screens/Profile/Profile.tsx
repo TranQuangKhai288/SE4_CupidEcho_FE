@@ -1,5 +1,5 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,9 +13,8 @@ import ProfileItem from "./detail/ProfileItem";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useAuth } from "../../contexts/AuthContext";
-
+import * as UserAPI from "../../apis/UserAPI";
 const ProfileScreen: React.FC = () => {
-  
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   // State to control the logout modal visibility
@@ -32,7 +31,28 @@ const ProfileScreen: React.FC = () => {
   };
 
   const { logout, state } = useAuth();
-  const { user } = state;
+
+  const user = state.user;
+
+  // useEffect(() => {
+  //   const fetchUserDetails = async () => {
+  //     try {
+  //       if (user?._id) {
+  //         const response = await UserAPI.getDetailsUser(user._id.toString());
+  //         // Bạn có thể lưu dữ liệu vào state nếu cần, hoặc xử lý thêm ở đây
+  //         console.log("User detail fetched:", response.data);
+  //       } else {
+  //         console.warn("User ID not found");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user details:", error);
+  //     }
+  //   };
+
+  //   if (user) {
+  //     fetchUserDetails(); // Gọi API nếu user đã có
+  //   }
+  // }, [user]); // Chạy lại khi `user` thay đổi
 
   // Function to handle logout confirmation (logs to console)
   const handleConfirmLogout = async () => {
@@ -56,7 +76,7 @@ const ProfileScreen: React.FC = () => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              console.log(user?.name)
+              console.log(user?.name);
               navigation.navigate("MyProfile");
             }}
           >
@@ -68,7 +88,7 @@ const ProfileScreen: React.FC = () => {
         <View className="items-center mt-6">
           <Image
             source={{ uri: user?.avatar }}
-            className="w-24 h-24 rounded-full"
+            className="w-48 h-48 rounded-full"
           />
         </View>
 

@@ -8,14 +8,16 @@ import {
   Image,
 } from "react-native";
 import { ChevronLeft, Calendar, Edit2, ChevronDown } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const PersonalInformation = () => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView>
         {/* Header */}
         <View className="flex-row items-center px-4 py-4">
-          <TouchableOpacity>
+          <TouchableOpacity onPress={navigation.goBack}>
             <ChevronLeft size={24} color="#000" />
           </TouchableOpacity>
           <Text className="text-lg font-medium ml-4">Personal Information</Text>

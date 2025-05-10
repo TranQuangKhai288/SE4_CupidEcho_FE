@@ -16,7 +16,7 @@ import { ChevronLeft, PencilLine } from "lucide-react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 
-const MyProfileScreen = () => {
+const EditProfileScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { state } = useAuth();
   const { user } = state;
@@ -125,4 +125,4 @@ const MyProfileScreen = () => {
   );
 };
 
-export default MyProfileScreen;
+export default EditProfileScreen;
