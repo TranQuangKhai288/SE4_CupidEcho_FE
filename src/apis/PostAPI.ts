@@ -48,3 +48,29 @@ export const getAllPosts = async (): Promise<Post[]> => {
     return [];
   }
 };
+
+export const getPostById = async (postId: string): Promise<Post | null> => {
+  try {
+    const res = await baseURL.get(`/post/${postId}`);
+    return res.data.media;
+  } catch (error) {
+    console.error(`Get post ${postId} error:`, error);
+    return null;
+  }
+};
+
+export const likePost = async (
+  postId: string,
+  token: string
+): Promise<void> => {
+  try {
+    await baseURL.post(`/post/like/${postId}`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error(`Like post ${postId} error:`, error);
+    throw error;
+  }
+};

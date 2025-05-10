@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigation";
 import { getAllPosts, Post } from "../apis/PostAPI";
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
+import CommentModal from "../components/CommentModal";
 
 const HomeScreen: React.FC = () => {
   const { state } = useAuth();
@@ -23,13 +23,36 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+
+  const openComments = (postId: string) => {
+    setSelectedPostId(postId);
+    setShowCommentsModal(true);
+  };
+
+  const handleLikeToggle = (postId: string, liked: boolean) => {
+    if (!user?._id) return;
+
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: liked
+                ? [...post.likes, user._id]
+                : post.likes.filter((id) => id !== user._id),
+            }
+          : post
+      )
+    );
+  };
 
   useFocusEffect(
     useCallback(() => {
       const fetchPosts = async () => {
         try {
           const data = await getAllPosts();
-          // console.log("DATA FROM API:", JSON.stringify(data, null, 2));
           setPosts(data);
         } catch (err) {
           console.error("Failed to fetch posts", err);
@@ -81,19 +104,30 @@ const HomeScreen: React.FC = () => {
           posts.map((post) => (
             <PostCard
               key={post._id}
-              id={post._id}
+              _id={post._id}
               username={post.userId}
               avatarUrl='https://cdn-icons-png.flaticon.com/512/149/149071.png'
               timeAgo={new Date(post.createdAt).toLocaleString()}
               caption={post.content}
-              // imageUrl={post.media?.[0]?.URL || ""}
               media={post.media ?? []}
-              likes={post.likes?.length ?? 0}
+              likes={post.likes ?? []}
               comments={0}
+              openComments={openComments}
+              onLikeToggle={handleLikeToggle}
+              userId={user?._id ?? ""}
             />
           ))
         )}
       </ScrollView>
+
+      {/* Comments Modal */}
+      {selectedPostId && (
+        <CommentModal
+          visible={showCommentsModal}
+          onClose={() => setShowCommentsModal(false)}
+          postId={selectedPostId}
+        />
+      )}
     </View>
   );
 };
