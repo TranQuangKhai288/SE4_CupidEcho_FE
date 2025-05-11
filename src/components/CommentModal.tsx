@@ -17,6 +17,7 @@ interface CommentModalProps {
   visible: boolean;
   onClose: () => void;
   postId: string;
+  onUpdateCommentCount: (postId: string, newCount: number) => void;
 }
 
 interface Comment {
@@ -33,6 +34,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   visible,
   onClose,
   postId,
+  onUpdateCommentCount,
 }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,6 +69,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
       await createComment({ postId, content: commentInput }, token);
       setCommentInput("");
       fetchComments();
+      onUpdateCommentCount(postId, comments.length + 1);
     } catch (err) {
       console.error("Failed to submit comment", err);
     } finally {

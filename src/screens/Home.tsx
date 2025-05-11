@@ -48,6 +48,14 @@ const HomeScreen: React.FC = () => {
     );
   };
 
+  const updateCommentCount = (postId: string, newCount: number) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId ? { ...post, commentCount: newCount } : post
+      )
+    );
+  };
+
   useFocusEffect(
     useCallback(() => {
       const fetchPosts = async () => {
@@ -111,7 +119,7 @@ const HomeScreen: React.FC = () => {
               caption={post.content}
               media={post.media ?? []}
               likes={post.likes ?? []}
-              comments={0}
+              comments={post.commentCount ?? 0}
               openComments={openComments}
               onLikeToggle={handleLikeToggle}
               userId={user?._id ?? ""}
@@ -126,6 +134,7 @@ const HomeScreen: React.FC = () => {
           visible={showCommentsModal}
           onClose={() => setShowCommentsModal(false)}
           postId={selectedPostId}
+          onUpdateCommentCount={updateCommentCount}
         />
       )}
     </View>

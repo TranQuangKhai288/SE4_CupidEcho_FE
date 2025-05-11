@@ -13,6 +13,8 @@ export type Post = {
   createdAt: string;
   updatedAt: string;
   media?: MediaItem[]; // Nếu có
+  likeCount?: number;
+  commentCount?: number;
 };
 
 export type CreatePostPayload = {
