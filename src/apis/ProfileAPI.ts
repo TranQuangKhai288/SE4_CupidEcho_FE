@@ -10,3 +10,8 @@ export const getDetailsProfile = async (id: string) => {
   const res: Response = await baseURL.get(`/user/profile/${id}`);
   return res;
 };
+
+export const updateProfile = async (data: any) => {
+  const res: Response = await baseURL.put(`/user/profile/`,data);
+  return res;
+}

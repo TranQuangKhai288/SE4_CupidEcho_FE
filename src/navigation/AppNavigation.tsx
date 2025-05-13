@@ -95,7 +95,7 @@ export type RootStackParamList = {
   SubscribeVIP: undefined;
   Payment: undefined;
   EditProfile: undefined;
-  EditInterest:undefined
+  EditInterest:{ListInterest: string[]};
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

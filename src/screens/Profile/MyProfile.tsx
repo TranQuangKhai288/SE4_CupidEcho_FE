@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import * as ProfileAPI from "../../apis/ProfileAPI";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { ChevronLeft, PencilLine } from "lucide-react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigation";
@@ -21,24 +21,29 @@ const MyProfileScreen = () => {
   const { user } = state;
   const [profile, setProfile] = useState<any>(null);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        if (user?._id) {
-          const response = await ProfileAPI.getDetailsProfile(
-            user._id.toString()
-          );
-          setProfile(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching user details:", error);
+  const fetchUserDetails = async () => {
+    try {
+      if (user?._id) {
+        const response = await ProfileAPI.getDetailsProfile(
+          user._id.toString()
+        );
+        setProfile(response.data);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
 
+  useEffect(() => {
     if (user) {
       fetchUserDetails();
     }
   }, [user]);
+
+  // Fetch data again when the screen comes into focus
+  useFocusEffect(() => {
+    fetchUserDetails();
+  });
 
   if (!profile) return null;
 
@@ -73,9 +78,12 @@ const MyProfileScreen = () => {
                 {new Date().getFullYear() -
                   new Date(profile.birthDate).getFullYear()}
               </Text>
-              <View className="flex-row items-center mt-2">
+              <View className="flex-row items-center mt-2 gap-2">
                 <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
-                  {profile.zodiac || "Capricorn"}
+                  {profile.gender}
+                </Text>
+                <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
+                  {profile.zodiac}
                 </Text>
               </View>
             </View>
