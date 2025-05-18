@@ -16,8 +16,11 @@ import { RootStackParamList } from "../navigation/AppNavigation";
 import { getAllPosts, Post } from "../apis/PostAPI";
 import { useFocusEffect } from "@react-navigation/native";
 import CommentModal from "../components/CommentModal";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HomeScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
+
   const { state } = useAuth();
   const { user } = state;
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -74,7 +77,7 @@ const HomeScreen: React.FC = () => {
   );
 
   return (
-    <View className='flex-1 bg-white pt-10 px-6'>
+    <View className='flex-1 bg-white px-6' style={{paddingTop:insets.top}}>
       {/* Header */}
       <View className='flex-row justify-between items-center py-3'>
         <View className='flex-row gap-3 items-center'>

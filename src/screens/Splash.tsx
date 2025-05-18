@@ -43,7 +43,7 @@ const SplashScreen: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   return (
-    <View className="flex-1 bg-white items-center justify-center">
+    <View className="flex-1 justify-center items-center bg-white">
       <View className="items-center flex-row justify-center gap-4">
         <Image
           className="object-cover"
@@ -52,7 +52,7 @@ const SplashScreen: React.FC<Props> = ({ navigation }) => {
         />
         <Text className="text-4xl font-bold">Cupid Echo</Text>
       </View>
-      <View className="mt-32">
+      <View className="mt-8">
         <Loader />
       </View>
     </View>

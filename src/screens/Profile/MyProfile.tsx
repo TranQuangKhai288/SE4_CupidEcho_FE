@@ -99,13 +99,13 @@ const MyProfileScreen = () => {
             <Text className="text-lg font-bold mt-3">Address</Text>
             <View className="flex-row items-center mt-2 gap-2">
               <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
-                {profile.address.formattedAddress}
+                {profile?.address?.formattedAddress}
               </Text>
               <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
-                {profile.address.city}
+                {profile?.address?.city}
               </Text>
               <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
-                {profile.address.country}
+                {profile?.address?.country}
               </Text>
             </View>
           </View>
@@ -114,7 +114,7 @@ const MyProfileScreen = () => {
             <Text className="text-lg font-bold mt-3">Birthday</Text>
             <View className="flex-row items-center mt-2 gap-2">
               <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
-                {new Date(profile.birthDate).toLocaleDateString("vi-VN")}
+                {new Date(profile?.birthDate)?.toLocaleDateString("vi-VN")}
               </Text>
             </View>
           </View>
@@ -124,10 +124,10 @@ const MyProfileScreen = () => {
           <View className="flex-row flex-wrap gap-3">
             {profile.interests?.map((interest: any) => (
               <Text
-                key={interest._id}
+                key={interest?._id}
                 className="px-4 py-2 bg-purple-700 text-white rounded-full text-sm"
               >
-                {interest.name}
+                {interest?.name}
               </Text>
             ))}
           </View>
@@ -137,7 +137,7 @@ const MyProfileScreen = () => {
           <Text className="text-gray-700 mt-2 text-base">
             I am single{" "}
             {new Date().getFullYear() -
-              new Date(profile.birthDate).getFullYear()}{" "}
+              new Date(profile?.birthDate)?.getFullYear()}{" "}
             years old. I love{" "}
             {profile.interests
               ?.slice(0, 3)

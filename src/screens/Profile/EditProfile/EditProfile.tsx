@@ -203,12 +203,12 @@ const EditProfileScreen = () => {
               </TouchableOpacity>
             </View>
             <View className="flex-row flex-wrap gap-3">
-              {profile.interests?.map((interest: any) => (
+              {profile?.interests?.map((interest: any) => (
                 <Text
-                  key={interest._id}
+                  key={interest?._id}
                   className="font-medium px-4 py-2 bg-purple-600 text-white rounded-full text-sm"
                 >
-                  {interest.name}
+                  {interest?.name}
                 </Text>
               ))}
             </View>
@@ -221,11 +221,11 @@ const EditProfileScreen = () => {
             </Text>
 
             <TextInput
-              value={user?.name}
+              value={user?.name || ""}
               className="text-black bg-gray-100 p-4 rounded-lg mb-5"
             />
             <TextInput
-              value={user?.email}
+              value={user?.email || ""}
               className="text-black bg-gray-100 p-4 rounded-lg mb-5"
             />
 
@@ -319,7 +319,7 @@ const EditProfileScreen = () => {
 
             <Text className="text-lg font-bold mt-3">Address</Text>
             <TextInput
-              value={profile?.address.formattedAddress}
+              value={profile?.address?.formattedAddress}
               onChangeText={(text) =>
                 setProfile({
                   ...profile,
@@ -329,7 +329,7 @@ const EditProfileScreen = () => {
               className="text-black bg-gray-100 p-4 rounded-lg mb-3"
             />
             <TextInput
-              value={profile?.address.city}
+              value={profile?.address?.city}
               onChangeText={(text) =>
                 setProfile({
                   ...profile,
@@ -339,7 +339,7 @@ const EditProfileScreen = () => {
               className="text-black bg-gray-100 p-4 rounded-lg mb-3"
             />
             <TextInput
-              value={profile?.address.country}
+              value={profile?.address?.country}
               onChangeText={(text) =>
                 setProfile({
                   ...profile,

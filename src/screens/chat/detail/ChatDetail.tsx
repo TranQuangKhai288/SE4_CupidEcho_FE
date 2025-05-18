@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import { Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
 import {
@@ -21,7 +22,7 @@ import * as ConvAPI from "../../../apis/ConversationAPI";
 import { useSocketEvents, Message } from "../../../hooks/useSocketEvents";
 import { set } from "date-fns";
 import { useAuth } from "../../../contexts/AuthContext";
-import { v4 as uuidv4 } from "uuid"; // Thêm thư viện này vào
+// import { v4 as uuidv4 } from "uuid"; // Thêm thư viện này vào
 type RootStackParamList = {
   ChatDetail: { _id: string; name: string; avatar: string };
   VoiceCall: undefined;
@@ -143,7 +144,7 @@ const ChatDetailScreen: React.FC = () => {
   }, [messages]);
 
   return (
-    <View className='flex-1 bg-white pt-6'>
+    <SafeAreaView className='flex-1 bg-white pt-6'>
       <View className='flex-row items-center justify-between px-4 py-3'>
         <View className='flex-row items-center gap-4'>
           <TouchableOpacity onPress={handleBackPress} className='mr-2'>
@@ -182,7 +183,7 @@ const ChatDetailScreen: React.FC = () => {
         setNewMessage={setNewMessage}
         handleSendMessage={handleSendMessage}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

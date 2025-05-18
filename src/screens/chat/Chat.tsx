@@ -9,13 +9,15 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FontAwesome, Feather } from "@expo/vector-icons";
 import ActiveUserList from "./ActiveUsers";
 import ChatItem from "./ChatItem";
 import * as ConvAPI from "../../apis/ConversationAPI";
 const ChatScreen: React.FC = ({}) => {
+  const insets = useSafeAreaInsets();
+
   // const chatData = [
   //   {
   //     id: 1,
@@ -156,7 +158,7 @@ const ChatScreen: React.FC = ({}) => {
   }, [pagination.page, pagination.limit]);
 
   return (
-    <View className="flex-1 bg-white pt-10 px-6">
+    <View className="flex-1 bg-white px-6" style={{paddingTop:insets.top}}>
       <View className="flex-row justify-between items-center py-3 ">
         <View className="flex-row gap-3 items-center">
           <Image
