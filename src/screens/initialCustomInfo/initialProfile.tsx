@@ -7,7 +7,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Button from "../../components/Button";
-import { useAuth } from "../../contexts/AuthContext";
 import { formatDate } from "date-fns";
 
 type InitialProfileRouteProp = RouteProp<RootStackParamList, "InitialProfile">;
@@ -15,11 +14,9 @@ type InitialProfileRouteProp = RouteProp<RootStackParamList, "InitialProfile">;
 const InitialProfile = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const route = useRoute<InitialProfileRouteProp>();
-  const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
+  const [zodiac, setZodiac] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
-
   const [gender, setGender] = useState("");
 
   const handleConfirmDate = (date: Date) => {
@@ -30,7 +27,7 @@ const InitialProfile = () => {
     setShowDatePicker(false);
   };
 
-  const handleRegister = async () => {
+  const handleUpdateProfile = async () => {
     try {
       navigation.navigate("Main");
     } catch (error) {
@@ -38,34 +35,32 @@ const InitialProfile = () => {
     }
   };
 
+  // Zodiac options
+  const zodiacOptions = [
+    "Aries",
+    "Taurus",
+    "Gemini",
+    "Cancer",
+    "Leo",
+    "Virgo",
+    "Libra",
+    "Scorpio",
+    "Sagittarius",
+    "Capricorn",
+    "Aquarius",
+    "Pisces",
+    "Unknown",
+  ];
+
   return (
     <View className='flex-1 bg-white pt-10 px-6'>
-      <View className='flex-row justify-between items-center py-3 mb-4'>
+      <View className='flex-row justify-between items-center py-3 mb-10'>
         <View className='flex-row gap-3 items-center'>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialIcons name='arrow-back' size={20} color='black' />
           </TouchableOpacity>
-          <Text className='text-2xl font-bold'>Fill Your Profile</Text>
+          <Text className='text-2xl font-bold '>Fill Your Profile</Text>
         </View>
-      </View>
-
-      <View className='flex-row items-center bg-gray-100 px-8 py-3 rounded-2xl mb-4'>
-        <TextInput
-          placeholder='Full Name'
-          value={name}
-          onChangeText={setName}
-          className='flex-1 text-base'
-        />
-      </View>
-
-      {/* Nickname */}
-      <View className='flex-row items-center bg-gray-100 px-8 py-3 rounded-2xl mb-4'>
-        <TextInput
-          placeholder='Nickname'
-          value={nickname}
-          onChangeText={setNickname}
-          className='flex-1 text-base'
-        />
       </View>
 
       {/* Date of Birth */}
@@ -73,7 +68,7 @@ const InitialProfile = () => {
         onPress={() => setShowDatePicker(true)}
         className='flex-row items-center bg-gray-100 px-8 py-6 rounded-2xl mb-4'
       >
-        <Text className='flex-1 text-base text-gray-500'>
+        <Text className='flex-1 text-base text-black'>
           {formatDate(dateOfBirth, "dd/MM/yyyy")}
         </Text>
         <MaterialIcons name='date-range' size={20} color='gray' />
@@ -90,7 +85,7 @@ const InitialProfile = () => {
         locale='vi-VN' // Vietnamese locale
         confirmTextIOS='Xác nhận'
         cancelTextIOS='Hủy'
-        textColor='#000000' // Đặt màu chữ để tránh lỗi hiển thị
+        textColor='#000000'
       />
 
       {/* Gender Picker */}
@@ -108,8 +103,23 @@ const InitialProfile = () => {
         </Picker>
       </View>
 
+      {/* Zodiac Picker */}
+      <View className='bg-gray-100 px-4 rounded-2xl mb-4'>
+        <Picker
+          selectedValue={zodiac}
+          onValueChange={(itemValue) => setZodiac(itemValue)}
+          style={{ height: 60 }}
+          itemStyle={{ fontSize: 12 }}
+        >
+          <Picker.Item label='Select Zodiac' value='' enabled={false} />
+          {zodiacOptions.map((option) => (
+            <Picker.Item key={option} label={option} value={option} />
+          ))}
+        </Picker>
+      </View>
+
       <View className='mt-10'>
-        <Button title='Continue' onPress={handleRegister} />
+        <Button title='Continue' onPress={handleUpdateProfile} />
       </View>
     </View>
   );
