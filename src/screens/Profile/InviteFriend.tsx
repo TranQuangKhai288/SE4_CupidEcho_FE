@@ -8,7 +8,8 @@ import {
   SafeAreaView,
   Image,
 } from "react-native";
-
+import { ChevronLeft } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
 // Define the type for Friend items
 interface Friend {
   id: string;
@@ -87,6 +88,7 @@ interface FriendItemProps {
 }
 
 const InviteFriendsScreen: React.FC = () => {
+  const navigation = useNavigation();
   // Render each friend item
   const renderFriendItem = ({ item }: FriendItemProps) => (
     <View className="flex-row items-center justify-between p-4 bg-white border-b border-gray-200">
@@ -111,8 +113,14 @@ const InviteFriendsScreen: React.FC = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
+      {/* Header */}
+      <View className="flex-row items-center px-4 py-4">
+        <TouchableOpacity onPress={navigation.goBack}>
+          <ChevronLeft size={24} color="#000" />
+        </TouchableOpacity>
+        <Text className="text-lg font-medium ml-4">Invite Friend</Text>
+      </View>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
-
       {/* Friend List */}
       <FlatList
         data={friendData}

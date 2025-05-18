@@ -1,3 +1,4 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -8,6 +9,9 @@ import {
   StatusBar,
   SafeAreaView,
 } from "react-native";
+import { RootStackParamList } from "../../navigation/AppNavigation";
+import { useNavigation } from "@react-navigation/native";
+import { ChevronLeft } from "lucide-react-native";
 
 // Define the type for FAQ/Support items
 interface HelpItem {
@@ -112,7 +116,7 @@ const HelpCenterScreen: React.FC = () => {
 
   // Ref to track if the component is mounted
   const isMounted = useRef(true);
-
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -133,7 +137,7 @@ const HelpCenterScreen: React.FC = () => {
     return (
       <TouchableOpacity
         onPress={() => toggleItem(item.id)}
-        className="bg-white rounded-lg p-4 mb-3 shadow-md"
+        className="bg-white rounded-lg p-4 mb-3"
       >
         <View className="flex-row justify-between items-center">
           <Text className="text-base font-bold text-black flex-1">
@@ -184,6 +188,13 @@ const HelpCenterScreen: React.FC = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
+      {/* Header */}
+      <View className="flex-row items-center px-4 py-4">
+        <TouchableOpacity onPress={navigation.goBack}>
+          <ChevronLeft size={24} color="#000" />
+        </TouchableOpacity>
+        <Text className="text-2xl font-medium ml-4">Help Center</Text>
+      </View>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       {/* Tabs */}
       <View className="flex-row bg-white px-4 py-2">

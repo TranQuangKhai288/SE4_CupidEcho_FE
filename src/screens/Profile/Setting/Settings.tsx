@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {
   User,
@@ -11,8 +11,10 @@ import {
   MessageSquare,
   Globe,
   Info,
+  ChevronLeft,
 } from "lucide-react-native";
 import SettingItem from "../detail/SettingItem";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 type RootStackParamList = {
   PersonalInfo: undefined;
@@ -108,8 +110,6 @@ const settingsData: SettingItemData[] = [
 ];
 
 const SettingsScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
-
   const handleItemPress = (screen: keyof RootStackParamList) => {
     navigation.navigate(screen);
   };
@@ -117,16 +117,24 @@ const SettingsScreen: React.FC = () => {
   const renderItem = ({ item }: { item: SettingItemData }) => (
     <SettingItem {...item} onPress={() => handleItemPress(item.screen)} />
   );
-
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
+      {/* Header */}
+      <View className="flex-row items-center px-4 py-4">
+        <TouchableOpacity onPress={navigation.goBack}>
+          <ChevronLeft size={24} color="#000" />
+        </TouchableOpacity>
+        <Text className="text-2xl font-medium ml-4">Setting</Text>
+      </View>
+
       <FlatList
         data={settingsData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 16 }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
