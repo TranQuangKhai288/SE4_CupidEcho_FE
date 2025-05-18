@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,142 +6,176 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
-import { Heart, MessageCircle } from "lucide-react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
-import { mockPosts } from "../Home";
-import { FontAwesome, Feather, MaterialIcons } from "@expo/vector-icons";
+import { Heart, MessageCircle } from "lucide-react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import axios from "axios";
+import { getPostById } from "../../apis/PostAPI";
+import baseURL from "../../apis/Customize-axios";
+
+type PostDetailRouteProp = RouteProp<RootStackParamList, "PostDetail">;
 
 interface Comment {
-  id: string;
-  username: string;
-  text: string;
-  timeAgo: string;
+  _id: string;
+  content: string;
+  createdAt: string;
+  user: {
+    name: string;
+    avatar: string;
+  };
 }
 
 const PostDetail: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const route = useRoute<RouteProp<RootStackParamList, "PostDetail">>();
+  const route = useRoute<PostDetailRouteProp>();
   const { postId } = route.params;
 
-  const post = mockPosts.find((p) => p.id === postId);
-  if (!post) return <Text>Post not found</Text>;
-
+  const [post, setPost] = useState<any>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState<Comment[]>([
-    { id: "1", username: "User1", text: "Đẹp quá!", timeAgo: "5 phút" },
-    {
-      id: "2",
-      username: "User2",
-      text: "Tuyệt vời luôn á",
-      timeAgo: "10 phút",
-    },
-  ]);
+
+  useEffect(() => {
+    const fetchPostAndComments = async () => {
+      try {
+        const postData = await getPostById(postId);
+        //  const commentsRes = await axios.get(
+        //    `${baseURL}/api/post/comment/${postId}`
+        //  );
+
+        if (postData) {
+          setPost(postData);
+          //  setComments(commentsRes.data.data.comments);
+        }
+      } catch (error) {
+        console.error("Failed to load post or comments", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPostAndComments();
+  }, [postId]);
 
   const handleAddComment = () => {
-    if (newComment.trim()) {
-      const comment: Comment = {
-        id: Date.now().toString(),
-        username: "CurrentUser", // Thay bằng username thực tế từ AuthContext
-        text: newComment,
-        timeAgo: "Vừa xong",
-      };
-      setComments([comment, ...comments]);
-      setNewComment("");
-    }
+    if (!newComment.trim()) return;
+
+    const fakeComment: Comment = {
+      _id: Date.now().toString(),
+      content: newComment,
+      createdAt: new Date().toISOString(),
+      user: {
+        name: "Bạn",
+        avatar: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+      },
+    };
+    setComments([fakeComment, ...comments]);
+    setNewComment("");
   };
 
+  if (loading || !post) {
+    return (
+      <View className='flex-1 items-center justify-center bg-white'>
+        <ActivityIndicator size='large' color='#6b21a8' />
+      </View>
+    );
+  }
+
+  const timeAgo = (dateString: string) => {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
+    if (diff < 60) return `${diff} giây trước`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+    return `${Math.floor(diff / 86400)} ngày trước`;
+  };
   return (
-    <View className='flex-1 bg-white pt-10 px-6'>
-      <View className='flex-row justify-between items-center p-4 '>
+    <View className='flex-1 bg-white pt-10 px-4'>
+      {/* Header */}
+      <View className='flex-row justify-between items-center p-4'>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialIcons name='arrow-back' size={20} color='black' />
         </TouchableOpacity>
         <Text className='text-2xl font-bold'>Post Details</Text>
-        <View className='w-2' />
+        <View className='w-5' />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Post Content */}
-        <View className=' px-4 py-3'>
-          <View className='flex-row items-center mb-2'>
+        {/* Post */}
+        <View className='px-2 py-3'>
+          <View className='flex-row items-center mb-3'>
             <Image
-              source={{ uri: post.avatarUrl }}
-              className='w-10 h-10 mr-2 rounded-full'
+              source={{
+                uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+              }}
+              className='w-10 h-10 mr-3 rounded-full'
             />
-            <View className='flex-col items-start justify-center'>
-              <Text className='text-black font-semibold text-sm'>
-                {post.username}
-              </Text>
-              <Text className='text-gray-500 text-xs ml-1'>
-                • {post.timeAgo}
+            <View>
+              <Text className='font-semibold text-sm'>{post.userId}</Text>
+              <Text className='text-xs text-gray-500'>
+                {timeAgo(post.createdAt)}
               </Text>
             </View>
           </View>
 
-          <Text className='text-black text-sm mb-3'>{post.caption}</Text>
+          <Text className='text-base text-black mb-3'>{post.content}</Text>
 
-          <Image
-            source={{ uri: post.imageUrl }}
-            className='w-full h-72 rounded-lg mb-3'
-            resizeMode='cover'
-          />
+          {post.media?.[0] && (
+            <Image
+              source={{ uri: post.URL }}
+              className='w-full h-72 rounded-lg mb-3'
+              resizeMode='cover'
+            />
+          )}
 
-          <View className='flex-row justify-between'>
-            <View className='flex-row gap-4'>
-              <TouchableOpacity
-                className='flex-row items-center'
-                onPress={() => setLiked(!liked)}
-              >
-                {liked ? (
-                  <Heart fill='#9333ea' color='#9333ea' size={20} />
-                ) : (
-                  <Heart size={20} color='#000' />
-                )}
-                <Text className='text-black text-sm ml-1'>
-                  {liked ? post.likes + 1 : post.likes}
-                </Text>
-              </TouchableOpacity>
-              <View className='flex-row items-center'>
-                <MessageCircle size={20} color='#000' />
-                <Text className='text-black text-sm ml-1'>
-                  {comments.length}
-                </Text>
-              </View>
+          {/* Like & Comment count */}
+          <View className='flex-row gap-6 mb-4'>
+            <TouchableOpacity
+              onPress={() => setLiked(!liked)}
+              className='flex-row items-center'
+            >
+              {liked ? (
+                <Heart fill='#9333ea' color='#9333ea' size={20} />
+              ) : (
+                <Heart size={20} color='#000' />
+              )}
+              <Text className='ml-2 text-sm text-black'>
+                {liked
+                  ? (post.likes?.length ?? 0) + 1
+                  : post.likes?.length ?? 0}
+              </Text>
+            </TouchableOpacity>
+
+            <View className='flex-row items-center'>
+              <MessageCircle size={20} color='#000' />
+              <Text className='ml-2 text-sm text-black'>{comments.length}</Text>
             </View>
           </View>
         </View>
 
-        {/* Comments Section */}
-        <View className='px-4 py-3'>
-          <Text className='text-lg font-bold mb-3'>Comments</Text>
+        {/* Comments */}
+        <View className='px-2 py-3'>
+          <Text className='text-lg font-bold mb-3'>Bình luận</Text>
           {comments.length > 0 ? (
-            comments.map((comment) => (
-              <View key={comment.id} className='mb-4'>
-                <View className='flex-row items-center gap-1'>
-                  <Image
-                    source={{
-                      uri: "https://randomuser.me/api/portraits/men/1.jpg",
-                    }}
-                    className='w-8 h-8 mr-2 rounded-full'
-                  />
-                  <View className='flex-col'>
-                    <View className='flex-row items-baseline gap-2'>
-                      <Text className='font-semibold text-sm'>
-                        {comment.username}
-                      </Text>
-                      <Text className='text-gray-500 text-xs'>
-                        {comment.timeAgo}
-                      </Text>
-                    </View>
-                    <Text className='text-black text-sm mt-1'>
-                      {comment.text}
-                    </Text>
-                  </View>
+            comments.map((c) => (
+              <View key={c._id} className='mb-4 flex-row gap-3'>
+                <Image
+                  source={{ uri: c.user.avatar }}
+                  className='w-8 h-8 rounded-full'
+                />
+                <View className='flex-1'>
+                  <Text className='font-semibold text-sm'>{c.user.name}</Text>
+                  <Text className='text-sm text-black mt-1'>{c.content}</Text>
+                  <Text className='text-xs text-gray-500 mt-1'>
+                    {timeAgo(c.createdAt)}
+                  </Text>
                 </View>
               </View>
             ))

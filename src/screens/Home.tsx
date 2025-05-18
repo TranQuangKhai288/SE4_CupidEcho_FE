@@ -1,74 +1,82 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
-  Button,
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { useAuth } from "../contexts/AuthContext";
-import { FontAwesome, Feather } from "@expo/vector-icons";
-import { Heart, MessageCircle, Share2 } from "lucide-react-native";
+import { Feather } from "@expo/vector-icons";
 import PostCard from "../components/PostCard";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigation";
+import { getAllPosts, Post } from "../apis/PostAPI";
+import { useFocusEffect } from "@react-navigation/native";
+import CommentModal from "../components/CommentModal";
 
-export const mockPosts = [
-  {
-    id: "1",
-    username: "Andre Oliver",
-    avatarUrl: "https://randomuser.me/api/portraits/women/1.jpg",
-    timeAgo: "1 giờ",
-    caption:
-      "Gái Nam và Trai Bắc trong những joke của Kiến không ngủ là có thật",
-    imageUrl: "https://images.unsplash.com/photo-1573497491208-6b1acb260507",
-    likes: 5844,
-    comments: 166,
-  },
-  {
-    id: "2",
-    username: "Trần Văn A",
-    avatarUrl: "https://cdn-icons-png.flaticon.com/512/4140/4140048.png",
-    timeAgo: "2 giờ",
-    caption: "Tối qua chill với anh em mà sáng nay vẫn chưa tỉnh 🍻",
-    imageUrl: "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d",
-    likes: 322,
-    comments: 45,
-  },
-  {
-    id: "3",
-    username: "Lê Thu Hằng",
-    avatarUrl: "https://cdn-icons-png.flaticon.com/512/168/168726.png",
-    timeAgo: "3 giờ",
-    caption: "Mùa hè năm nay phải đi Đà Lạt ít nhất 2 lần ☀️🌸",
-    imageUrl:
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    likes: 1032,
-    comments: 77,
-  },
-  {
-    id: "4",
-    username: "Nguyễn Quốc Bảo",
-    avatarUrl: "https://cdn-icons-png.flaticon.com/512/924/924915.png",
-    timeAgo: "4 giờ",
-    caption: "Code xuyên Tết, deadline không tha một ai 😭💻",
-    imageUrl:
-      "https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=800&q=80",
-    likes: 867,
-    comments: 98,
-  },
-];
-
-const HomeScreen: React.FC = ({}) => {
+const HomeScreen: React.FC = () => {
   const { state } = useAuth();
   const { user } = state;
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+
+  const openComments = (postId: string) => {
+    setSelectedPostId(postId);
+    setShowCommentsModal(true);
+  };
+
+  const handleLikeToggle = (postId: string, liked: boolean) => {
+    if (!user?._id) return;
+
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: liked
+                ? [...post.likes, user._id]
+                : post.likes.filter((id) => id !== user._id),
+            }
+          : post
+      )
+    );
+  };
+
+  const updateCommentCount = (postId: string, newCount: number) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId ? { ...post, commentCount: newCount } : post
+      )
+    );
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPosts = async () => {
+        try {
+          const data = await getAllPosts();
+          setPosts(data);
+        } catch (err) {
+          console.error("Failed to fetch posts", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchPosts();
+    }, [])
+  );
 
   return (
     <View className='flex-1 bg-white pt-10 px-6'>
-      <View className='flex-row justify-between items-center py-3 '>
+      {/* Header */}
+      <View className='flex-row justify-between items-center py-3'>
         <View className='flex-row gap-3 items-center'>
           <Image
             source={require("../../assets/Logo.png")}
@@ -95,21 +103,40 @@ const HomeScreen: React.FC = ({}) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Posts */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        {mockPosts.map((post) => (
-          <PostCard
-            key={post.id}
-            id={post.id}
-            username={post.username}
-            avatarUrl={post.avatarUrl}
-            timeAgo={post.timeAgo}
-            caption={post.caption}
-            imageUrl={post.imageUrl}
-            likes={post.likes}
-            comments={post.comments}
-          />
-        ))}
+        {loading ? (
+          <ActivityIndicator size='large' color='#6b21a8' />
+        ) : (
+          posts.map((post) => (
+            <PostCard
+              key={post._id}
+              _id={post._id}
+              username={post.userId}
+              avatarUrl='https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              timeAgo={new Date(post.createdAt).toLocaleString()}
+              caption={post.content}
+              media={post.media ?? []}
+              likes={post.likes ?? []}
+              comments={post.commentCount ?? 0}
+              openComments={openComments}
+              onLikeToggle={handleLikeToggle}
+              userId={user?._id ?? ""}
+            />
+          ))
+        )}
       </ScrollView>
+
+      {/* Comments Modal */}
+      {selectedPostId && (
+        <CommentModal
+          visible={showCommentsModal}
+          onClose={() => setShowCommentsModal(false)}
+          postId={selectedPostId}
+          onUpdateCommentCount={updateCommentCount}
+        />
+      )}
     </View>
   );
 };

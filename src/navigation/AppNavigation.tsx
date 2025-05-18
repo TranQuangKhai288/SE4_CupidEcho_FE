@@ -73,7 +73,7 @@ export type RootStackParamList = {
   PostDetail: { postId: string };
 
   //InitialCustomInfo
-  InitialProfile: { email: string; password: string; confirmPassword: string };
+  InitialProfile: undefined;
   InitialImage: undefined;
   InitialInterest: undefined;
   InitialIdealMatch: undefined;

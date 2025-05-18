@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import {
   MaterialIcons,
   Feather,
@@ -8,6 +15,7 @@ import {
 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigation";
+import { registerUser } from "../../apis/UserAPI";
 
 type RegisterScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -19,54 +27,86 @@ interface Props {
 }
 
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
-  const [isChecked, setChecked] = useState(false);
-  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isChecked, setChecked] = useState(false);
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
 
-  const handleSignUp = () => {
-    // Validate input
-    if (!email || !password || !confirmPassword) {
-      console.log("Please fill in all fields");
+
+  const handleRegister = async () => {
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
     if (password !== confirmPassword) {
-      console.log("Passwords do not match");
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
-    // Chuyển sang InitialProfile với email, password, confirmPassword
-    navigation.navigate("InitialProfile", { email, password, confirmPassword });
+
+    try {
+      const payload = { name, email, password, confirmPassword };
+      const res = await registerUser(payload);
+
+      if (res.status === "OK") {
+        Alert.alert(
+          "Success",
+          "Account created successfully",
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate("InitialProfile"),
+            },
+          ],
+          { cancelable: false }
+        );
+      } else {
+        Alert.alert("Error", res.message || "Registration failed");
+      }
+    } catch (err) {
+      Alert.alert("Error", "Something went wrong. Please try again.");
+    }
   };
 
-  const handleSignIn = () => {
-    navigation.navigate("Login");
-  };
+  const handleSignIn = () => navigation.navigate("Login");
 
   return (
     <View className='flex-1 bg-white px-6 pt-6'>
-      <TouchableOpacity className='mb-14' onPress={() => navigation.goBack()}>
+      <TouchableOpacity className='mb-4' onPress={() => navigation.goBack()}>
         <MaterialIcons name='arrow-back' size={24} color='black' />
       </TouchableOpacity>
+
       <View className='items-center'>
         <Image
-          className='object-cover'
           source={require("../../../assets/Logo.png")}
           style={{ width: 80, height: 80 }}
         />
       </View>
+
       <Text className='text-3xl font-bold text-center my-8'>
         Create Your Account
       </Text>
+
+      <View className='flex-row items-center bg-gray-100 px-4 py-3 rounded-lg mb-4'>
+        <MaterialIcons name='person' size={20} color='gray' />
+        <TextInput
+          placeholder='Username'
+          className='flex-1 ml-3 text-base'
+          value={name}
+          onChangeText={setName}
+        />
+      </View>
 
       <View className='flex-row items-center bg-gray-100 px-4 py-3 rounded-lg mb-4'>
         <MaterialIcons name='email' size={20} color='gray' />
         <TextInput
           placeholder='Email'
           className='flex-1 ml-3 text-base'
-          keyboardType='email-address'
           value={email}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={setEmail}
+          keyboardType='email-address'
+          autoCapitalize='none'
         />
       </View>
 
@@ -75,9 +115,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         <TextInput
           placeholder='Password'
           className='flex-1 ml-3 text-base'
-          secureTextEntry={!isPasswordVisible}
           value={password}
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={setPassword}
+          secureTextEntry={!isPasswordVisible}
         />
         <TouchableOpacity
           onPress={() => setPasswordVisible(!isPasswordVisible)}
@@ -95,9 +135,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         <TextInput
           placeholder='Confirm Password'
           className='flex-1 ml-3 text-base'
-          secureTextEntry={!isPasswordVisible}
           value={confirmPassword}
-          onChangeText={(text) => setConfirmPassword(text)}
+          onChangeText={setConfirmPassword}
+          secureTextEntry={!isPasswordVisible}
         />
         <TouchableOpacity
           onPress={() => setPasswordVisible(!isPasswordVisible)}
@@ -110,25 +150,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View className='items-center mb-6'>
-        <TouchableOpacity
-          onPress={() => setChecked(!isChecked)}
-          className='flex-row items-center'
-        >
-          <View
-            className={`w-6 h-6 border-2 rounded-md mr-3 flex items-center justify-center ${
-              isChecked
-                ? "bg-primary-main border-purple-600"
-                : "border-gray-400"
-            }`}
-          >
-            {isChecked && <Ionicons name='checkmark' size={16} color='white' />}
-          </View>
-          <Text className='text-gray-500 font-semibold'>Remember me</Text>
-        </TouchableOpacity>
-      </View>
       <TouchableOpacity
-        onPress={handleSignUp}
+        onPress={handleRegister}
         className='bg-primary-main py-4 rounded-3xl'
       >
         <Text className='text-white text-center text-lg font-bold'>
@@ -156,8 +179,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           <FontAwesome name='apple' size={20} color='black' />
         </TouchableOpacity>
       </View>
-      <View className='flex-row justify-center mt-8'>
-        <Text className='text-gray-500'>Already have an account? </Text>
+
+      <View className='flex-row justify-center mt-4'>
+        <Text className='text-gray-500'>Already have an account?</Text>
         <TouchableOpacity onPress={handleSignIn}>
           <Text className='text-purple-600 font-bold ml-2'>Sign in</Text>
         </TouchableOpacity>
