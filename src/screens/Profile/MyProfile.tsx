@@ -95,8 +95,45 @@ const MyProfileScreen = () => {
             </TouchableOpacity>
           </View>
 
+          <View>
+            <Text className="text-lg font-bold mt-3">Address</Text>
+            <View className="flex-row items-center mt-2 gap-2">
+              <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
+                {profile.address.formattedAddress}
+              </Text>
+              <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
+                {profile.address.city}
+              </Text>
+              <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
+                {profile.address.country}
+              </Text>
+            </View>
+          </View>
+
+          <View>
+            <Text className="text-lg font-bold mt-3">Birthday</Text>
+            <View className="flex-row items-center mt-2 gap-2">
+              <Text className="text-purple-600 font-semibold bg-purple-100 px-3 py-1 rounded-full text-sm">
+                {new Date(profile.birthDate).toLocaleDateString("vi-VN")}
+              </Text>
+            </View>
+          </View>
+
+          {/* Interests */}
+          <Text className="text-lg font-bold mt-3 mb-2">Interest</Text>
+          <View className="flex-row flex-wrap gap-3">
+            {profile.interests?.map((interest: any) => (
+              <Text
+                key={interest._id}
+                className="px-4 py-2 bg-purple-700 text-white rounded-full text-sm"
+              >
+                {interest.name}
+              </Text>
+            ))}
+          </View>
+
           {/* About */}
-          <Text className="text-lg font-bold mt-6">About</Text>
+          <Text className="text-lg font-bold mt-3">About</Text>
           <Text className="text-gray-700 mt-2 text-base">
             I am single{" "}
             {new Date().getFullYear() -
@@ -108,19 +145,6 @@ const MyProfileScreen = () => {
               .join(", ")}
             ... You can find me in {profile.address?.city}.
           </Text>
-
-          {/* Interests */}
-          <Text className="text-lg font-bold mt-6 mb-2">Interest</Text>
-          <View className="flex-row flex-wrap gap-3">
-            {profile.interests?.map((interest: any) => (
-              <Text
-                key={interest._id}
-                className="px-4 py-2 bg-purple-700 text-white rounded-full text-sm"
-              >
-                {interest.name}
-              </Text>
-            ))}
-          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

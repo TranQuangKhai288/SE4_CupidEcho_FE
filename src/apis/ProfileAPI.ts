@@ -12,6 +12,11 @@ export const getDetailsProfile = async (id: string) => {
 };
 
 export const updateProfile = async (data: any) => {
-  const res: Response = await baseURL.put(`/user/profile/`,data);
+  try{
+    const res: Response = await baseURL.put(`/user/profile/`,data);
   return res;
+  }catch(error){
+    console.error("Update Profile Error",error);
+    throw error;
+  }
 }
