@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -7,35 +14,62 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Button from "../../components/Button";
-import { formatDate } from "date-fns";
+import { format } from "date-fns";
+import * as ProfileAPI from "../../apis/ProfileAPI";
 
 type InitialProfileRouteProp = RouteProp<RootStackParamList, "InitialProfile">;
 
 const InitialProfile = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const route = useRoute<InitialProfileRouteProp>();
+
   const [zodiac, setZodiac] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [gender, setGender] = useState("");
+  const [formattedAddress, setFormattedAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirmDate = (date: Date) => {
     setShowDatePicker(false);
     setDateOfBirth(date);
   };
+
   const handleCancelDate = () => {
     setShowDatePicker(false);
   };
 
   const handleUpdateProfile = async () => {
+    if (!zodiac || !gender || !formattedAddress || !city || !country) {
+      Alert.alert("Incomplete", "Please fill in all the fields.");
+      return;
+    }
+
     try {
-      navigation.navigate("Main");
+      setIsLoading(true);
+      const payload = {
+        birthDate: dateOfBirth.toISOString(),
+        zodiac,
+        gender,
+        address: {
+          formattedAddress,
+          city,
+          country,
+        },
+      };
+      await ProfileAPI.updateProfile(payload);
+      Alert.alert("Success", "Your profile has been saved.");
+      navigation.navigate("InitialInterest");
     } catch (error) {
-      console.error("Register error:", error);
+      console.error("Update profile failed:", error);
+      Alert.alert("Error", "Failed to update profile.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Zodiac options
   const zodiacOptions = [
     "Aries",
     "Taurus",
@@ -66,61 +100,72 @@ const InitialProfile = () => {
       {/* Date of Birth */}
       <TouchableOpacity
         onPress={() => setShowDatePicker(true)}
-        className='flex-row items-center bg-gray-100 px-8 py-6 rounded-2xl mb-4'
+        className='flex-row items-center justify-between mb-4 px-4 py-5 bg-gray-100 rounded-lg'
       >
-        <Text className='flex-1 text-base text-black'>
-          {formatDate(dateOfBirth, "dd/MM/yyyy")}
-        </Text>
+        <Text className='text-black'>{format(dateOfBirth, "dd/MM/yyyy")}</Text>
         <MaterialIcons name='date-range' size={20} color='gray' />
       </TouchableOpacity>
 
-      {/* Date Picker Modal */}
       <DateTimePickerModal
         isVisible={showDatePicker}
         mode='date'
-        date={dateOfBirth}
         onConfirm={handleConfirmDate}
         onCancel={handleCancelDate}
         maximumDate={new Date()}
-        locale='vi-VN' // Vietnamese locale
-        confirmTextIOS='Xác nhận'
-        cancelTextIOS='Hủy'
-        textColor='#000000'
       />
 
       {/* Gender Picker */}
-      <View className='bg-gray-100 px-4 rounded-2xl mb-4'>
+      <View className='mb-4 bg-gray-100 rounded-lg'>
         <Picker
           selectedValue={gender}
           onValueChange={(itemValue) => setGender(itemValue)}
-          style={{ height: 60 }}
-          itemStyle={{ fontSize: 12 }}
         >
-          <Picker.Item label='Select Gender' value='' enabled={false} />
+          <Picker.Item label='Select gender' value='' />
           <Picker.Item label='Male' value='male' />
           <Picker.Item label='Female' value='female' />
-          <Picker.Item label='Other' value='other' />
+          <Picker.Item label='Another' value='another' />
         </Picker>
       </View>
 
       {/* Zodiac Picker */}
-      <View className='bg-gray-100 px-4 rounded-2xl mb-4'>
+      <View className='mb-4 bg-gray-100 rounded-lg'>
         <Picker
           selectedValue={zodiac}
           onValueChange={(itemValue) => setZodiac(itemValue)}
-          style={{ height: 60 }}
-          itemStyle={{ fontSize: 12 }}
         >
-          <Picker.Item label='Select Zodiac' value='' enabled={false} />
-          {zodiacOptions.map((option) => (
-            <Picker.Item key={option} label={option} value={option} />
+          <Picker.Item label='Select zodiac' value='' />
+          {zodiacOptions.map((z) => (
+            <Picker.Item key={z} label={z} value={z} />
           ))}
         </Picker>
       </View>
 
-      <View className='mt-10'>
-        <Button title='Continue' onPress={handleUpdateProfile} />
-      </View>
+      {/* Address Inputs */}
+      <TextInput
+        placeholder='Formatted Address'
+        value={formattedAddress}
+        onChangeText={setFormattedAddress}
+        className='bg-gray-100 text-black rounded-lg px-4 py-5 mb-4'
+      />
+      <TextInput
+        placeholder='City'
+        value={city}
+        onChangeText={setCity}
+        className='bg-gray-100 text-black rounded-lg px-4 py-5 mb-4'
+      />
+      <TextInput
+        placeholder='Country'
+        value={country}
+        onChangeText={setCountry}
+        className='bg-gray-100 text-black rounded-lg px-4 py-5 mb-6'
+      />
+
+      {/* Save Button */}
+      <Button
+        title={isLoading ? "Saving..." : "Save Profile"}
+        onPress={handleUpdateProfile}
+        disabled={isLoading}
+      />
     </View>
   );
 };
