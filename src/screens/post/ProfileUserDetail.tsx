@@ -1,39 +1,49 @@
-import React, { useEffect, useState, useCallback } from "react";
 import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import {
+  Image,
   View,
   Text,
-  Image,
-  TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
-import { useAuth } from "../contexts/AuthContext";
-import { Feather } from "@expo/vector-icons";
-import PostCard from "../components/PostCard";
-import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../navigation/AppNavigation";
+import PostCard from "../../components/PostCard";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../navigation/AppNavigation";
-import { getAllPosts, Post } from "../apis/PostAPI";
-import { useFocusEffect } from "@react-navigation/native";
-import CommentModal from "../components/CommentModal";
+import React, { useCallback, useState } from "react";
+import { getAllPosts, getPostByUserId, Post } from "../../apis/PostAPI";
+import CommentModal from "../../components/CommentModal";
+import { useAuth } from "../../contexts/AuthContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Colors } from "react-native/Libraries/NewAppScreen";
+import { ChevronLeft } from "lucide-react-native";
+import { getDetailsUser } from "../../apis/UserAPI";
+type ProfileUserDetailProps = RouteProp<
+  RootStackParamList,
+  "ProfileUserDetail"
+>;
 
-const HomeScreen: React.FC = () => {
-  const insets = useSafeAreaInsets();
-
-  const { state } = useAuth();
-  const { user } = state;
+const ProfileUserDetail: React.FC = () => {
+  const route = useRoute<ProfileUserDetailProps>();
+  const { userId } = route.params;
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [detailUser, setDetailUser] = useState<any>(null);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
-
   const openComments = (postId: string) => {
     setSelectedPostId(postId);
     setShowCommentsModal(true);
   };
-
+  const { state } = useAuth();
+  const { user } = state;
+  const insets = useSafeAreaInsets();
   const handleLikeToggle = (postId: string, liked: boolean) => {
     if (!user?._id) return;
 
@@ -63,8 +73,10 @@ const HomeScreen: React.FC = () => {
     useCallback(() => {
       const fetchPosts = async () => {
         try {
-          const data = await getAllPosts();
+          const data = await getPostByUserId(userId);
+          const dataDetailUser = await getDetailsUser(userId);
           setPosts(data);
+          setDetailUser(dataDetailUser);
         } catch (err) {
           console.error("Failed to fetch posts", err);
         } finally {
@@ -75,49 +87,50 @@ const HomeScreen: React.FC = () => {
       fetchPosts();
     }, [])
   );
-
   return (
-    <View className='flex-1 bg-white' style={{paddingTop:insets.top}}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
-      <View className='flex-row justify-between items-center py-3 px-6'>
-        <View className='flex-row gap-3 items-center'>
-          <Image
-            source={require("../../assets/Logo.png")}
-            style={{ width: 28, height: 28 }}
-          />
-          <Text className='text-3xl font-bold'>CupidEcho</Text>
-        </View>
-
-        <View className='flex-row gap-5 items-center'>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("CreateNewPost")}
-          >
-            <Feather name='plus-circle' size={20} color='black' />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View className='relative'>
-              <Feather name='heart' size={20} color='black' />
-              <View className='absolute bottom-4 left-4'>
-                <Text className='bg-red-600 text-white text-xs rounded-full px-1'>
-                  5
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
+      <View className="relative items-center justify-center h-14 mb-3">
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full"
+        >
+          <ChevronLeft size={24} color="#000" />
+        </TouchableOpacity>
+        <Text className="text-2xl font-bold">{detailUser?.data?.name}</Text>
       </View>
 
-      {/* Posts */}
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 32,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Avatar và Info */}
+        <View className="flex-col items-center justify-center my-3">
+          <Image
+            source={{ uri: detailUser?.data?.avatar }}
+            className="w-36 h-36 rounded-full mb-3"
+          />
+          <Text className="text-black font-semibold text-sm my-2">
+            {detailUser?.data?.name}
+          </Text>
+          <Text className="text-black font-semibold text-sm">
+            {detailUser?.data?.email}
+          </Text>
+        </View>
+
+        {/* Posts */}
         {loading ? (
-          <ActivityIndicator size='large' color='#6b21a8' />
+          <ActivityIndicator size="large" color="#6b21a8" />
         ) : (
           posts.map((post) => (
             <PostCard
               key={post._id}
               _id={post._id}
               username={post.userId}
-              avatarUrl='https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              avatarUrl="https://cdn-icons-png.flaticon.com/512/149/149071.png"
               timeAgo={new Date(post.createdAt).toLocaleString()}
               caption={post.content}
               media={post.media ?? []}
@@ -144,4 +157,4 @@ const HomeScreen: React.FC = () => {
   );
 };
 
-export default HomeScreen;
+export default ProfileUserDetail;

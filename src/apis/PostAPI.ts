@@ -61,6 +61,16 @@ export const getPostById = async (postId: string): Promise<Post | null> => {
   }
 };
 
+export const getPostByUserId = async (userId: string): Promise<Post[]> => {
+  try {
+    const res = await baseURL.get(`/post/users/${userId}`);
+    return res.data.posts;
+  } catch (error) {
+    console.error(`Get post ${userId} error:`, error);
+    return [];
+  }
+};
+
 export const likePost = async (
   postId: string,
   token: string

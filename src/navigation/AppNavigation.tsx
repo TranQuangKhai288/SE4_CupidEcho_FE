@@ -43,6 +43,7 @@ import SubscribeVIP from "../screens/Profile/SubscribeVIP/SubscribeVIP";
 import PaymentScreen from "../screens/Profile/SubscribeVIP/Payment";
 import EditProfileScreen from "../screens/Profile/EditProfile/EditProfile";
 import EditInterestScreen from "../screens/Profile/EditProfile/EditInterest";
+import ProfileUserDetail from "../screens/post/ProfileUserDetail";
 
 // import ProfileScreen from '../screens/ProfileScreen';
 // import MatchScreen from '../screens/MatchScreen';
@@ -96,6 +97,7 @@ export type RootStackParamList = {
   Payment: undefined;
   EditProfile: undefined;
   EditInterest:{ListInterest: string[]};
+  ProfileUserDetail:{ userId : string}
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -188,6 +190,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="Payment" component={PaymentScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="EditInterest" component={EditInterestScreen} />
+        <Stack.Screen name="ProfileUserDetail" component={ProfileUserDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );

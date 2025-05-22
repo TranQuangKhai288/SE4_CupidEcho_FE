@@ -81,8 +81,8 @@ const PostDetail: React.FC = () => {
 
   if (loading || !post) {
     return (
-      <View className='flex-1 items-center justify-center bg-white'>
-        <ActivityIndicator size='large' color='#6b21a8' />
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#6b21a8" />
       </View>
     );
   }
@@ -97,104 +97,106 @@ const PostDetail: React.FC = () => {
     return `${Math.floor(diff / 86400)} ngày trước`;
   };
   return (
-    <View className='flex-1 bg-white pt-10 px-4'>
+    <View className="flex-1 bg-white pt-10 px-4">
       {/* Header */}
-      <View className='flex-row justify-between items-center p-4'>
+      <View className="flex-row justify-between items-center p-4">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name='arrow-back' size={20} color='black' />
+          <MaterialIcons name="arrow-back" size={20} color="black" />
         </TouchableOpacity>
-        <Text className='text-2xl font-bold'>Post Details</Text>
-        <View className='w-5' />
+        <Text className="text-2xl font-bold">Post Details</Text>
+        <View className="w-5" />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Post */}
-        <View className='px-2 py-3'>
-          <View className='flex-row items-center mb-3'>
-            <Image
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-              }}
-              className='w-10 h-10 mr-3 rounded-full'
-            />
-            <View>
-              <Text className='font-semibold text-sm'>{post.userId}</Text>
-              <Text className='text-xs text-gray-500'>
-                {timeAgo(post.createdAt)}
-              </Text>
+        <View className="px-2 py-3">
+          <TouchableOpacity>
+            <View className="flex-row items-center mb-3">
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                }}
+                className="w-10 h-10 mr-3 rounded-full"
+              />
+              <View>
+                <Text className="font-semibold text-sm">{post.userId}</Text>
+                <Text className="text-xs text-gray-500">
+                  {timeAgo(post.createdAt)}
+                </Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
 
-          <Text className='text-base text-black mb-3'>{post.content}</Text>
+          <Text className="text-base text-black mb-3">{post.content}</Text>
 
           {post.media?.[0] && (
             <Image
               source={{ uri: post.URL }}
-              className='w-full h-72 rounded-lg mb-3'
-              resizeMode='cover'
+              className="w-full h-72 rounded-lg mb-3"
+              resizeMode="cover"
             />
           )}
 
           {/* Like & Comment count */}
-          <View className='flex-row gap-6 mb-4'>
+          <View className="flex-row gap-6 mb-4">
             <TouchableOpacity
               onPress={() => setLiked(!liked)}
-              className='flex-row items-center'
+              className="flex-row items-center"
             >
               {liked ? (
-                <Heart fill='#9333ea' color='#9333ea' size={20} />
+                <Heart fill="#9333ea" color="#9333ea" size={20} />
               ) : (
-                <Heart size={20} color='#000' />
+                <Heart size={20} color="#000" />
               )}
-              <Text className='ml-2 text-sm text-black'>
+              <Text className="ml-2 text-sm text-black">
                 {liked
                   ? (post.likes?.length ?? 0) + 1
                   : post.likes?.length ?? 0}
               </Text>
             </TouchableOpacity>
 
-            <View className='flex-row items-center'>
-              <MessageCircle size={20} color='#000' />
-              <Text className='ml-2 text-sm text-black'>{comments.length}</Text>
+            <View className="flex-row items-center">
+              <MessageCircle size={20} color="#000" />
+              <Text className="ml-2 text-sm text-black">{comments.length}</Text>
             </View>
           </View>
         </View>
 
         {/* Comments */}
-        <View className='px-2 py-3'>
-          <Text className='text-lg font-bold mb-3'>Bình luận</Text>
+        <View className="px-2 py-3">
+          <Text className="text-lg font-bold mb-3">Bình luận</Text>
           {comments.length > 0 ? (
             comments.map((c) => (
-              <View key={c._id} className='mb-4 flex-row gap-3'>
+              <View key={c._id} className="mb-4 flex-row gap-3">
                 <Image
                   source={{ uri: c.user.avatar }}
-                  className='w-8 h-8 rounded-full'
+                  className="w-8 h-8 rounded-full"
                 />
-                <View className='flex-1'>
-                  <Text className='font-semibold text-sm'>{c.user.name}</Text>
-                  <Text className='text-sm text-black mt-1'>{c.content}</Text>
-                  <Text className='text-xs text-gray-500 mt-1'>
+                <View className="flex-1">
+                  <Text className="font-semibold text-sm">{c.user.name}</Text>
+                  <Text className="text-sm text-black mt-1">{c.content}</Text>
+                  <Text className="text-xs text-gray-500 mt-1">
                     {timeAgo(c.createdAt)}
                   </Text>
                 </View>
               </View>
             ))
           ) : (
-            <Text className='text-gray-500'>Chưa có bình luận nào.</Text>
+            <Text className="text-gray-500">Chưa có bình luận nào.</Text>
           )}
         </View>
       </ScrollView>
 
       {/* Comment Input */}
-      <View className='flex-row items-center p-4 border-t border-gray-200'>
+      <View className="flex-row items-center p-4 border-t border-gray-200">
         <TextInput
-          className='flex-1 bg-gray-100 rounded-full px-4 py-3 mr-2'
-          placeholder='Viết bình luận...'
+          className="flex-1 bg-gray-100 rounded-full px-4 py-3 mr-2"
+          placeholder="Viết bình luận..."
           value={newComment}
           onChangeText={setNewComment}
         />
         <TouchableOpacity onPress={handleAddComment}>
-          <Text className='text-purple-600 font-semibold'>Gửi</Text>
+          <Text className="text-purple-600 font-semibold">Gửi</Text>
         </TouchableOpacity>
       </View>
     </View>
