@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../../contexts/AuthContext";
 import * as ProfileAPI from "../../../apis/ProfileAPI";
+import * as UserAPI from "../../../apis/UserAPI";
 import { useNavigation } from "@react-navigation/native";
 import {
   ChevronLeft,
@@ -25,6 +26,7 @@ import { TextInput } from "react-native-gesture-handler";
 import ImageItem from "../detail/ImageItem";
 import { useFocusEffect } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
 
 const EditProfileScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -33,6 +35,7 @@ const EditProfileScreen = () => {
   const [profile, setProfile] = useState<any>(null);
   const [listInterest, setListInterest] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [avatar, setAvatar] = useState(user?.avatar?.toString() || "");
   // DatePicker states
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -61,6 +64,78 @@ const EditProfileScreen = () => {
     "Unknown",
   ];
 
+  // Hàm upload ảnh lên Cloudinary
+  const uploadToCloudinary = async (
+    uri: string,
+    type: "image" | "video"
+  ): Promise<string | null> => {
+    const data = new FormData();
+
+    const file = {
+      uri,
+      type: type === "image" ? "image/jpeg" : "video/mp4",
+      name: `post_${Date.now()}.${type === "image" ? "jpg" : "mp4"}`,
+    };
+
+    data.append("file", file as any);
+    data.append("upload_preset", "eBook_project");
+    data.append("cloud_name", "ddzqupaez");
+
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/ddzqupaez/${type}/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const result = await res.json();
+      return result.secure_url;
+    } catch (err) {
+      console.error("Upload error:", err);
+      return null;
+    }
+  };
+
+  // Hàm chọn ảnh từ thư viện
+  const handleSelectMedia = async () => {
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permissionResult.granted) {
+        console.log("Permission to access media library was denied");
+        alert("Permission to access media library was denied");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        allowsEditing: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const selectedAsset = result.assets[0];
+        const uploadedUrl = await uploadToCloudinary(
+          selectedAsset.uri,
+          "image"
+        );
+        if (uploadedUrl) {
+          console.log("Uploaded image URL:", uploadedUrl);
+          setAvatar(uploadedUrl); // Cập nhật state avatar để hiển thị ảnh mới ngay lập tức
+        } else {
+          console.log("Failed to upload image");
+          alert("Failed to upload image to Cloudinary");
+        }
+      }
+    } catch (error) {
+      console.error("Error selecting media:", error);
+      alert("Error selecting media");
+    }
+  };
+
   // Hàm lấy thông tin người dùng
   const fetchUserDetails = useCallback(async () => {
     try {
@@ -85,6 +160,11 @@ const EditProfileScreen = () => {
         if (response.data.zodiac) {
           setZodiac(response.data.zodiac);
         }
+
+        // Set avatar from profile if available
+        if (response.data.avatar) {
+          setAvatar(response.data.avatar);
+        }
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -104,6 +184,12 @@ const EditProfileScreen = () => {
           country: profile?.address.country,
         },
       };
+      if (avatar !== user?.avatar) {
+        const userPayload = {
+          avatar,
+        };
+        await UserAPI.updateUser(userPayload);
+      }
       await ProfileAPI.updateProfile(payload);
       alert("Profile updated successfully!");
       await fetchUserDetails(); // Refresh after update
@@ -175,7 +261,7 @@ const EditProfileScreen = () => {
             Your Best Photo
           </Text>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            <ImageItem url={user?.avatar?.toString() ?? ""} />
+            <ImageItem url={avatar} handleSelectMedia={handleSelectMedia} />
           </ScrollView>
         </View>
 
