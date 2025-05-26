@@ -1,85 +1,107 @@
-import React, { useRef } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, ActivityIndicator } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import ProfileCard from "./ProfileCard";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import DatingCard from "./DatingCard";
+import { getUserRecommends } from "../apis/UserAPI";
 
 type CardData = {
   name: string;
-  job: string;
+  zodiac: string;
   age: number;
   image: string;
   distance?: string;
 };
 
-const cards: CardData[] = [
-  {
-    name: "Kristin, 26",
-    age: 24,
-    job: "Officer",
-    image:
-      "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-19-1.jpg",
-    distance: "2.9 km",
-  },
-  {
-    name: "Esther, 24",
-    age: 24,
-    job: "Traveller",
-    image: "https://i.pravatar.cc/300?img=34",
-    distance: "2.9 km",
-  },
-  {
-    name: "Esther, 24",
-    age: 24,
-    job: "Traveller",
-    image: "https://i.pravatar.cc/300?img=30",
-    distance: "2.9 km",
-  },
-  {
-    name: "Esther, 24",
-    age: 24,
-    job: "Traveller",
-    image: "https://i.pravatar.cc/300?img=31",
-    distance: "2.9 km",
-  },
-];
-
 const SwipeCard = () => {
   const swiperRef = useRef<Swiper<CardData>>(null);
+  const [cards, setCards] = useState<CardData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [swipeKey, setSwipeKey] = useState(0); // Force re-render Swiper
 
   const swipeLeft = () => swiperRef.current?.swipeLeft();
   const swipeRight = () => swiperRef.current?.swipeRight();
 
+  const fetchUserRecommends = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getUserRecommends();
+      const data = response?.data || [];
+
+      const formattedData: CardData[] = data.map((user: any) => ({
+        name: user.name,
+        age: user.age,
+        zodiac: user.zodiac,
+        image: user.avatar,
+        distance: user.distance + " km",
+      }));
+
+      setCards(formattedData);
+      setSwipeKey((prev) => prev + 1); // Reset swiper
+    } catch (error) {
+      console.error("Failed to load user recommends", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserRecommends();
+  }, []);
+
+  const renderCard = (card: CardData | undefined) => {
+    if (!card) {
+      return (
+        <View className="items-center justify-center h-96 w-72 bg-gray-100 rounded-xl">
+          <Text>Loading...</Text>
+        </View>
+      );
+    }
+
+    return (
+      <DatingCard
+        name={card.name}
+        age={card.age}
+        zodiac={card.zodiac}
+        imageUrl={card.image}
+        distance={card.distance}
+        onLike={swipeRight}
+        onDislike={swipeLeft}
+        onRefresh={() => console.log("Refresh")}
+        onStar={() => console.log("Star")}
+      />
+    );
+  };
+
   return (
-    <View className='flex-1 bg-white'>
-      <View className='flex-1 items-center justify-center pb-12'>
-        <Swiper
-          ref={swiperRef}
-          cards={cards}
-          cardIndex={0}
-          verticalSwipe={false}
-          stackSize={5}
-          renderCard={(card) => (
-            <DatingCard
-              name={card.name}
-              age={card.age}
-              profession={card.job}
-              imageUrl={card.image}
-              distance={card.distance}
-              onLike={swipeRight}
-              onDislike={swipeLeft}
-              onRefresh={() => console.log("Refresh")}
-              onStar={() => console.log("Star")}
-            />
-          )}
-          backgroundColor='transparent'
-          showSecondCard
-          animateCardOpacity
-          disableTopSwipe
-          onSwipedLeft={(i) => console.log("❌ Disliked:", cards[i]?.name)}
-          onSwipedRight={(i) => console.log("❤️ Liked:", cards[i]?.name)}
-        />
+    <View className="flex-1 bg-white">
+      <View className="flex-1 items-center justify-center pb-12">
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#888" />
+        ) : cards.length === 0 ? (
+          <View className="items-center justify-center h-96 w-72 bg-gray-100 rounded-xl">
+            <Text>No more users. Fetching more...</Text>
+          </View>
+        ) : (
+          <Swiper
+            key={swipeKey}
+            ref={swiperRef}
+            cards={cards}
+            cardIndex={0}
+            verticalSwipe={false}
+            stackSize={5}
+            renderCard={renderCard}
+            backgroundColor="transparent"
+            showSecondCard
+            animateCardOpacity
+            disableTopSwipe
+            onSwipedLeft={(i) => console.log("❌ Disliked:", cards[i]?.name)}
+            onSwipedRight={(i) => console.log("❤️ Liked:", cards[i]?.name)}
+            onSwipedAll={() => {
+              console.log("✨ All cards swiped. Fetching more...");
+              fetchUserRecommends();
+            }}
+          />
+        )}
       </View>
     </View>
   );

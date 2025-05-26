@@ -16,8 +16,11 @@ import { RootStackParamList } from "../navigation/AppNavigation";
 import { getAllPosts, Post } from "../apis/PostAPI";
 import { useFocusEffect } from "@react-navigation/native";
 import CommentModal from "../components/CommentModal";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HomeScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
+
   const { state } = useAuth();
   const { user } = state;
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -72,11 +75,12 @@ const HomeScreen: React.FC = () => {
       fetchPosts();
     }, [])
   );
+  console.log("posts===", posts[0]);
 
   return (
-    <View className='flex-1 bg-white pt-10 px-6'>
+    <View className='flex-1 bg-white' style={{paddingTop:insets.top}}>
       {/* Header */}
-      <View className='flex-row justify-between items-center py-3'>
+      <View className='flex-row justify-between items-center py-3 px-6'>
         <View className='flex-row gap-3 items-center'>
           <Image
             source={require("../../assets/Logo.png")}
@@ -113,8 +117,8 @@ const HomeScreen: React.FC = () => {
             <PostCard
               key={post._id}
               _id={post._id}
-              username={post.userId}
-              avatarUrl='https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              username={post?.user?.name}
+              avatarUrl={post.user.avatar}
               timeAgo={new Date(post.createdAt).toLocaleString()}
               caption={post.content}
               media={post.media ?? []}

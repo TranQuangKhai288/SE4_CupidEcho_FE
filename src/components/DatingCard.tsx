@@ -6,7 +6,7 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 interface DatingCardProps {
   name: string;
   age: number;
-  profession: string;
+  zodiac: string;
   imageUrl: string;
   distance?: string;
   height?: number;
@@ -20,7 +20,7 @@ interface DatingCardProps {
 const DatingCard = ({
   name,
   age,
-  profession,
+  zodiac,
   imageUrl,
   distance,
   height = 580, // 👈 cao hơn để chứa nút
@@ -33,16 +33,16 @@ const DatingCard = ({
   const cardHeight = height - 64; // Chiều cao phần card không tính phần nút
 
   return (
-    <View style={{ width, height }} className='relative items-center'>
+    <View style={{ width, height }} className="relative items-center">
       {/* Card content */}
       <View
         style={{ width, height: cardHeight }}
-        className='rounded-[36px] overflow-hidden shadow-lg'
+        className="rounded-[36px] overflow-hidden shadow-lg"
       >
         <Image
           source={{ uri: imageUrl }}
-          className='w-full h-full object-cover'
-          resizeMode='cover'
+          className="w-full h-full object-cover"
+          resizeMode="cover"
         />
 
         {/* Gradient Overlay */}
@@ -54,31 +54,39 @@ const DatingCard = ({
             "rgba(138, 43, 226, 0.9)",
             "rgba(138, 43, 226, 1)",
           ]}
-          className='absolute bottom-0 left-0 right-0 h-1/2'
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "50%",
+          }}
         />
 
         {/* Info */}
-        <View className='absolute bottom-16 left-4 right-4'>
-          <View className='flex-row items-center justify-between mb-2'>
+        <View className="absolute bottom-16 left-4 right-4">
+          <View className="flex-row items-center justify-between mb-2">
             <View>
-              <Text className='text-white text-3xl font-bold mb-1'>
+              <Text className="text-white text-3xl font-bold mb-1">
                 {name}, {age}
               </Text>
-              <Text className='text-white text-xl opacity-90 mb-1'>
-                {profession}
+              <Text className="text-white text-xl opacity-90 mb-1">
+                {zodiac}
               </Text>
             </View>
-            <View className='flex-row items-center gap-2'>
+            <View className="flex-row items-center gap-2">
               <View
-                className='flex-row items-center px-4 py-2 rounded-full'
+                className="flex-row items-center px-4 py-2 rounded-full"
                 style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
               >
-                <Ionicons name='location-outline' size={14} color='white' />
-                <Text className='text-white text-sm ml-1'>{distance}</Text>
+                <Ionicons name="location-outline" size={14} color="white" />
+                <Text className="text-white text-sm ml-1">{distance}</Text>
               </View>
 
               <TouchableOpacity>
-                <Ionicons name='ellipsis-vertical' size={20} color='white' />
+                <Ionicons name="ellipsis-vertical" size={20} color="white" />
               </TouchableOpacity>
             </View>
           </View>
@@ -88,19 +96,19 @@ const DatingCard = ({
       {/* Action buttons */}
       <View style={styles.actionContainer}>
         <TouchableOpacity style={styles.smallButton} onPress={onRefresh}>
-          <Ionicons name='refresh' size={24} color='#6B7280' />
+          <Ionicons name="refresh" size={24} color="#6B7280" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.bigButton} onPress={onDislike}>
-          <Ionicons name='close' size={36} color='#F87171' />
+          <Ionicons name="close" size={36} color="#F87171" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.bigButton} onPress={onLike}>
-          <Ionicons name='heart' size={36} color='#EC4899' />
+          <Ionicons name="heart" size={36} color="#EC4899" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.smallButton} onPress={onStar}>
-          <FontAwesome name='star' size={24} color='#FBBF24' />
+          <FontAwesome name="star" size={24} color="#FBBF24" />
         </TouchableOpacity>
       </View>
     </View>

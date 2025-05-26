@@ -12,6 +12,13 @@ import {
 import { getCommentsByPostId } from "../apis/CommentAPI";
 import { createComment } from "../apis/CommentAPI"; // 👈 Nhớ import API tạo bình luận
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { RootStackParamList } from "../navigation/AppNavigation";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
 
 interface CommentModalProps {
   visible: boolean;
@@ -36,11 +43,12 @@ const CommentModal: React.FC<CommentModalProps> = ({
   postId,
   onUpdateCommentCount,
 }) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [commentInput, setCommentInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
+  const insets = useSafeAreaInsets();
   const fetchComments = async () => {
     setLoading(true);
     try {
@@ -78,29 +86,29 @@ const CommentModal: React.FC<CommentModalProps> = ({
   };
 
   return (
-    <Modal visible={visible} animationType='slide' onRequestClose={onClose}>
-      <View className='flex-1 bg-white p-4'>
+    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
+      <View className="flex-1 bg-white p-4" style = {{paddingTop:insets.top}}>
         <TouchableOpacity onPress={onClose}>
-          <Text className='text-right text-purple-600 font-semibold'>Đóng</Text>
+          <Text className="text-right text-purple-600 font-semibold">Đóng</Text>
         </TouchableOpacity>
-        <Text className='text-lg font-bold mt-4 mb-2'>Bình luận</Text>
+        <Text className="text-lg font-bold mt-4 mb-2">Bình luận</Text>
 
         {loading ? (
-          <ActivityIndicator size='large' color='#9333ea' />
+          <ActivityIndicator size="large" color="#9333ea" />
         ) : comments.length === 0 ? (
-          <Text className='text-gray-500'>Chưa có bình luận nào.</Text>
+          <Text className="text-gray-500">Chưa có bình luận nào.</Text>
         ) : (
-          <ScrollView className='mb-20'>
+          <ScrollView className="mb-20">
             {comments.map((c) => (
-              <View key={c._id} className='mt-4 flex-row gap-3'>
+              <View key={c._id} className="mt-4 flex-row gap-3">
                 <Image
                   source={{ uri: c.user.avatar }}
-                  className='w-8 h-8 rounded-full'
+                  className="w-8 h-8 rounded-full"
                 />
-                <View className='flex-1'>
-                  <Text className='font-semibold text-sm'>{c.user.name}</Text>
-                  <Text className='text-sm text-black mt-1'>{c.content}</Text>
-                  <Text className='text-xs text-gray-500 mt-1'>
+                <View className="flex-1">
+                  <Text className="font-semibold text-sm">{c.user.name}</Text>
+                  <Text className="text-sm text-black mt-1">{c.content}</Text>
+                  <Text className="text-xs text-gray-500 mt-1">
                     {new Date(c.createdAt).toLocaleString()}
                   </Text>
                 </View>
@@ -110,20 +118,20 @@ const CommentModal: React.FC<CommentModalProps> = ({
         )}
 
         {/* Ô nhập và nút gửi bình luận */}
-        <View className='absolute bottom-0 left-0 right-0 bg-white p-3 border-t border-gray-200 flex-row items-center'>
+        <View className="absolute bottom-0 left-0 right-0 bg-white p-3 border-t border-gray-200 flex-row items-center">
           <TextInput
-            placeholder='Nhập bình luận...'
+            placeholder="Nhập bình luận..."
             value={commentInput}
             onChangeText={setCommentInput}
-            className='flex-1 border border-gray-300 rounded-xl px-4 py-3 mr-2 text-sm'
+            className="flex-1 border border-gray-300 rounded-xl px-4 py-3 mr-2 text-sm"
             editable={!submitting}
           />
           <TouchableOpacity
             onPress={handleSubmitComment}
             disabled={submitting}
-            className='bg-purple-600 px-6 py-3 rounded-xl'
+            className="bg-purple-600 px-6 py-3 rounded-xl"
           >
-            <Text className='text-white font-semibold text-sm'>
+            <Text className="text-white font-semibold text-sm">
               {submitting ? "..." : "Gửi"}
             </Text>
           </TouchableOpacity>

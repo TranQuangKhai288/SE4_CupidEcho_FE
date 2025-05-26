@@ -15,7 +15,8 @@ import {
 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigation";
-import { registerUser } from "../../apis/UserAPI";
+import { loginUser, registerUser } from "../../apis/UserAPI";
+import { useAuth } from "../../contexts/AuthContext";
 
 type RegisterScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -33,6 +34,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChecked, setChecked] = useState(false);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const { login } = useAuth();
 
 
   const handleRegister = async () => {
@@ -50,17 +52,35 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       const res = await registerUser(payload);
 
       if (res.status === "OK") {
-        Alert.alert(
-          "Success",
-          "Account created successfully",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.navigate("InitialProfile"),
-            },
-          ],
-          { cancelable: false }
-        );
+        // Nếu đăng ký thành công thì login luôn
+        try {
+          const loginRes = await loginUser({ email, password });
+
+          if (
+            loginRes.status === "OK" &&
+            loginRes.access_token &&
+            loginRes.refresh_token
+          ) {
+            await login({
+              token: loginRes.access_token,
+              user: loginRes.data,
+              refreshToken: loginRes.refresh_token,
+            });
+            navigation.navigate("InitialProfile");
+          } else {
+            Alert.alert(
+              "Login failed",
+              "Account created, but login failed. Please try logging in manually."
+            );
+            navigation.navigate("Login");
+          }
+        } catch (loginError) {
+          Alert.alert(
+            "Login error",
+            "Account created, but login failed. Please try logging in manually."
+          );
+          navigation.navigate("Login");
+        }
       } else {
         Alert.alert("Error", res.message || "Registration failed");
       }

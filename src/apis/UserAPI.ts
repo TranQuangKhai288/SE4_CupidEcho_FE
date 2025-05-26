@@ -43,6 +43,11 @@ export const getDetailsUser = async (id: string) => {
   return res;
 };
 
+export const getUserRecommends = async () => {
+  const res: Response = await baseURL.get(`/user/recommend`);
+  return res;
+};
+
 export const refreshToken = async (refreshToken: string) => {
   const res: Response = await baseURL.post(`/user/refresh-token`, {
     refreshToken: refreshToken,
