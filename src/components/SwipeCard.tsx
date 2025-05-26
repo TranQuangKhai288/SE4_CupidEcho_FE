@@ -3,8 +3,9 @@ import { View, Text, ActivityIndicator } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import DatingCard from "./DatingCard";
 import { getUserRecommends } from "../apis/UserAPI";
-
+import * as MatchingAPI from "../apis/MatchingAPI";
 type CardData = {
+  _id: string;
   name: string;
   zodiac: string;
   age: number;
@@ -28,6 +29,7 @@ const SwipeCard = () => {
       const data = response?.data || [];
 
       const formattedData: CardData[] = data.map((user: any) => ({
+        _id: user._id,
         name: user.name,
         age: user.age,
         zodiac: user.zodiac,
@@ -72,6 +74,21 @@ const SwipeCard = () => {
     );
   };
 
+  const handleSentRequest = async (data: CardData) => {
+    try {
+      const resSent = await MatchingAPI.sentRelationshipRequest({
+        receiverId: data._id,
+      });
+      console.log(resSent, "resSent");
+    } catch (e) {
+      console.log(e, "error");
+    }
+  };
+
+  const handleDisliked = async (data: CardData) => {
+    console.log(data, "card dislike");
+  };
+
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 items-center justify-center pb-12">
@@ -94,8 +111,8 @@ const SwipeCard = () => {
             showSecondCard
             animateCardOpacity
             disableTopSwipe
-            onSwipedLeft={(i) => console.log("❌ Disliked:", cards[i]?.name)}
-            onSwipedRight={(i) => console.log("❤️ Liked:", cards[i]?.name)}
+            onSwipedLeft={(i) => handleDisliked(cards[i])}
+            onSwipedRight={(i) => handleSentRequest(cards[i])}
             onSwipedAll={() => {
               console.log("✨ All cards swiped. Fetching more...");
               fetchUserRecommends();

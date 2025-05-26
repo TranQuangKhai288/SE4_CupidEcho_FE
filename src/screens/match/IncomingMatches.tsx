@@ -59,7 +59,7 @@ interface Relationship {
 }
 
 type NewMatchNavigationProp = NavigationProp<RootStackParamList, "NewMatch">;
-const NewMatch = () => {
+const InComingMatches = () => {
   const [pendingMatches, setPendingMatches] = useState<Relationship[]>([]);
   const navigation = useNavigation<NewMatchNavigationProp>();
   const handlePress = () => {
@@ -69,6 +69,7 @@ const NewMatch = () => {
     const resMatches = await MatchingAPI.getRelationshipRequest({
       page: 1,
       limit: 5,
+      direction: "received",
     });
     console.log(resMatches, "resMatches");
     setPendingMatches(resMatches.data.relationship);
@@ -80,7 +81,7 @@ const NewMatch = () => {
   return (
     <View className="py-4">
       <View className="flex-row justify-between items-center mb-2">
-        <Text className="text-xl font-bold">Pending Matches</Text>
+        <Text className="text-xl font-bold">Someone Likes you</Text>
         <TouchableOpacity onPress={handlePress}>
           <Text className="text-primary-main font-bold">See All</Text>
         </TouchableOpacity>
@@ -93,11 +94,11 @@ const NewMatch = () => {
         {pendingMatches.map((item) => (
           <View className="flex mr-3 items-center" key={item._id}>
             <ProfileCard
-              _id={item._id}
-              name={item.receiver.name}
-              age={item.receiver.age}
-              zodiac={item.receiver.zodiac}
-              imageUrl={item.receiver.avatar}
+              _id={item?._id}
+              name={item?.sender.name}
+              age={item.sender.age}
+              zodiac={item.sender.zodiac}
+              imageUrl={item.sender.avatar}
             />
           </View>
         ))}
@@ -106,4 +107,4 @@ const NewMatch = () => {
   );
 };
 
-export default NewMatch;
+export default InComingMatches;

@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const instance = axios.create({
-  baseURL: `http://192.168.1.6:5000/api`,
+  baseURL: `http://172.16.16.127:5000/api`,
   timeout: 50000,
 });
 
@@ -38,7 +38,11 @@ instance.interceptors.response.use(
         const result: any = await instance.post(`/user/refresh-token`, {
           withCredentials: true,
         });
-        console.log(result, "result refresh token");
+
+        if (result.status === "ERR") {
+          console.error("refresh token failed");
+          console.log(result, "result refresh token");
+        }
         //console.log("Refresh token result", result.access_token);
         const access_token = result.access_token;
         originalRequest.headers["authorization"] = `Bearer ${access_token}`;
