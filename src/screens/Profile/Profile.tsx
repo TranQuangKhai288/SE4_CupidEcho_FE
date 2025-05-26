@@ -15,6 +15,7 @@ import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useAuth } from "../../contexts/AuthContext";
 import * as UserAPI from "../../apis/UserAPI";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
@@ -56,6 +57,7 @@ const ProfileScreen: React.FC = () => {
   // }, [user]); // Chạy lại khi `user` thay đổi
 
   // Function to handle logout confirmation (logs to console)
+  const insets = useSafeAreaInsets();
   const handleConfirmLogout = async () => {
     setLogoutModalVisible(false);
     console.log("User logged out successfully!"); // Log to console
@@ -63,7 +65,7 @@ const ProfileScreen: React.FC = () => {
     navigation.navigate("Login");
   };
   return (
-    <SafeAreaView className='flex-1 bg-white'>
+    <View className="flex-1 bg-white" style={{paddingTop: insets.top}} >
       <View>
         <ScrollView>
           {/* Header */}
@@ -191,7 +193,7 @@ const ProfileScreen: React.FC = () => {
           </View>
         </Modal>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

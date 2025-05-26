@@ -48,9 +48,24 @@ export const getUserRecommends = async () => {
   return res;
 };
 
+export const updateUser = async(data: any)=>{
+  const res:Response = await baseURL.put(`/user/`,data)
+  return res;
+}
+
 export const refreshToken = async (refreshToken: string) => {
   const res: Response = await baseURL.post(`/user/refresh-token`, {
     refreshToken: refreshToken,
   });
   return res;
 };
+
+export const getConditionByUserId = async(userId: string)=>{
+  const res:Response = await baseURL.get(`/user/condition/${userId}`);
+  return res.data;
+}
+
+export const updateConditionByUser = async(data: any)=>{
+  const res:Response = await baseURL.put(`/user/condition/`,data);
+  return res;
+}

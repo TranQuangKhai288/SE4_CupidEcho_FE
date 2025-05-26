@@ -66,7 +66,7 @@ const PostCard: React.FC<PostCardProps> = ({
     <View className="bg-gray-50 px-4 py-3 shadow-gray-400 shadow-lg rounded-lg m-4">
       {/* Header */}
       <TouchableOpacity className="flex-row items-center mb-2" onPress={() => {
-            navigation.navigate("ProfileUserDetail", { userId: username });
+            navigation.navigate("ProfileUserDetail", { userId: userId });
           }} >
           <Image
             source={{ uri: avatarUrl }}
