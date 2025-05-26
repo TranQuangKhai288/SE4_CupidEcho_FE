@@ -19,7 +19,7 @@ import * as MatchingAPI from "../../apis/MatchingAPI";
 
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { Relationship } from "./PendingMatches";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const newMatchingUsers = [
   {
     id: 1,
@@ -107,6 +107,7 @@ const SeeAllMatches = () => {
     setData(resMatches.data.relationship);
   };
 
+  const insets = useSafeAreaInsets();
   useEffect(() => {
     switch (title) {
       case "Pending Matches":
@@ -121,8 +122,8 @@ const SeeAllMatches = () => {
   }, [title]);
 
   return (
-    <View className="flex-1 bg-white">
-      <View className="flex-row items-center justify-between px-4 py-6 ">
+    <View className="flex-1 bg-white" style={{paddingTop:insets.top}}>
+      <View className="flex-row items-center justify-between px-4 pb-4 ">
         <View className="flex-row items-center gap-4">
           <TouchableOpacity onPress={handleBackPress}>
             <MaterialIcons name="arrow-back" size={20} color="black" />

@@ -26,7 +26,7 @@ const SwipeCard = () => {
     setIsLoading(true);
     try {
       const response = await getUserRecommends();
-      const data = response?.data || [];
+      const data = response?.data.recommended || [];
 
       const formattedData: CardData[] = data.map((user: any) => ({
         _id: user._id,

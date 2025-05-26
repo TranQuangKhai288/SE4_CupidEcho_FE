@@ -118,7 +118,7 @@ const ExploreScreen: React.FC = () => {
           {["male", "female", "another"].map((g) => (
             <TouchableOpacity
               key={g}
-              className={`px-10 py-4 rounded-full ${
+              className={`px-9 py-3 rounded-full ${
                 gender === g ? "bg-purple-500" : "bg-gray-200"
               }`}
               onPress={() => setGender(g)}

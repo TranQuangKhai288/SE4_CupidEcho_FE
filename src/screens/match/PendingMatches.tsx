@@ -4,7 +4,7 @@ import ProfileCard from "../../components/ProfileCard";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import * as MatchingAPI from "../../apis/MatchingAPI";
 import { RootStackParamList } from "../../navigation/AppNavigation";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 export interface Relationship {
   _id: string;
   sender: {
@@ -49,8 +49,9 @@ const PendingMatches = () => {
   useEffect(() => {
     getPendingMatches();
   }, []);
+  const insets = useSafeAreaInsets();
   return (
-    <View className="py-4">
+    <View className="flex-1 mt-4">
       <View className="flex-row justify-between items-center mb-2">
         <Text className="text-xl font-bold">Pending Matches</Text>
         <TouchableOpacity onPress={handlePress}>
