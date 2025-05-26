@@ -59,3 +59,13 @@ export const refreshToken = async (refreshToken: string) => {
   });
   return res;
 };
+
+export const getConditionByUserId = async(userId: string)=>{
+  const res:Response = await baseURL.get(`/user/condition/${userId}`);
+  return res.data;
+}
+
+export const updateConditionByUser = async(data: any)=>{
+  const res:Response = await baseURL.put(`/user/condition/`,data);
+  return res;
+}

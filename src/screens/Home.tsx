@@ -75,7 +75,6 @@ const HomeScreen: React.FC = () => {
       fetchPosts();
     }, [])
   );
-  console.log("posts===", posts[0]);
 
   return (
     <View className='flex-1 bg-white' style={{paddingTop:insets.top}}>
