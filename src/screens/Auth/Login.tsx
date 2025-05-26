@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, Alert } from "react-native";
 import {
   MaterialIcons,
   Feather,
@@ -33,6 +33,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       const response = await UserAPI.loginUser({ email, password });
       if (response?.status !== "OK") {
         console.log("Login failed", response?.message);
+        Alert.alert("Login Failed", response?.message || "Invalid credentials");
         return;
       }
       if (!response?.access_token || !response?.refresh_token) {

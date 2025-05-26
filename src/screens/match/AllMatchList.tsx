@@ -23,8 +23,8 @@ const AllMatchListScreen: React.FC = ({}) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
-    <ScrollView className="flex-1 bg-white pt-10 px-6">
-      <View className="flex-row justify-between items-center  py-3 ">
+    <ScrollView className="flex-1 bg-white px-6">
+      <View className="flex-row justify-between items-center py-3 ">
         <View className="flex-row gap-5 items-center">
           <TouchableOpacity onPress={handleBackPress}>
             <MaterialIcons name="arrow-back" size={20} color="black" />

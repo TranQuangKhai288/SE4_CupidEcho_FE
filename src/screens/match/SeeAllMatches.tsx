@@ -121,8 +121,8 @@ const SeeAllMatches = () => {
   }, [title]);
 
   return (
-    <View className="flex-1 bg-white pt-6">
-      <View className="flex-row items-center justify-between px-4 py-3 ">
+    <View className="flex-1 bg-white">
+      <View className="flex-row items-center justify-between px-4 py-6 ">
         <View className="flex-row items-center gap-4">
           <TouchableOpacity onPress={handleBackPress}>
             <MaterialIcons name="arrow-back" size={20} color="black" />
