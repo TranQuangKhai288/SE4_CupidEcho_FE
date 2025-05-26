@@ -129,8 +129,8 @@ const ProfileUserDetail: React.FC = () => {
             <PostCard
               key={post._id}
               _id={post._id}
-              username={post.userId}
-              avatarUrl="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              username={post.user.name}
+              avatarUrl={post.user.avatar}
               timeAgo={new Date(post.createdAt).toLocaleString()}
               caption={post.content}
               media={post.media ?? []}
@@ -138,7 +138,7 @@ const ProfileUserDetail: React.FC = () => {
               comments={post.commentCount ?? 0}
               openComments={openComments}
               onLikeToggle={handleLikeToggle}
-              userId={user?._id ?? ""}
+              userId={post.user._id}
             />
           ))
         )}

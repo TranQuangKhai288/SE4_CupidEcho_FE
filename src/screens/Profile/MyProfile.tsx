@@ -55,7 +55,7 @@ const MyProfileScreen = () => {
         <View className="relative">
           <Image
             source={{
-              uri: "https://anhnail.vn/wp-content/uploads/2024/10/meme-meo-khoc-7.webp",
+              uri: user?.avatar,
             }}
             className="w-full h-[500px]"
             resizeMode="cover"

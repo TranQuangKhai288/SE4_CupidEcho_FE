@@ -75,7 +75,6 @@ const HomeScreen: React.FC = () => {
       fetchPosts();
     }, [])
   );
-  console.log("posts===", posts[0]);
 
   return (
     <View className='flex-1 bg-white' style={{paddingTop:insets.top}}>
@@ -126,7 +125,7 @@ const HomeScreen: React.FC = () => {
               comments={post.commentCount ?? 0}
               openComments={openComments}
               onLikeToggle={handleLikeToggle}
-              userId={user?._id ?? ""}
+              userId={post.user._id}
             />
           ))
         )}
