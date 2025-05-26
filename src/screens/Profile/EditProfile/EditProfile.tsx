@@ -176,11 +176,6 @@ const EditProfileScreen = () => {
           </Text>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             <ImageItem url={user?.avatar?.toString() ?? ""} />
-            <ImageItem url="https://anhnail.vn/wp-content/uploads/2024/10/meme-meo-khoc-3.webp" />
-            <ImageItem url="https://anhnail.vn/wp-content/uploads/2024/10/meme-meo-khoc-6.webp" />
-            <ImageItem url="https://anhnail.vn/wp-content/uploads/2024/10/meme-meo-khoc-3.webp" />
-            <ImageItem url="https://anhnail.vn/wp-content/uploads/2024/10/meme-meo-khoc-6.webp" />
-            <ImageItem url="https://anhnail.vn/wp-content/uploads/2024/10/meme-meo-khoc-3.webp" />
           </ScrollView>
         </View>
 

@@ -5,9 +5,15 @@ export type MediaItem = {
   URL: string;
 };
 
+export type UserItem ={
+  _id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}
+
 export type Post = {
   _id: string;
-  userId: string;
   content: string;
   likes: string[]; // Mảng userId đã like
   createdAt: string;
@@ -15,6 +21,7 @@ export type Post = {
   media?: MediaItem[]; // Nếu có
   likeCount?: number;
   commentCount?: number;
+  user: UserItem;
 };
 
 export type CreatePostPayload = {

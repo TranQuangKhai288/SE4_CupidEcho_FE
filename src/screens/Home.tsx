@@ -75,6 +75,7 @@ const HomeScreen: React.FC = () => {
       fetchPosts();
     }, [])
   );
+  console.log("posts===", posts[0]);
 
   return (
     <View className='flex-1 bg-white' style={{paddingTop:insets.top}}>
@@ -116,8 +117,8 @@ const HomeScreen: React.FC = () => {
             <PostCard
               key={post._id}
               _id={post._id}
-              username={post.userId}
-              avatarUrl='https://cdn-icons-png.flaticon.com/512/149/149071.png'
+              username={post?.user?.name}
+              avatarUrl={post.user.avatar}
               timeAgo={new Date(post.createdAt).toLocaleString()}
               caption={post.content}
               media={post.media ?? []}
