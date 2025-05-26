@@ -5,8 +5,8 @@ import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigation";
 
-// const SOCKET_URL = `${process.env.EXPO_PUBLIC_API_URL}`; // Thay bằng URL của BE server của bạn
-const SOCKET_URL = `http://192.168.1.2:5000`; // Thay bằng URL của BE server của bạn
+// const SOCKET_URL = `${process.env.EXPO_PUBLIC_API_URL}`;
+const SOCKET_URL = `http://172.16.16.127:5000`;
 
 // sockets/socket.ts
 class SocketService {

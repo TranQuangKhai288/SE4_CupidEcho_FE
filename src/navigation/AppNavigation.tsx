@@ -20,7 +20,7 @@ import OnboardingScreen from "../screens/onboarding/Onboarding";
 import ForgotPasswordScreen from "../screens/forgotPass/ForgotPassword";
 import verifyCodeScreen from "../screens/forgotPass/verifyCode";
 import CreateNewPasswordScreen from "../screens/forgotPass/CreateNewPassword";
-import NewMatchList from "../screens/match/NewMatchList";
+import SeeAllMatches from "../screens/match/SeeAllMatches";
 import SettingsScreen from "../screens/Profile/Setting/Settings";
 import FindAMatch from "../screens/match/FindAMatch";
 import HelpCenterScreen from "../screens/Profile/Help";
@@ -56,7 +56,7 @@ export type RootStackParamList = {
   Register: undefined;
   Home: undefined;
   Profile: undefined;
-  NewMatch: undefined;
+  SeeAllMatches: { title: string };
   AllMatchList: undefined;
   RandomMatch: undefined;
   ExploreDetail: { title: string };
@@ -96,8 +96,8 @@ export type RootStackParamList = {
   SubscribeVIP: undefined;
   Payment: undefined;
   EditProfile: undefined;
-  EditInterest:{ListInterest: string[]};
-  ProfileUserDetail:{ userId : string}
+  EditInterest: { ListInterest: string[] };
+  ProfileUserDetail: { userId: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -142,7 +142,7 @@ const AppNavigator: React.FC = () => {
         />
         {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
         <Stack.Screen name="AllMatchList" component={AllMatchListScreen} />
-        <Stack.Screen name="NewMatch" component={NewMatchList} />
+        <Stack.Screen name="SeeAllMatches" component={SeeAllMatches} />
         <Stack.Screen name="RandomMatch" component={RandomMatch} />
         <Stack.Screen name="ExploreDetail" component={ExploreDetail} />
         <Stack.Screen name="Chat" component={ChatScreen} />
