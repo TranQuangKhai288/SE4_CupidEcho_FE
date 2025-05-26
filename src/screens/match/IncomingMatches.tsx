@@ -3,69 +3,18 @@ import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import ProfileCard from "../../components/ProfileCard";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import * as MatchingAPI from "../../apis/MatchingAPI";
+import { RootStackParamList } from "../../navigation/AppNavigation";
+import { Relationship } from "./PendingMatches";
 
-const newMatchingUsers = [
-  {
-    id: 1,
-    name: "Trinh Nguyễn",
-    age: 25,
-    profession: "Designer",
-    avatar:
-      "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-25.jpg",
-  },
-  {
-    id: 2,
-    name: "Bích Hằng",
-    age: 23,
-    profession: "Developer",
-    avatar:
-      "https://timanhdep.com/wp-content/uploads/2022/06/hinh-anh-gai-xinh-cute-viet-nam-nhin-la-yeu-30.jpg",
-  },
-  {
-    id: 3,
-    name: "Mai Nguyễn",
-    age: 22,
-    profession: "Marketing",
-    avatar:
-      "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-19-1.jpg",
-  },
-];
-
-type RootStackParamList = {
-  NewMatch: undefined;
-};
-interface Relationship {
-  _id: string;
-  sender: {
-    _id: string;
-    name: string;
-    email: string;
-    avatar: string;
-    age: number;
-    birthDate: Date;
-    zodiac: string;
-  };
-  receiver: {
-    _id: string;
-    name: string;
-    email: string;
-    avatar: string;
-    age: number;
-    birthDate: Date;
-    zodiac: string;
-  };
-  type: string;
-  status: string;
-}
-
-type NewMatchNavigationProp = NavigationProp<RootStackParamList, "NewMatch">;
 const InComingMatches = () => {
   const [pendingMatches, setPendingMatches] = useState<Relationship[]>([]);
-  const navigation = useNavigation<NewMatchNavigationProp>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const handlePress = () => {
-    navigation.navigate("NewMatch");
+    navigation.navigate("SeeAllMatches", {
+      title: "Someone Likes You",
+    });
   };
-  const getPendingMatches = async () => {
+  const getReceivedMatches = async () => {
     const resMatches = await MatchingAPI.getRelationshipRequest({
       page: 1,
       limit: 5,
@@ -76,7 +25,7 @@ const InComingMatches = () => {
   };
 
   useEffect(() => {
-    getPendingMatches();
+    getReceivedMatches();
   }, []);
   return (
     <View className="py-4">

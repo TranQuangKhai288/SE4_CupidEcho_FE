@@ -29,22 +29,22 @@ const yourMatchingUsers = [
   },
 ];
 
-const YourMatch = () => {
+const YourMatched = () => {
   return (
-    <View className='py-4'>
-      <View className='flex-row justify-between items-center mb-2'>
-        <Text className='text-xl font-bold'>Your Match</Text>
+    <View className="py-4">
+      <View className="flex-row justify-between items-center mb-2">
+        <Text className="text-xl font-bold">Your Match</Text>
         <TouchableOpacity>
-          <Text className='text-primary-main font-bold'>See All</Text>
+          <Text className="text-primary-main font-bold">See All</Text>
         </TouchableOpacity>
       </View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        className='flex-row mt-3'
+        className="flex-row mt-3"
       >
         {yourMatchingUsers.map((user) => (
-          <View className='flex mr-3 items-center' key={user.id}>
+          <View className="flex mr-3 items-center" key={user.id}>
             <SimpleProfileCard
               name={user.name}
               age={user.age}
@@ -57,4 +57,4 @@ const YourMatch = () => {
   );
 };
 
-export default YourMatch;
+export default YourMatched;

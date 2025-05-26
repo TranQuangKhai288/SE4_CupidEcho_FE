@@ -12,8 +12,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { FontAwesome, Feather, MaterialIcons } from "@expo/vector-icons";
-import NewMatch from "./NewMatch";
-import YourMatch from "./YourMatch";
+import PendingMatches from "./PendingMatches";
+import YourMatched from "./YourMatched";
 import InComingMatches from "./IncomingMatches";
 
 const AllMatchListScreen: React.FC = ({}) => {
@@ -32,9 +32,9 @@ const AllMatchListScreen: React.FC = ({}) => {
           <Text className="text-3xl font-bold">Match</Text>
         </View>
       </View>
-      <NewMatch />
+      <PendingMatches />
       <InComingMatches />
-      <YourMatch />
+      <YourMatched />
     </ScrollView>
   );
 };
