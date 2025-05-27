@@ -4,13 +4,13 @@ import { LinearGradient } from "expo-linear-gradient";
 
 interface ProfileCardProps {
   _id: string;
-
   name: string;
   age: number;
   zodiac: string;
   imageUrl: string;
   height?: number;
   width?: number;
+  actions?: React.ReactNode;
 }
 
 const ProfileCard = ({
@@ -19,12 +19,13 @@ const ProfileCard = ({
   age,
   zodiac,
   imageUrl,
-  height = 320, // Default height of 320px
-  width = 224, // Default width of 224px
+  height = 320,
+  width = 224,
+  actions,
 }: ProfileCardProps) => {
   return (
     <View
-      className="relative rounded-[36px] overflow-hidden shadow-lg"
+      className='relative rounded-[36px] overflow-hidden shadow-lg'
       style={{
         width: width,
         height: height,
@@ -32,8 +33,8 @@ const ProfileCard = ({
     >
       <Image
         source={{ uri: imageUrl }}
-        className="w-full h-full object-cover"
-        resizeMode="cover"
+        className='w-full h-full object-cover'
+        resizeMode='cover'
       />
 
       <LinearGradient
@@ -52,11 +53,14 @@ const ProfileCard = ({
           height: "50%",
         }}
       >
-        <View className="absolute bottom-4 left-4">
-          <Text className="text-white text-2xl font-bold mb-1">
+        <View className='absolute bottom-4 left-4 right-4'>
+          <Text className='text-white text-2xl font-bold mb-1'>
             {name}, {age}
           </Text>
-          <Text className="text-white text-sm opacity-90 mb-2">{zodiac}</Text>
+          <Text className='text-white text-sm opacity-90 mb-2'>{zodiac}</Text>
+
+     
+          {actions && <View className='mt-3 items-center'>{actions}</View>}
         </View>
       </LinearGradient>
     </View>

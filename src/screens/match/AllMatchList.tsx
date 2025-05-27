@@ -24,7 +24,7 @@ const AllMatchListScreen: React.FC = ({}) => {
   const insets = useSafeAreaInsets();
   return (
     <ScrollView
-      className="flex-1 bg-white px-6 "
+      className="flex-1 bg-white px-6 mt-3"
       style={{ paddingTop: insets.top }}
       showsVerticalScrollIndicator={false}
     >
