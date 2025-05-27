@@ -1,40 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import ProfileCard from "../../components/ProfileCard";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import * as MatchingAPI from "../../apis/MatchingAPI";
+import { RootStackParamList } from "../../navigation/AppNavigation";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SimpleProfileCard from "../../components/SimpleProfileCard";
-
-const yourMatchingUsers = [
-  {
-    id: 1,
-    name: "Trinh Nguyễn",
-    age: 25,
-    profession: "Designer",
-    avatar:
-      "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-25.jpg",
-  },
-  {
-    id: 2,
-    name: "Bích Hằng",
-    age: 23,
-    profession: "Developer",
-    avatar:
-      "https://timanhdep.com/wp-content/uploads/2022/06/hinh-anh-gai-xinh-cute-viet-nam-nhin-la-yeu-30.jpg",
-  },
-  {
-    id: 3,
-    name: "Mai Nguyễn",
-    age: 22,
-    profession: "Marketing",
-    avatar:
-      "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-19-1.jpg",
-  },
-];
+export interface Relationship {
+  _id: string;
+  sender: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    age: number;
+    birthDate: Date;
+    zodiac: string;
+  };
+  receiver: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    age: number;
+    birthDate: Date;
+    zodiac: string;
+  };
+  type: string;
+  status: string;
+}
 
 const YourMatched = () => {
+  const [pendingMatches, setPendingMatches] = useState<Relationship[]>([]);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const handlePress = () => {
+    navigation.navigate("SeeAllMatches", {
+      title: "Your Matched",
+    });
+  };
+  const getPendingMatches = async () => {
+    const resMatches = await MatchingAPI.getRelationshipRequest({
+      page: 1,
+      limit: 5,
+      status: "accepted",
+    });
+    console.log(resMatches, "resMatches");
+    setPendingMatches(resMatches.data.relationship);
+  };
+
+  useEffect(() => {
+    getPendingMatches();
+  }, []);
+  const insets = useSafeAreaInsets();
   return (
-    <View className="py-4">
+    <View className="flex-1 pb-16">
       <View className="flex-row justify-between items-center mb-2">
-        <Text className="text-xl font-bold">Your Match</Text>
-        <TouchableOpacity>
+        <Text className="text-xl font-bold">Your Matched</Text>
+        <TouchableOpacity onPress={handlePress}>
           <Text className="text-primary-main font-bold">See All</Text>
         </TouchableOpacity>
       </View>
@@ -43,12 +65,12 @@ const YourMatched = () => {
         showsHorizontalScrollIndicator={false}
         className="flex-row mt-3"
       >
-        {yourMatchingUsers.map((user) => (
-          <View className="flex mr-3 items-center" key={user.id}>
+        {pendingMatches.map((item) => (
+          <View className="flex mr-3 items-center" key={item._id}>
             <SimpleProfileCard
-              name={user.name}
-              age={user.age}
-              imageUrl={user.avatar}
+              name={item.receiver.name}
+              age={item.receiver.age}
+              imageUrl={item.receiver.avatar}
             />
           </View>
         ))}

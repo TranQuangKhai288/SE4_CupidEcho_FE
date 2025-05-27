@@ -76,7 +76,7 @@ const SwipeCard = () => {
 
   const handleSentRequest = async (data: CardData) => {
     try {
-      const resSent = await MatchingAPI.sentRelationshipRequest({
+      const resSent = await MatchingAPI.createRelationship({
         receiverId: data._id,
       });
       console.log(resSent, "resSent");
@@ -86,7 +86,15 @@ const SwipeCard = () => {
   };
 
   const handleDisliked = async (data: CardData) => {
-    console.log(data, "card dislike");
+    try {
+      const resSent = await MatchingAPI.createRelationship({
+        receiverId: data._id,
+        status: "ignored",
+      });
+      console.log(resSent, "resSent");
+    } catch (e) {
+      console.log(e, "error");
+    }
   };
 
   return (

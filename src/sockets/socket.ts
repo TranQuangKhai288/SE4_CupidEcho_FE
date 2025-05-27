@@ -6,7 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigation";
 
 // const SOCKET_URL = `${process.env.EXPO_PUBLIC_API_URL}`;
-const SOCKET_URL = `http://172.16.16.127:5000`;
+const SOCKET_URL = `http://192.168.1.11:5000`;
 
 // sockets/socket.ts
 class SocketService {
