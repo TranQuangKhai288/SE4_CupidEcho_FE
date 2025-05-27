@@ -6,10 +6,10 @@ import React, {
   ReactNode,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as UserAPI from "../apis/UserAPI"; // Giả sử bạn đã có UserAPI
+import * as UserAPI from "../apis/UserAPI";
 import { socketService } from "../sockets/socket";
 
-interface User {
+export interface IUser {
   _id: string;
   name: string;
   email: string;
@@ -20,7 +20,7 @@ interface User {
 interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
-  user: User | null;
+  user: IUser | null;
   token: string | null;
   refreshToken: string | null;
   isSocketConnected: boolean;
@@ -31,16 +31,17 @@ type AuthAction =
       type: "RESTORE_TOKEN";
       payload: {
         token: string | null;
-        user: User | null;
+        user: IUser | null;
         refreshToken: string | null;
       };
     }
   | {
       type: "LOGIN";
-      payload: { token: string; user: User; refreshToken: string };
+      payload: { token: string; user: IUser; refreshToken: string };
     }
   | { type: "LOGOUT" }
-  | { type: "SET_SOCKET_CONNECTED"; payload: boolean };
+  | { type: "SET_SOCKET_CONNECTED"; payload: boolean }
+  | { type: "UPDATE_USER"; payload: IUser }; // Thêm action này
 
 const initialState: AuthState = {
   isLoading: true,
@@ -55,10 +56,11 @@ const AuthContext = createContext<{
   state: AuthState;
   login: (userData: {
     token: string;
-    user: User;
+    user: IUser;
     refreshToken: string;
   }) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (user: IUser) => Promise<void>; // Thêm vào context
 }>(undefined!);
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -90,6 +92,11 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
       return {
         ...state,
         isSocketConnected: action.payload,
+      };
+    case "UPDATE_USER":
+      return {
+        ...state,
+        user: action.payload,
       };
     default:
       return state;
@@ -156,6 +163,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     };
 
     bootstrapAsync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -209,6 +217,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         socketService.disconnect();
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token, state.refreshToken]);
 
   const login = async ({
@@ -217,7 +226,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     refreshToken,
   }: {
     token: string;
-    user: User;
+    user: IUser;
     refreshToken: string;
   }) => {
     await AsyncStorage.setItem("token", token);
@@ -232,8 +241,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     socketService.disconnect();
   };
 
+  // THÊM PHƯƠNG THỨC UPDATE USER
+  const updateUser = async (user: IUser) => {
+    await AsyncStorage.setItem("user", JSON.stringify(user));
+    dispatch({ type: "UPDATE_USER", payload: user });
+  };
+
   return (
-    <AuthContext.Provider value={{ state, login, logout }}>
+    <AuthContext.Provider value={{ state, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

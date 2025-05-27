@@ -10,7 +10,7 @@ import {
   Modal,
   FlatList,
 } from "react-native";
-import { useAuth } from "../../../contexts/AuthContext";
+import { useAuth, IUser } from "../../../contexts/AuthContext";
 import * as ProfileAPI from "../../../apis/ProfileAPI";
 import * as UserAPI from "../../../apis/UserAPI";
 import { useNavigation } from "@react-navigation/native";
@@ -30,7 +30,7 @@ import * as ImagePicker from "expo-image-picker";
 
 const EditProfileScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const { state } = useAuth();
+  const { state, updateUser } = useAuth();
   const { user } = state;
   const [profile, setProfile] = useState<any>(null);
   const [listInterest, setListInterest] = useState<string[]>([]);
@@ -188,7 +188,9 @@ const EditProfileScreen = () => {
         const userPayload = {
           avatar,
         };
-        await UserAPI.updateUser(userPayload);
+        const resUpdate = await UserAPI.updateUser(userPayload);
+        console.log(resUpdate, "resUpdate");
+        await updateUser(resUpdate as IUser);
       }
       await ProfileAPI.updateProfile(payload);
       alert("Profile updated successfully!");
