@@ -23,7 +23,11 @@ const AllMatchListScreen: React.FC = ({}) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   return (
-    <ScrollView className="flex-1 bg-white px-6 " style={{paddingTop:insets.top}}>
+    <ScrollView
+      className="flex-1 bg-white px-6 "
+      style={{ paddingTop: insets.top }}
+      showsVerticalScrollIndicator={false}
+    >
       <View className="flex-row justify-between items-center">
         <View className="flex-row gap-5 items-center">
           <TouchableOpacity onPress={handleBackPress}>

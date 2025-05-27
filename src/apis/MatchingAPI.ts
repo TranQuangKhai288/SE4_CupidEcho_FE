@@ -26,17 +26,20 @@ export const stopMatching = async () => {
   }
 };
 
-export const sentRelationshipRequest = async ({
+export const createRelationship = async ({
   receiverId,
   type = "crush",
+  status = "pending",
 }: {
   receiverId: string;
   type?: string;
+  status?: string;
 }) => {
   try {
     const res: Response = await baseURL.post("/relationship", {
       receiverId,
       type,
+      status,
     });
     return res;
   } catch (error) {
@@ -50,15 +53,17 @@ export const getRelationshipRequest = async ({
   limit = 10,
   type = "crush",
   direction = "sent",
+  status = "",
 }: {
   page?: number;
   limit?: number;
   type?: string;
   direction?: string;
+  status?: string;
 }) => {
   try {
     const res: any = await baseURL.get(
-      `/relationship?page=${page}&limit=${limit}&type=${type}&direction=${direction}`
+      `/relationship?page=${page}&limit=${limit}&type=${type}&direction=${direction}&status=${status}`
     );
     return res;
   } catch (error) {
