@@ -34,23 +34,6 @@ const HomeScreen: React.FC = () => {
     setShowCommentsModal(true);
   };
 
-  const handleLikeToggle = (postId: string, liked: boolean) => {
-    if (!user?._id) return;
-
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post._id === postId
-          ? {
-              ...post,
-              likes: liked
-                ? [...post.likes, user._id]
-                : post.likes.filter((id) => id !== user._id),
-            }
-          : post
-      )
-    );
-  };
-
   const updateCommentCount = (postId: string, newCount: number) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
@@ -77,28 +60,28 @@ const HomeScreen: React.FC = () => {
   );
 
   return (
-    <View className='flex-1 bg-white' style={{paddingTop:insets.top}}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
-      <View className='flex-row justify-between items-center py-3 px-6'>
-        <View className='flex-row gap-3 items-center'>
+      <View className="flex-row justify-between items-center py-3 px-6">
+        <View className="flex-row gap-3 items-center">
           <Image
             source={require("../../assets/Logo.png")}
             style={{ width: 28, height: 28 }}
           />
-          <Text className='text-3xl font-bold'>CupidEcho</Text>
+          <Text className="text-3xl font-bold">CupidEcho</Text>
         </View>
 
-        <View className='flex-row gap-5 items-center'>
+        <View className="flex-row gap-5 items-center">
           <TouchableOpacity
             onPress={() => navigation.navigate("CreateNewPost")}
           >
-            <Feather name='plus-circle' size={20} color='black' />
+            <Feather name="plus-circle" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity>
-            <View className='relative'>
-              <Feather name='heart' size={20} color='black' />
-              <View className='absolute bottom-4 left-4'>
-                <Text className='bg-red-600 text-white text-xs rounded-full px-1'>
+            <View className="relative">
+              <Feather name="heart" size={20} color="black" />
+              <View className="absolute bottom-4 left-4">
+                <Text className="bg-red-600 text-white text-xs rounded-full px-1">
                   5
                 </Text>
               </View>
@@ -110,7 +93,7 @@ const HomeScreen: React.FC = () => {
       {/* Posts */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {loading ? (
-          <ActivityIndicator size='large' color='#6b21a8' />
+          <ActivityIndicator size="large" color="#6b21a8" />
         ) : (
           posts.map((post) => (
             <PostCard
@@ -121,10 +104,11 @@ const HomeScreen: React.FC = () => {
               timeAgo={new Date(post.createdAt).toLocaleString()}
               caption={post.content}
               media={post.media ?? []}
-              likes={post.likes ?? []}
-              comments={post.commentCount ?? 0}
+              likeCount={post.likeCount}
+              commentCount={post.commentCount}
+              isLiked={post.isLiked}
               openComments={openComments}
-              onLikeToggle={handleLikeToggle}
+              // onLikeToggle={handleLikeToggle}
               userId={post.user._id}
             />
           ))

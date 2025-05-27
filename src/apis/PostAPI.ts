@@ -5,22 +5,23 @@ export type MediaItem = {
   URL: string;
 };
 
-export type UserItem ={
+export type UserItem = {
   _id: string;
   name: string;
   email: string;
   avatar: string;
-}
+};
 
 export type Post = {
   _id: string;
   content: string;
-  likes: string[]; // Mảng userId đã like
+
   createdAt: string;
   updatedAt: string;
   media?: MediaItem[]; // Nếu có
-  likeCount?: number;
-  commentCount?: number;
+  likeCount: number;
+  commentCount: number;
+  isLiked: boolean;
   user: UserItem;
 };
 
@@ -78,16 +79,10 @@ export const getPostByUserId = async (userId: string): Promise<Post[]> => {
   }
 };
 
-export const likePost = async (
-  postId: string,
-  token: string
-): Promise<void> => {
+export const likePost = async (postId: string): Promise<any> => {
   try {
-    await baseURL.post(`/post/like/${postId}`, null, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await baseURL.post(`/post/like/${postId}`);
+    return res;
   } catch (error) {
     console.error(`Like post ${postId} error:`, error);
     throw error;
