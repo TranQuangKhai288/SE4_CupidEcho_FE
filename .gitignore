@@ -5,6 +5,12 @@ node_modules/
 package-lock.json
 android/.gradle
 ios/Pods
+android/app/build/
+android/build/
+ios/build/
+ios/Pods/
+ios/Podfile.lock
+
 
 # Expo
 .expo/
