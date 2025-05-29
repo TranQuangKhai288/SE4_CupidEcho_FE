@@ -3,15 +3,14 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { format } from "date-fns";
 import { useAuth } from "../../contexts/AuthContext";
-type RootStackParamList = {
-  ChatDetail: { _id: string; name: string; avatar: string };
-};
+import { RootStackParamList } from "../../navigation/AppNavigation";
 
 type ChatNavigationProp = NavigationProp<RootStackParamList, "ChatDetail">;
 
 interface ChatItemProps {
   _id: string;
   participants: {
+    _id: string;
     name: string;
     avatar: string;
   };
@@ -42,9 +41,10 @@ const ChatItem: React.FC<ChatItemProps> = ({
   const { user } = state;
   const handlePress = () => {
     navigation.navigate("ChatDetail", {
-      _id,
+      convId: _id,
       name: participants.name,
       avatar: participants.avatar,
+      peerId: participants._id,
     });
   };
   console.log(lastMessage, "lastMessage");

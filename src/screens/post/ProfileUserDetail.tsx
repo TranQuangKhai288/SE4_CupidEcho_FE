@@ -100,7 +100,21 @@ const ProfileUserDetail: React.FC = () => {
   );
 
   const handleMessage = async () => {
-    navigation.navigate("ChatDetail", { _id: "hehe", name: "Ngu", avatar: "" });
+    try {
+      const participants = [user?._id || "", userId];
+
+      const resAccess = await ConvAPI.accessConv(participants);
+      console.log(resAccess, "resAccess");
+
+      navigation.navigate("ChatDetail", {
+        convId: resAccess.data._id,
+        name: detailUser.name,
+        avatar: detailUser.avatar,
+        peerId: detailUser._id,
+      });
+    } catch (e) {
+      console.log(e, "err");
+    }
   };
 
   return (
@@ -111,7 +125,7 @@ const ProfileUserDetail: React.FC = () => {
         <View className="relative bg-slate-500">
           <Image
             source={{
-              uri: user?.avatar,
+              uri: detailUser?.avatar,
             }}
             className="w-full h-[500px]"
             resizeMode="cover"

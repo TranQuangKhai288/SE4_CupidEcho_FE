@@ -21,6 +21,7 @@ const ChatScreen: React.FC = ({}) => {
   interface Conv {
     _id: string;
     participants: {
+      _id: string;
       name: string;
       avatar: string;
     };
