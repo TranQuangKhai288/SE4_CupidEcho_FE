@@ -112,61 +112,60 @@ const CreateNewPost: React.FC = () => {
   };
 
   return (
-    <View className='flex-1 bg-white pt-10 px-6'>
-
+    <View className="flex-1 bg-white pt-10 px-6">
       {isLoading ? (
         <Loader />
       ) : (
         <>
           {/* Header */}
-          <View className='flex-row justify-between items-center p-4'>
+          <View className="flex-row justify-between items-center p-4">
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <MaterialIcons name='arrow-back' size={20} color='black' />
+              <MaterialIcons name="arrow-back" size={20} color="black" />
             </TouchableOpacity>
-            <Text className='text-2xl font-bold'>Create a new Post</Text>
+            <Text className="text-2xl font-bold">Create a new Post</Text>
             <TouchableOpacity onPress={handlePost}>
-              <Text className='text-purple-600 text-lg font-semibold'>
+              <Text className="text-purple-600 text-lg font-semibold">
                 POST
               </Text>
             </TouchableOpacity>
           </View>
 
           <ScrollView>
-            <View className='px-4 py-3'>
-              <View className='flex-row items-center mb-3'>
+            <View className="px-4 py-3">
+              <View className="flex-row items-center mb-3">
                 <Image
                   source={{ uri: user?.avatar }}
-                  className='w-8 h-8 mr-2 rounded-full'
+                  className="w-8 h-8 mr-2 rounded-full"
                 />
-                <Text className='text-black font-semibold text-sm'>
+                <Text className="text-black font-semibold text-sm">
                   {user?.name}
                 </Text>
               </View>
               <TextInput
-                className='bg-gray-50 rounded-lg p-3 text-sm text-black min-h-[120px] my-2'
+                className="bg-gray-50 rounded-lg p-3 text-sm text-black min-h-[120px] my-2"
                 style={{ fontSize: 16 }}
-                placeholder='What do you think?'
+                placeholder="What do you think?"
                 multiline
                 value={caption}
                 onChangeText={setCaption}
-                textAlignVertical='top'
+                textAlignVertical="top"
               />
             </View>
 
             {/* Media Preview */}
-            <View className='px-4 py-3'>
+            <View className="px-4 py-3">
               {mediaUri ? (
                 <View>
                   {mediaType === "image" ? (
                     <Image
                       source={{ uri: mediaUri }}
-                      className='w-full h-64 rounded-lg'
-                      resizeMode='cover'
+                      className="w-full h-64 rounded-lg"
+                      resizeMode="cover"
                     />
                   ) : (
                     <Video
                       source={{ uri: mediaUri }}
-                      className='w-full h-64 rounded-lg'
+                      className="w-full h-64 rounded-lg"
                       useNativeControls
                       shouldPlay={false}
                     />
@@ -176,18 +175,18 @@ const CreateNewPost: React.FC = () => {
                       setMediaUri(null);
                       setMediaType(null);
                     }}
-                    className='absolute top-2 right-2 bg-gray-800 p-1 rounded-full'
+                    className="absolute top-2 right-2 bg-gray-800 p-1 rounded-full"
                   >
-                    <Feather name='x' size={20} color='white' />
+                    <Feather name="x" size={20} color="white" />
                   </TouchableOpacity>
                 </View>
               ) : (
                 <TouchableOpacity
                   onPress={handleSelectMedia}
-                  className='border-2 border-dashed border-gray-400 rounded-lg p-4 items-center justify-center h-64'
+                  className="border-2 border-dashed border-gray-400 rounded-lg p-4 items-center justify-center h-64"
                 >
-                  <Feather name='image' size={40} color='gray' />
-                  <Text className='text-gray-500 mt-2'>Add image or video</Text>
+                  <Feather name="image" size={40} color="gray" />
+                  <Text className="text-gray-500 mt-2">Add image or video</Text>
                 </TouchableOpacity>
               )}
             </View>

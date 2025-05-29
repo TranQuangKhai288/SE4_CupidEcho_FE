@@ -24,12 +24,20 @@ export interface MatchSuccess {
   conversationId: string;
   timestamp: number;
 }
+export interface WebRTCSignal {
+  type: "offer" | "answer" | "candidate";
+  data: any;
+  from?: string;
+  to?: string;
+  roomId?: string;
+}
 
 export interface SocketEvents {
   onNewMessage?: (message: Message) => void;
   onNewNotification?: (notification: Notification) => void;
   onMatchSuccess?: (match: MatchSuccess) => void;
   onExitSign?: (convId: string) => void;
+  onWebRTCSignal?: (signal: WebRTCSignal) => void;
 }
 
 export const useSocketEvents = ({
@@ -37,6 +45,7 @@ export const useSocketEvents = ({
   onNewNotification,
   onMatchSuccess,
   onExitSign,
+  onWebRTCSignal,
 }: SocketEvents) => {
   const { state } = useAuth();
   const socket = socketService.getSocket();
@@ -44,7 +53,11 @@ export const useSocketEvents = ({
 
   useEffect(() => {
     if (!socket || !isConnected) return;
-
+    socket.on("webrtc:signal", (signal: WebRTCSignal) => {
+      if (onWebRTCSignal) {
+        onWebRTCSignal(signal);
+      }
+    });
     socket.on("newMessage", (message: Message) => {
       console.log("Tin nhắn mới:", message);
       if (onNewMessage) {
@@ -83,8 +96,16 @@ export const useSocketEvents = ({
       socket.off("errorMessage");
       socket.off("matching:matched");
       socket.off("exitSignal");
+      socket.off("webrtc:signal");
     };
-  }, [socket, isConnected, onNewMessage, onNewNotification, onMatchSuccess]);
+  }, [
+    socket,
+    isConnected,
+    onNewMessage,
+    onNewNotification,
+    onMatchSuccess,
+    onWebRTCSignal,
+  ]);
 
   const sendMessage = (
     convId: string,
@@ -123,5 +144,19 @@ export const useSocketEvents = ({
     socket.emit("exitSign", { convId, partnerId }, callback);
   };
 
-  return { sendMessage, sendNotification, sendExitSign, isConnected };
+  const sendWebRTCSignal = (signal: WebRTCSignal) => {
+    if (!socket || !isConnected) {
+      console.error("Socket chưa kết nối");
+      return;
+    }
+    socket.emit("webrtc:signal", signal);
+  };
+
+  return {
+    sendMessage,
+    sendNotification,
+    sendExitSign,
+    sendWebRTCSignal,
+    isConnected,
+  };
 };

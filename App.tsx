@@ -8,10 +8,6 @@ import "./global.css";
 
 import { ThemeProvider } from "./src/contexts/ThemeContext";
 const App: React.FC = () => {
-  console.log(
-    "process.env.EXPO_PUBLIC_API_URL",
-    process.env.EXPO_PUBLIC_API_URL
-  );
   return (
     <ThemeProvider>
       <AuthProvider>

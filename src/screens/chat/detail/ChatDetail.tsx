@@ -22,12 +22,8 @@ import * as ConvAPI from "../../../apis/ConversationAPI";
 import { useSocketEvents, Message } from "../../../hooks/useSocketEvents";
 import { set } from "date-fns";
 import { useAuth } from "../../../contexts/AuthContext";
+import { RootStackParamList } from "../../../navigation/AppNavigation";
 // import { v4 as uuidv4 } from "uuid"; // Thêm thư viện này vào
-type RootStackParamList = {
-  ChatDetail: { _id: string; name: string; avatar: string };
-  VoiceCall: undefined;
-  VideoCall: undefined;
-};
 
 type ChatDetailRouteProp = RouteProp<RootStackParamList, "ChatDetail">;
 
@@ -36,8 +32,8 @@ type ChatNavigationProp = NavigationProp<RootStackParamList, "ChatDetail">;
 const ChatDetailScreen: React.FC = () => {
   const route = useRoute<ChatDetailRouteProp>();
   const navigation = useNavigation<ChatNavigationProp>();
-  const { name, avatar, _id } = route.params;
-
+  const { name, avatar, convId, peerId } = route.params;
+  console.log(peerId, "peerId");
   const [messages, setMessages] = useState<Message[]>([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -54,11 +50,14 @@ const ChatDetailScreen: React.FC = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
+        console.log(convId, "convId");
+        if (!convId) return;
         const response = await ConvAPI.getConvDetails(
-          _id,
+          convId,
           pagination.page,
           pagination.limit
         );
+        console.log(response, "getConvDetails");
         setMessages(response.data.messages);
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -67,11 +66,11 @@ const ChatDetailScreen: React.FC = () => {
     };
 
     fetchMessages();
-  }, [pagination.page, pagination.limit]);
+  }, [pagination.page, pagination.limit, convId]);
 
   const { sendMessage, isConnected } = useSocketEvents({
     onNewMessage: (message: Message) => {
-      if (message.conversationId === _id) {
+      if (message.conversationId === convId) {
         setMessages((prev) => {
           // Tìm tin nhắn tạm thời đã gửi
           const tempIndex = prev.findIndex(
@@ -114,7 +113,7 @@ const ChatDetailScreen: React.FC = () => {
 
     const sendingMessage: Message = {
       _id: tempId,
-      conversationId: _id,
+      conversationId: convId,
       senderId: user?._id || "",
       content: newMessage,
       createdAt: new Date(),
@@ -123,7 +122,7 @@ const ChatDetailScreen: React.FC = () => {
 
     setMessages((prev) => [...prev, sendingMessage]);
 
-    sendMessage(_id, newMessage, (response) => {
+    sendMessage(convId, newMessage, (response) => {
       if (response.status === "OK") {
         setNewMessage("");
         // Tin nhắn thực sẽ được xử lý tại onNewMessage
@@ -144,30 +143,44 @@ const ChatDetailScreen: React.FC = () => {
   }, [messages]);
 
   return (
-    <SafeAreaView className='flex-1 bg-white pt-6'>
-      <View className='flex-row items-center justify-between px-4 py-3'>
-        <View className='flex-row items-center gap-4'>
-          <TouchableOpacity onPress={handleBackPress} className='mr-2'>
-            <MaterialIcons name='arrow-back' size={20} color='black' />
+    <SafeAreaView className="flex-1 bg-white pt-6">
+      <View className="flex-row items-center justify-between px-4 py-3">
+        <View className="flex-row items-center gap-4">
+          <TouchableOpacity onPress={handleBackPress} className="mr-2">
+            <MaterialIcons name="arrow-back" size={20} color="black" />
           </TouchableOpacity>
-          <Image source={{ uri: avatar }} className='w-10 h-10 rounded-full' />
-          <Text className='text-2xl font-bold'>{name}</Text>
+          <Image source={{ uri: avatar }} className="w-10 h-10 rounded-full" />
+          <Text className="text-2xl font-bold">{name}</Text>
         </View>
-        <View className='flex-row gap-6'>
-          <TouchableOpacity onPress={() => navigation.navigate("VoiceCall")}>
-            <Ionicons name='call-outline' size={20} color='black' />
+        <View className="flex-row gap-6">
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("VoiceCall", {
+                roomId: convId,
+                peerId: peerId,
+              })
+            }
+          >
+            <Ionicons name="call-outline" size={20} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("VideoCall")}>
-            <Ionicons name='videocam-outline' size={20} color='black' />
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("VideoCall", {
+                roomId: convId,
+                peerId: peerId,
+              })
+            }
+          >
+            <Ionicons name="videocam-outline" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Feather name='more-horizontal' size={20} color='black' />
+            <Feather name="more-horizontal" size={20} color="black" />
           </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView
-        className='flex-1 px-4 py-2 mt-4'
+        className="flex-1 px-4 py-2 mt-4"
         ref={scrollViewRef}
         onContentSizeChange={() => {
           scrollViewRef.current?.scrollToEnd({ animated: true });
