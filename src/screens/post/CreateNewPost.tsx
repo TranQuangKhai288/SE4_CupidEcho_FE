@@ -17,7 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Video } from "expo-av";
 import { createPost, MediaItem } from "../../apis/PostAPI";
 import Loader from "../../components/Loader";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const CreateNewPost: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [caption, setCaption] = useState("");
@@ -27,7 +27,7 @@ const CreateNewPost: React.FC = () => {
   const { user } = state;
 
   const [isLoading, setIsLoading] = useState(false);
-
+  const insets = useSafeAreaInsets();
   const handleSelectMedia = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -112,13 +112,13 @@ const CreateNewPost: React.FC = () => {
   };
 
   return (
-    <View className="flex-1 bg-white pt-10 px-6">
+    <View className="flex-1 bg-white px-6" style={{ paddingTop: insets.top }}>
       {isLoading ? (
         <Loader />
       ) : (
         <>
           {/* Header */}
-          <View className="flex-row justify-between items-center p-4">
+          <View className="flex-row justify-between items-center p-3">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <MaterialIcons name="arrow-back" size={20} color="black" />
             </TouchableOpacity>
