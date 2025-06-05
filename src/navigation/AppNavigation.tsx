@@ -61,7 +61,7 @@ export type RootStackParamList = {
   RandomMatch: undefined;
   ExploreDetail: { title: string };
   Chat: undefined;
-  ChatDetail: { convId: string; name: string; avatar: string; peerId: string };
+  ChatDetail: { convId: string; name: string; avatar: string };
   BlindChat: { partnerId: string; conversationId: string };
   Splash: undefined;
   Onboarding: undefined;
@@ -82,8 +82,8 @@ export type RootStackParamList = {
   InitialIdealMatch: undefined;
 
   //Call
-  VoiceCall: { roomId: string; peerId: string };
-  VideoCall: { roomId: string; peerId: string };
+  VoiceCall: { roomId: string };
+  VideoCall: { roomId: string };
 
   //Profile
   Settings: { title: String };

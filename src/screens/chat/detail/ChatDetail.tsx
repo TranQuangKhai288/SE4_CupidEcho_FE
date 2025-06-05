@@ -32,8 +32,8 @@ type ChatNavigationProp = NavigationProp<RootStackParamList, "ChatDetail">;
 const ChatDetailScreen: React.FC = () => {
   const route = useRoute<ChatDetailRouteProp>();
   const navigation = useNavigation<ChatNavigationProp>();
-  const { name, avatar, convId, peerId } = route.params;
-  console.log(peerId, "peerId");
+  const { name, avatar, convId } = route.params;
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -157,7 +157,6 @@ const ChatDetailScreen: React.FC = () => {
             onPress={() =>
               navigation.navigate("VoiceCall", {
                 roomId: convId,
-                peerId: peerId,
               })
             }
           >
@@ -167,7 +166,6 @@ const ChatDetailScreen: React.FC = () => {
             onPress={() =>
               navigation.navigate("VideoCall", {
                 roomId: convId,
-                peerId: peerId,
               })
             }
           >
