@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
-import Swiper from "react-native-deck-swiper";
+// import Swiper from "react-native-deck-swiper";
 import DatingCard from "./DatingCard";
 import { getUserRecommends } from "../apis/UserAPI";
 import * as MatchingAPI from "../apis/MatchingAPI";
@@ -14,13 +14,13 @@ type CardData = {
 };
 
 const SwipeCard = () => {
-  const swiperRef = useRef<Swiper<CardData>>(null);
+  // const swiperRef = useRef<Swiper<CardData>>(null);
   const [cards, setCards] = useState<CardData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [swipeKey, setSwipeKey] = useState(0); // Force re-render Swiper
 
-  const swipeLeft = () => swiperRef.current?.swipeLeft();
-  const swipeRight = () => swiperRef.current?.swipeRight();
+  // const swipeLeft = () => swiperRef.current?.swipeLeft();
+  // const swipeRight = () => swiperRef.current?.swipeRight();
 
   const fetchUserRecommends = async () => {
     setIsLoading(true);
@@ -66,8 +66,8 @@ const SwipeCard = () => {
         zodiac={card.zodiac}
         imageUrl={card.image}
         distance={card.distance}
-        onLike={swipeRight}
-        onDislike={swipeLeft}
+        // onLike={swipeRight}
+        // onDislike={swipeLeft}
         onRefresh={() => console.log("Refresh")}
         onStar={() => console.log("Star")}
       />
@@ -107,25 +107,7 @@ const SwipeCard = () => {
             <Text>No more users. Fetching more...</Text>
           </View>
         ) : (
-          <Swiper
-            key={swipeKey}
-            ref={swiperRef}
-            cards={cards}
-            cardIndex={0}
-            verticalSwipe={false}
-            stackSize={5}
-            renderCard={renderCard}
-            backgroundColor="transparent"
-            showSecondCard
-            animateCardOpacity
-            disableTopSwipe
-            onSwipedLeft={(i) => handleDisliked(cards[i])}
-            onSwipedRight={(i) => handleSentRequest(cards[i])}
-            onSwipedAll={() => {
-              console.log("✨ All cards swiped. Fetching more...");
-              fetchUserRecommends();
-            }}
-          />
+          <View></View>
         )}
       </View>
     </View>

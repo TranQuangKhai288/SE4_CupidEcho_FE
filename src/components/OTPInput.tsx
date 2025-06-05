@@ -22,14 +22,14 @@ const OTPInput = () => {
   };
 
   return (
-    <View className='flex-row justify-center gap-6'>
+    <View className="flex-row justify-center gap-6">
       {otp.map((value, index) => (
         <TextInput
           key={index}
-          ref={(ref) => (inputRefs.current[index] = ref)}
-          className='w-20 h-14 border border-gray-300 text-center text-lg font-bold rounded-2xl'
+          // ref={(ref) => (inputRefs.current[index] = ref)}
+          className="w-20 h-14 border border-gray-300 text-center text-lg font-bold rounded-2xl"
           maxLength={1}
-          keyboardType='numeric'
+          keyboardType="numeric"
           value={value}
           onChangeText={(text) => handleChange(text, index)}
           onKeyPress={(e) => handleKeyPress(e, index)}
