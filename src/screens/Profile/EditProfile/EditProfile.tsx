@@ -189,7 +189,6 @@ const EditProfileScreen = () => {
           avatar,
         };
         const resUpdate = await UserAPI.updateUser(userPayload);
-        console.log(resUpdate, "resUpdate");
         await updateUser(resUpdate as IUser);
       }
       await ProfileAPI.updateProfile(payload);
@@ -312,17 +311,40 @@ const EditProfileScreen = () => {
               className="text-black bg-gray-100 p-4 rounded-lg mb-5"
             />
 
-            <View className="flex-row items-center">
-              <Text className="text-lg font-bold">Birthday:</Text>
-              {/* Date Picker UI */}
-              <DateTimePicker
-                value={date}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-                maximumDate={new Date()}
-                style={{ margin: 0, padding: 0 }}
-              />
+            <View className="mb-5">
+              {Platform.OS === "ios" ? (
+                <View className="flex-row items-center">
+                  <Text className="text-lg font-bold">Birthday:</Text>
+                  <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display="default"
+                    onChange={onDateChange}
+                    maximumDate={new Date()}
+                    style={{ margin: 0, padding: 0 }}
+                  />
+                </View>
+              ) : (
+                <>
+                  <Text className="text-lg font-bold">Birthday:</Text>
+                  <TouchableOpacity
+                    onPress={() => setShowDatePicker(true)}
+                    className="text-black bg-gray-100 p-4 rounded-lg mt-3 flex-row justify-between items-center"
+                  >
+                    <Text className="text-black">{formatDate(date)}</Text>
+                    <ChevronDown size={20} color="#000" />
+                  </TouchableOpacity>
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={date}
+                      mode="date"
+                      display="default"
+                      onChange={onDateChange}
+                      maximumDate={new Date()}
+                    />
+                  )}
+                </>
+              )}
             </View>
 
             <Text className="text-lg font-bold mt-3">Gender</Text>
@@ -433,7 +455,7 @@ const EditProfileScreen = () => {
             />
           </View>
         </View>
-        <View className="p-4 bg-white border-t border-gray-200">
+        <View className="mb-5 p-4 bg-white border-t border-gray-200">
           <TouchableOpacity
             disabled={isLoading}
             onPress={updateProfile}

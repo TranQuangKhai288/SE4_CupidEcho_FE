@@ -35,7 +35,6 @@ const MyProfileScreen = () => {
         const response = await ProfileAPI.getDetailsProfile(
           user._id.toString()
         );
-        console.log(response, "response");
         setProfile(response.data);
       }
     } catch (error) {

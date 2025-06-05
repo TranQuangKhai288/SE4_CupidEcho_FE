@@ -11,7 +11,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, Heart, User } from "lucide-react-native";
 import { formatDistanceToNow } from "date-fns";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 type NotificationItem = {
@@ -32,13 +32,13 @@ type Props = {
 const getIcon = (type: string) => {
   switch (type) {
     case "comment":
-      return <MessageCircle size={24} color='#3b82f6' />;
+      return <MessageCircle size={24} color="#3b82f6" />;
     case "like":
-      return <Heart size={24} color='#ef4444' />;
+      return <Heart size={24} color="#ef4444" />;
     case "follow":
-      return <User size={24} color='#10b981' />;
+      return <User size={24} color="#10b981" />;
     default:
-      return <MessageCircle size={24} color='#6b7280' />;
+      return <MessageCircle size={24} color="#6b7280" />;
   }
 };
 
@@ -66,25 +66,28 @@ const NotificationListModal = ({ visible, onClose, notifications }: Props) => {
   }, [visible]);
 
   if (!internalVisible) return null;
-
+  const insets = useSafeAreaInsets();
   return (
-    <Modal transparent visible={true} animationType='none'>
-      <View className='flex-1 bg-black bg-opacity-40'>
+    <Modal transparent visible={true} animationType="none">
+      <View className="flex-1 bg-black bg-opacity-40">
         <TouchableOpacity
-          className='absolute top-0 left-0 right-0 bottom-0'
+          className="absolute top-0 left-0 right-0 bottom-0"
           activeOpacity={1}
           onPress={onClose}
         />
         <Animated.View
-          className='absolute top-0 bottom-0 right-0 w-full bg-white'
+          className="absolute top-0 bottom-0 right-0 w-full bg-white"
           style={{
             transform: [{ translateX: slideAnim }],
           }}
         >
-          <View className='flex-row justify-between items-center px-4 py-3 border-b border-gray-200'>
-            <Text className='text-lg font-bold'>Notifications</Text>
+          <View
+            className="flex-row justify-between items-center px-4 py-3 border-b border-gray-200"
+            style={{ paddingTop: insets.top }}
+          >
+            <Text className="text-lg font-bold">Notifications</Text>
             <TouchableOpacity onPress={onClose}>
-              <Text className='text-purple-500 font-semibold'>Close</Text>
+              <Text className="text-purple-500 font-semibold">Close</Text>
             </TouchableOpacity>
           </View>
 
@@ -102,9 +105,9 @@ const NotificationListModal = ({ visible, onClose, notifications }: Props) => {
                 }`}
               >
                 {getIcon(item.type)}
-                <View className='flex-1'>
-                  <Text className='text-sm text-gray-800'>{item.content}</Text>
-                  <Text className='text-xs text-gray-500 mt-1'>
+                <View className="flex-1">
+                  <Text className="text-sm text-gray-800">{item.content}</Text>
+                  <Text className="text-xs text-gray-500 mt-1">
                     {formatDistanceToNow(new Date(item.createdAt), {
                       addSuffix: true,
                     })}

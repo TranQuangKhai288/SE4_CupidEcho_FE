@@ -89,7 +89,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View className="flex-1 bg-white p-4" style = {{paddingTop:insets.top}}>
         <TouchableOpacity onPress={onClose}>
-          <Text className="text-right text-purple-600 font-semibold">Đóng</Text>
+          <Text className="mt-3 text-right text-purple-600 font-semibold">Đóng</Text>
         </TouchableOpacity>
         <Text className="text-lg font-bold mt-4 mb-2">Bình luận</Text>
 
