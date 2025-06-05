@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const instance = axios.create({
-  baseURL: `http:///192.168.1.3:5000/api`,
+  baseURL: `http://172.16.16.167:5000/api`,
   timeout: 50000,
 });
 
@@ -42,6 +42,7 @@ instance.interceptors.response.use(
         if (result.status === "ERR") {
           console.error("refresh token failed");
           console.log(result, "result refresh token");
+          return;
         }
         //console.log("Refresh token result", result.access_token);
         const access_token = result.access_token;

@@ -1,8 +1,6 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
-    "types": ["nativewind/types"],
-    "lib": ["dom", "esnext"] // Đảm bảo 'dom' có trong đây
+    "strict": true
   }
 }

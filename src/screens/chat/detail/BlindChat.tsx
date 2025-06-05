@@ -147,6 +147,8 @@ const BlindChatScreen: React.FC = () => {
                 _id: partnerId,
                 name: "Tên đối tác", // Thay bằng API thực tế
                 avatar: "https://i.pravatar.cc/150?img=2", // Thay bằng API thực tế
+                convId: "",
+                peerId: "",
               };
               navigation.navigate("ChatDetail", partnerInfo);
             } catch (error) {

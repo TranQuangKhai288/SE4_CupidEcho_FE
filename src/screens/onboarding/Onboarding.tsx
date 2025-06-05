@@ -20,9 +20,9 @@ interface NextButtonProps {
 const NextButton: React.FC<NextButtonProps> = ({ onPress }) => (
   <TouchableOpacity
     onPress={onPress}
-    className='bg-primary-main px-40 py-4 rounded-full mt-40'
+    className="bg-primary-main px-40 py-4 rounded-full mt-40"
   >
-    <Text className='text-white text-lg font-semibold'>Next</Text>
+    <Text className="text-white text-lg font-semibold">Next</Text>
   </TouchableOpacity>
 );
 
@@ -55,13 +55,13 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
             />
           ),
           title: (
-            <Text className='font-bold text-black text-2xl text-center'>
+            <Text className="font-bold text-black text-2xl text-center">
               Find Your Soul Mate
             </Text>
           ),
           subtitle: (
-            <View className='items-center'>
-              <Text className='text-center text-gray-600 mt-4'>
+            <View className="items-center">
+              <Text className="text-center text-gray-600 mt-4">
                 It’s easy to find a soul mate nearby & around you
               </Text>
               <NextButton onPress={() => handleNext(0)} />
@@ -77,13 +77,13 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
             />
           ),
           title: (
-            <Text className='font-bold text-black text-2xl text-center'>
+            <Text className="font-bold text-black text-2xl text-center">
               Connect & Communicate
             </Text>
           ),
           subtitle: (
-            <View className='items-center'>
-              <Text className='text-center text-gray-600 mt-4'>
+            <View className="items-center">
+              <Text className="text-center text-gray-600 mt-4">
                 You can share, chat, and video call with your match
               </Text>
               <NextButton onPress={() => handleNext(1)} />
@@ -99,13 +99,13 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
             />
           ),
           title: (
-            <Text className='font-bold text-black text-2xl text-center'>
+            <Text className="font-bold text-black text-2xl text-center">
               Start Your Love Journey
             </Text>
           ),
           subtitle: (
-            <View className='items-center'>
-              <Text className='text-center text-gray-600 mt-4'>
+            <View className="items-center">
+              <Text className="text-center text-gray-600 mt-4">
                 Don't wait anymore, find your soul mate right now!
               </Text>
               <NextButton onPress={() => handleNext(2)} />
