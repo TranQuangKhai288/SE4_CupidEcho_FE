@@ -11,6 +11,7 @@ import {
   CallContent,
 } from "@stream-io/video-react-native-sdk";
 import { useAuth } from "../../contexts/AuthContext";
+import { getCallToken } from "../../apis/UserAPI";
 
 type ChatDetailRouteProp = RouteProp<RootStackParamList, "VideoCall">;
 
@@ -31,11 +32,8 @@ export default function VideoCallScreen() {
     const initializeVideoCall = async () => {
       try {
         // Lấy token từ BE
-        const response = await fetch(
-          `http://192.168.1.12:5000/stream-token?userId=${user?._id}`
-        );
-        const data = await response.json();
-        console.log("Token data:", data);
+        const response = await getCallToken(user?._id || "");
+        console.log("Token data:", response);
 
         // Khởi tạo StreamVideoClient
         const client = new StreamVideoClient({
@@ -44,7 +42,7 @@ export default function VideoCallScreen() {
             id: user?._id || "",
             name: user?.name || user?._id || "Anonymous", // Thêm name cho user
           },
-          token: data.token,
+          token: response.token,
         });
 
         setStreamClient(client);

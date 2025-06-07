@@ -110,7 +110,6 @@ const ProfileUserDetail: React.FC = () => {
         convId: resAccess.data._id,
         name: detailUser.name,
         avatar: detailUser.avatar,
-        peerId: detailUser._id,
       });
     } catch (e) {
       console.log(e, "err");

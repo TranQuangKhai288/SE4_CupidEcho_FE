@@ -71,3 +71,21 @@ export const getRelationshipRequest = async ({
     throw error;
   }
 };
+
+export const changeStatusRelationship = async (
+  pendingId: string,
+  status: string
+) => {
+  try {
+    const res: Response = await baseURL.put(
+      `/relationship/requests/${pendingId}`,
+      {
+        status,
+      }
+    );
+    return res;
+  } catch (error) {
+    console.error("API stop matching error", error);
+    throw error;
+  }
+};

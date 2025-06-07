@@ -1,9 +1,13 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/AppNavigation";
 
 interface ProfileCardProps {
   _id: string;
+  userId: string;
   name: string;
   age: number;
   zodiac: string;
@@ -15,6 +19,7 @@ interface ProfileCardProps {
 
 const ProfileCard = ({
   _id,
+  userId,
   name,
   age,
   zodiac,
@@ -23,18 +28,25 @@ const ProfileCard = ({
   width = 224,
   actions,
 }: ProfileCardProps) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  const handlePressCard = () => {
+    navigation.navigate("ProfileUserDetail", { userId: userId });
+  };
+
   return (
-    <View
-      className='relative rounded-[36px] overflow-hidden shadow-lg'
+    <TouchableOpacity
+      className="relative rounded-[16px] overflow-hidden shadow-lg"
       style={{
         width: width,
         height: height,
       }}
+      onPress={handlePressCard}
     >
       <Image
         source={{ uri: imageUrl }}
-        className='w-full h-full object-cover'
-        resizeMode='cover'
+        className="w-full h-full object-cover"
+        resizeMode="cover"
       />
 
       <LinearGradient
@@ -53,17 +65,16 @@ const ProfileCard = ({
           height: "50%",
         }}
       >
-        <View className='absolute bottom-4 left-4 right-4'>
-          <Text className='text-white text-2xl font-bold mb-1'>
+        <View className="absolute bottom-4 left-4 right-4">
+          <Text className="text-white text-2xl font-bold mb-1">
             {name}, {age}
           </Text>
-          <Text className='text-white text-sm opacity-90 mb-2'>{zodiac}</Text>
+          <Text className="text-white text-sm opacity-90 mb-2">{zodiac}</Text>
 
-     
-          {actions && <View className='mt-3 items-center'>{actions}</View>}
+          {actions && <View>{actions}</View>}
         </View>
       </LinearGradient>
-    </View>
+    </TouchableOpacity>
   );
 };
 

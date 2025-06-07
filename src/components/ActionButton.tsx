@@ -5,28 +5,30 @@ import { Check, X } from "lucide-react-native";
 const ActionButton = ({
   onAccept,
   onReject,
+  justIcon,
 }: {
   onAccept: () => void;
   onReject: () => void;
+  justIcon?: boolean;
 }) => {
   return (
-    <View className='flex-row gap-2'>
+    <View className="flex-row w-full gap-2">
       {/* Reject Button */}
       <TouchableOpacity
         onPress={onReject}
-        className='bg-red-500 px-4 py-2 rounded-full flex-row items-center gap-2 shadow'
+        className="flex-1 bg-red-500 py-2 rounded-full flex-row items-center justify-center gap-2 shadow"
       >
-        <X size={18} color='white' />
-        <Text className='text-white font-semibold'>Reject</Text>
+        <X size={18} color="white" />
+        {!justIcon && <Text className="text-white font-semibold">Reject</Text>}
       </TouchableOpacity>
 
       {/* Accept Button */}
       <TouchableOpacity
         onPress={onAccept}
-        className='bg-green-500 px-4 py-2 rounded-full flex-row items-center gap-2 shadow'
+        className="flex-1 bg-green-500 py-2 rounded-full flex-row items-center justify-center gap-2 shadow"
       >
-        <Check size={18} color='white' />
-        <Text className='text-white font-semibold'>Accept</Text>
+        <Check size={18} color="white" />
+        {!justIcon && <Text className="text-white font-semibold">Accept</Text>}
       </TouchableOpacity>
     </View>
   );
