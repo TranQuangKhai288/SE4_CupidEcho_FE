@@ -43,6 +43,7 @@ const BlindChatScreen: React.FC = () => {
 
   // For reveal identity requests
   const [pendingReveal, setPendingReveal] = useState<null | {
+    relationshipId: string;
     senderId: string;
     timestamp: number;
   }>(null);
@@ -99,7 +100,7 @@ const BlindChatScreen: React.FC = () => {
           text: "OK",
           onPress: () => {
             if (navigation.canGoBack()) {
-              navigation.goBack();
+              navigation.pop(2);
             } else {
               navigation.navigate("Home");
             }
@@ -149,14 +150,22 @@ const BlindChatScreen: React.FC = () => {
             text: "Reject",
             style: "cancel",
             onPress: () => {
-              respondMatchRequest(pendingReveal.senderId, "reject");
+              respondMatchRequest(
+                pendingReveal.relationshipId,
+                pendingReveal.senderId,
+                "reject"
+              );
               setPendingReveal(null);
             },
           },
           {
             text: "Accept",
             onPress: () => {
-              respondMatchRequest(pendingReveal.senderId, "accept");
+              respondMatchRequest(
+                pendingReveal.relationshipId,
+                pendingReveal.senderId,
+                "accept"
+              );
               // Navigate to normal chat
               navigation.replace("ChatDetail", {
                 name: partner.name,
@@ -221,11 +230,6 @@ const BlindChatScreen: React.FC = () => {
                   "Error",
                   response.message || "Unable to send connection request"
                 );
-              } else {
-                Alert.alert(
-                  "Request sent",
-                  "Your connection request has been sent. Please wait for your partner to respond."
-                );
               }
             });
           },
@@ -251,7 +255,7 @@ const BlindChatScreen: React.FC = () => {
             try {
               // send notification to partner that you left the conversation
               sendExitSign(conversationId, partner.id);
-              navigation.goBack();
+              navigation.pop(2);
             } catch (error) {
               console.error("Error deleting conversation:", error);
               Alert.alert("Error", "Failed to delete conversation");

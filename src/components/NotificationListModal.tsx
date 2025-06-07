@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { MessageCircle, Heart, User } from "lucide-react-native";
 import { formatDistanceToNow } from "date-fns";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_H = Dimensions.get("window").height;
 
 type NotificationItem = {
   _id: string;
@@ -43,7 +43,7 @@ const getIcon = (type: string) => {
 };
 
 const NotificationListModal = ({ visible, onClose, notifications }: Props) => {
-  const slideAnim = useRef(new Animated.Value(SCREEN_WIDTH)).current;
+  const slideAnim = useRef(new Animated.Value(SCREEN_H * 0.8)).current;
   const [internalVisible, setInternalVisible] = useState(visible);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const NotificationListModal = ({ visible, onClose, notifications }: Props) => {
       }).start();
     } else {
       Animated.timing(slideAnim, {
-        toValue: SCREEN_WIDTH,
+        toValue: SCREEN_H * 0.8,
         duration: 300,
         useNativeDriver: true,
       }).start(() => {
@@ -68,7 +68,14 @@ const NotificationListModal = ({ visible, onClose, notifications }: Props) => {
   if (!internalVisible) return null;
   const insets = useSafeAreaInsets();
   return (
-    <Modal transparent visible={true} animationType="none">
+    <Modal
+      transparent
+      visible={true}
+      animationType="slide"
+      style={{
+        height: "50%",
+      }}
+    >
       <View className="flex-1 bg-black bg-opacity-40">
         <TouchableOpacity
           className="absolute top-0 left-0 right-0 bottom-0"
@@ -78,7 +85,7 @@ const NotificationListModal = ({ visible, onClose, notifications }: Props) => {
         <Animated.View
           className="absolute top-0 bottom-0 right-0 w-full bg-white"
           style={{
-            transform: [{ translateX: slideAnim }],
+            transform: [{ translateY: slideAnim }],
           }}
         >
           <View
