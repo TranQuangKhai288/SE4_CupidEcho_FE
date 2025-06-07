@@ -23,14 +23,14 @@ const DatingCard = ({
   zodiac,
   imageUrl,
   distance,
-  height = 580, // 👈 cao hơn để chứa nút
+  height = 580,
   width = 320,
   onRefresh,
   onLike,
   onDislike,
   onStar,
 }: DatingCardProps) => {
-  const cardHeight = height - 64; // Chiều cao phần card không tính phần nút
+  const cardHeight = height - 64;
 
   return (
     <View style={{ width, height }} className="relative items-center">

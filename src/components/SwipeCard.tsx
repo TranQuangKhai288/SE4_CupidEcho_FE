@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
-import TinderCard from "react-tinder-card";
+import TinderSwiper from "./TinderSwiper";
 import DatingCard from "./DatingCard";
 import { getUserRecommends } from "../apis/UserAPI";
 import * as MatchingAPI from "../apis/MatchingAPI";
@@ -76,21 +76,26 @@ const SwipeCard = () => {
     if (!currentCard) return null;
 
     return (
-      <TinderCard
-        key={currentCard._id}
-        onSwipe={(dir) => handleSwipe(dir, currentCard)}
-        preventSwipe={["up", "down"]}
-      >
-        <DatingCard
-          name={currentCard.name}
-          age={currentCard.age}
-          zodiac={currentCard.zodiac}
-          imageUrl={currentCard.image}
-          distance={currentCard.distance}
-          onRefresh={() => console.log("Refresh")}
-          onStar={() => console.log("Star")}
-        />
-      </TinderCard>
+      // <TinderCard
+      //   key={currentCard._id}
+      //   onSwipe={(dir) => handleSwipe(dir, currentCard)}
+      //   preventSwipe={["up", "down"]}
+      // >
+      //   <DatingCard
+      //     name={currentCard.name}
+      //     age={currentCard.age}
+      //     zodiac={currentCard.zodiac}
+      //     imageUrl={currentCard.image}
+      //     distance={currentCard.distance}
+      //     onRefresh={() => console.log("Refresh")}
+      //     onStar={() => console.log("Star")}
+      //   />
+      // </TinderCard>
+      <TinderSwiper
+        data={cards}
+        onSwipeLeft={(item) => console.log("Swipe Left:", item.name)}
+        onSwipeRight={(item) => console.log("Swipe Right:", item.name)}
+      />
     );
   };
 
@@ -103,9 +108,7 @@ const SwipeCard = () => {
           <Text>No more users. Fetching more...</Text>
         </View>
       ) : (
-        <View className="absolute">
-          {renderCard()}
-        </View>
+        <View className="absolute">{renderCard()}</View>
       )}
     </View>
   );
