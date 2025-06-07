@@ -44,7 +44,6 @@ const ChatItem: React.FC<ChatItemProps> = ({
       convId: _id,
       name: participants.name,
       avatar: participants.avatar,
-      peerId: participants._id,
     });
   };
   console.log(lastMessage, "lastMessage");

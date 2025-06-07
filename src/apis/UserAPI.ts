@@ -26,6 +26,16 @@ export const registerUser = async (data: any) => {
   }
 };
 
+export const getCallToken = async (userId: string) => {
+  try {
+    const res: any = await baseURL.post(`/stream-token?userId=${userId}`);
+    return res;
+  } catch (error) {
+    console.error("API stream-token error", error);
+    throw error;
+  }
+};
+
 export const forgotPassword = async (email: string) => {
   try {
     const res: Response = await baseURL.post(`/user/forgot-password`, {

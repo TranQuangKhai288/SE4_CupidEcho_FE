@@ -67,6 +67,7 @@ const PendingMatches = () => {
           <View className="flex mr-3 items-center" key={item._id}>
             <ProfileCard
               _id={item._id}
+              userId={item.receiver._id}
               name={item.receiver.name}
               age={item.receiver.age}
               zodiac={item.receiver.zodiac}

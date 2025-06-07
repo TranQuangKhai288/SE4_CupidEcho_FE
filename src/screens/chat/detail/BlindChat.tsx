@@ -21,15 +21,15 @@ import * as ConvAPI from "../../../apis/ConversationAPI";
 import { useSocketEvents, Message } from "../../../hooks/useSocketEvents";
 import { useAuth } from "../../../contexts/AuthContext";
 import { RootStackParamList } from "../../../navigation/AppNavigation";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 type BlindChatRouteProp = RouteProp<RootStackParamList, "BlindChat">;
-
-type ChatNavigationProp = NavigationProp<RootStackParamList>;
+type ChatNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const BlindChatScreen: React.FC = () => {
   const route = useRoute<BlindChatRouteProp>();
   const navigation = useNavigation<ChatNavigationProp>();
-  const { partnerId, conversationId } = route.params;
+  const { partner, conversationId } = route.params;
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -37,9 +37,16 @@ const BlindChatScreen: React.FC = () => {
   const { state } = useAuth();
   const { user } = state;
 
-  // Giả lập tên và avatar cho Blind Chat
-  const blindChatName = "Your Match";
-  const blindChatAvatar = "https://i.pravatar.cc/150?img=1";
+  // Simulated name and avatar for Blind Chat
+  const blindChatName = partner.name;
+  const blindChatAvatar = partner.avatar;
+
+  // For reveal identity requests
+  const [pendingReveal, setPendingReveal] = useState<null | {
+    senderId: string;
+    timestamp: number;
+  }>(null);
+
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -47,16 +54,21 @@ const BlindChatScreen: React.FC = () => {
         setMessages(response.data.messages);
       } catch (error) {
         console.error("Error fetching messages:", error);
-        Alert.alert("Lỗi", "Không thể tải tin nhắn");
+        Alert.alert("Error", "Failed to load messages");
       }
     };
 
     fetchMessages();
   }, [conversationId]);
 
-  const { sendMessage, isConnected, sendExitSign } = useSocketEvents({
+  const {
+    sendMessage,
+    isConnected,
+    sendExitSign,
+    sendMatchRequest,
+    respondMatchRequest,
+  } = useSocketEvents({
     onNewMessage: (message: Message) => {
-      console.log("Tin nhắn mới:", message);
       if (message.conversationId === conversationId) {
         setMessages((prev) => {
           const tempIndex = prev.findIndex(
@@ -82,7 +94,6 @@ const BlindChatScreen: React.FC = () => {
       }
     },
     onExitSign: (convId: string) => {
-      console.log("Exit sign received for conversation:", convId);
       Alert.alert("Alert", "Your match has exited the conversation.", [
         {
           text: "OK",
@@ -90,19 +101,81 @@ const BlindChatScreen: React.FC = () => {
             if (navigation.canGoBack()) {
               navigation.goBack();
             } else {
-              navigation.navigate("Home"); // hoặc màn hình phù hợp
+              navigation.navigate("Home");
             }
           },
         },
       ]);
     },
+    onReceiveMatchRequest: (req) => {
+      // Show dialog to accept/reject reveal identity
+      setPendingReveal(req);
+    },
+    onMatchRequestResponse: (resp) => {
+      if (resp.response === "accept") {
+        Alert.alert(
+          "Connection accepted",
+          "Your partner accepted the identity reveal. You can now chat with real identities.",
+          [
+            {
+              text: "Go to normal chat",
+              onPress: () => {
+                // Simulate navigating to ChatDetail with real info
+                navigation.navigate("ChatDetail", {
+                  name: partner.name,
+                  avatar: partner.avatar,
+                  convId: conversationId,
+                });
+              },
+            },
+          ]
+        );
+      } else {
+        Alert.alert(
+          "Request rejected",
+          "Your partner declined the connection request."
+        );
+      }
+    },
   });
+
+  useEffect(() => {
+    if (pendingReveal) {
+      Alert.alert(
+        "Connection Request",
+        "Your partner wants to reveal identity and continue the conversation with real profiles. Do you accept?",
+        [
+          {
+            text: "Reject",
+            style: "cancel",
+            onPress: () => {
+              respondMatchRequest(pendingReveal.senderId, "reject");
+              setPendingReveal(null);
+            },
+          },
+          {
+            text: "Accept",
+            onPress: () => {
+              respondMatchRequest(pendingReveal.senderId, "accept");
+              // Navigate to normal chat
+              navigation.replace("ChatDetail", {
+                name: partner.name,
+                avatar: partner.avatar,
+                convId: conversationId,
+              });
+              setPendingReveal(null);
+            },
+          },
+        ]
+      );
+    }
+  }, [pendingReveal]);
 
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
 
     if (!isConnected) {
-      Alert.alert("Lỗi", "Không thể gửi tin nhắn: Socket chưa kết nối");
+      Alert.alert("Error", "Cannot send message: Socket is not connected");
       return;
     }
 
@@ -127,34 +200,34 @@ const BlindChatScreen: React.FC = () => {
             msg._id === tempId ? { ...msg, status: "failed" } : msg
           )
         );
-        Alert.alert("Lỗi", response.message || "Không thể gửi tin nhắn");
+        Alert.alert("Error", response.message || "Failed to send message");
       }
     });
   };
 
   const handleRevealIdentity = () => {
     Alert.alert(
-      "Lộ danh tính",
-      "Bạn có muốn lộ danh tính và chuyển sang chat thông thường?",
+      "Reveal Identity",
+      "Do you want to reveal your identity and switch to normal chat?",
       [
-        { text: "Hủy", style: "cancel" },
+        { text: "Cancel", style: "cancel" },
         {
-          text: "Đồng ý",
+          text: "Confirm",
           onPress: async () => {
-            try {
-              // Giả lập API lấy thông tin đối tác
-              const partnerInfo = {
-                _id: partnerId,
-                name: "Tên đối tác", // Thay bằng API thực tế
-                avatar: "https://i.pravatar.cc/150?img=2", // Thay bằng API thực tế
-                convId: "",
-                peerId: "",
-              };
-              navigation.navigate("ChatDetail", partnerInfo);
-            } catch (error) {
-              console.error("Error revealing identity:", error);
-              Alert.alert("Lỗi", "Không thể lộ danh tính");
-            }
+            // Send reveal request to partner
+            sendMatchRequest(partner.id, (response) => {
+              if (response.status !== "OK") {
+                Alert.alert(
+                  "Error",
+                  response.message || "Unable to send connection request"
+                );
+              } else {
+                Alert.alert(
+                  "Request sent",
+                  "Your connection request has been sent. Please wait for your partner to respond."
+                );
+              }
+            });
           },
         },
       ]
@@ -168,7 +241,7 @@ const BlindChatScreen: React.FC = () => {
   const handleGoBack = () => {
     Alert.alert(
       "Exit Conversation?",
-      "Are you sure you want to exit this conversation??",
+      "Are you sure you want to exit this conversation?",
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -176,14 +249,12 @@ const BlindChatScreen: React.FC = () => {
           style: "destructive",
           onPress: async () => {
             try {
-              // await ConvAPI.deleteConv(conversationId);
-              //gui thong bao cho doi tac rang ban da thoat khoi cuoc tro chuyen
-              sendExitSign(conversationId, partnerId);
+              // send notification to partner that you left the conversation
+              sendExitSign(conversationId, partner.id);
               navigation.goBack();
-              //xoa cuộc trò chuyện
             } catch (error) {
               console.error("Error deleting conversation:", error);
-              Alert.alert("Lỗi", "Không thể xóa cuộc trò chuyện");
+              Alert.alert("Error", "Failed to delete conversation");
             }
           },
         },

@@ -6,6 +6,8 @@ import * as MatchingAPI from "../../apis/MatchingAPI";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SimpleProfileCard from "../../components/SimpleProfileCard";
+import { useAuth } from "../../contexts/AuthContext";
+
 export interface Relationship {
   _id: string;
   sender: {
@@ -31,25 +33,27 @@ export interface Relationship {
 }
 
 const YourMatched = () => {
-  const [pendingMatches, setPendingMatches] = useState<Relationship[]>([]);
+  const { state } = useAuth();
+  const { user } = state;
+  const [AcceptedMatches, setAcceptedMatches] = useState<Relationship[]>([]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const handlePress = () => {
     navigation.navigate("SeeAllMatches", {
       title: "Your Matched",
     });
   };
-  const getPendingMatches = async () => {
+  const getAcceptedMatches = async () => {
     const resMatches = await MatchingAPI.getRelationshipRequest({
       page: 1,
       limit: 5,
       status: "accepted",
     });
     console.log(resMatches, "resMatches");
-    setPendingMatches(resMatches.data.relationship);
+    setAcceptedMatches(resMatches.data.relationship);
   };
 
   useEffect(() => {
-    getPendingMatches();
+    getAcceptedMatches();
   }, []);
   const insets = useSafeAreaInsets();
   return (
@@ -65,15 +69,21 @@ const YourMatched = () => {
         showsHorizontalScrollIndicator={false}
         className="flex-row mt-3"
       >
-        {pendingMatches.map((item) => (
-          <View className="flex mr-3 items-center" key={item._id}>
-            <SimpleProfileCard
-              name={item.receiver.name}
-              age={item.receiver.age}
-              imageUrl={item.receiver.avatar}
-            />
-          </View>
-        ))}
+        {AcceptedMatches.map((item) => {
+          const matchedProfile =
+            item.sender._id === user?._id ? item.receiver : item.sender;
+          return (
+            <View className="flex mr-3 items-center" key={item._id}>
+              <SimpleProfileCard
+                id={matchedProfile._id}
+                userId={matchedProfile._id}
+                name={matchedProfile.name}
+                age={matchedProfile.age}
+                imageUrl={matchedProfile.avatar}
+              />
+            </View>
+          );
+        })}
       </ScrollView>
     </View>
   );
