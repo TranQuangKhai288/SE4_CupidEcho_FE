@@ -19,7 +19,7 @@ import PostCard from "../../components/PostCard";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useCallback, useState } from "react";
 import { getPostByUserId, Post } from "../../apis/PostAPI";
-import CommentModal from "../../components/CommentModal";
+import CommentSheet from "../../components/CommentSheet";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -35,6 +35,7 @@ import { getDetailsUser } from "../../apis/UserAPI";
 import * as ProfileAPI from "../../apis/ProfileAPI";
 import * as ConvAPI from "../../apis/ConversationAPI";
 import * as MatchingAPI from "../../apis/MatchingAPI";
+import { useBottomSheet } from "../../contexts/BottomSheetContext";
 
 type ProfileUserDetailProps = RouteProp<
   RootStackParamList,
@@ -47,7 +48,6 @@ const ProfileUserDetail: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [detailUser, setDetailUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [matchStatus, setMatchStatus] = useState<any>(null);
@@ -61,6 +61,17 @@ const ProfileUserDetail: React.FC = () => {
       prevPosts.map((post) =>
         post._id === postId ? { ...post, commentCount: newCount } : post
       )
+    );
+  };
+  const { openBottomSheet, closeBottomSheet } = useBottomSheet();
+  const openComments = (postId: string) => {
+    openBottomSheet(
+      <CommentSheet
+        postId={postId}
+        onClose={closeBottomSheet}
+        onUpdateCommentCount={updateCommentCount}
+      />,
+      ["80%"]
     );
   };
 
@@ -352,7 +363,7 @@ const ProfileUserDetail: React.FC = () => {
                   likeCount={post.likeCount}
                   commentCount={post.commentCount}
                   isLiked={post.isLiked}
-                  openComments={setSelectedPostId}
+                  openComments={openComments}
                   userId={post.user._id}
                 />
               ))
@@ -364,15 +375,6 @@ const ProfileUserDetail: React.FC = () => {
           </View>
         </View>
       </ScrollView>
-      {/* Comments Modal */}
-      {selectedPostId && (
-        <CommentModal
-          visible={showCommentsModal}
-          onClose={() => setShowCommentsModal(false)}
-          postId={selectedPostId}
-          onUpdateCommentCount={updateCommentCount}
-        />
-      )}
     </SafeAreaView>
   );
 };

@@ -17,7 +17,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { getAllPosts, getPostByUserId, Post } from "../../apis/PostAPI";
 import PostCard from "../../components/PostCard";
-import CommentModal from "../../components/CommentModal";
+import CommentSheet from "../../components/CommentSheet";
+import { useBottomSheet } from "../../contexts/BottomSheetContext";
 
 const MyProfileScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -53,6 +54,18 @@ const MyProfileScreen = () => {
     }
   };
 
+  const { openBottomSheet, closeBottomSheet } = useBottomSheet();
+  const openComments = (postId: string) => {
+    openBottomSheet(
+      <CommentSheet
+        postId={postId}
+        onClose={closeBottomSheet}
+        onUpdateCommentCount={updateCommentCount}
+      />,
+      ["80%"]
+    );
+  };
+
   // Fetch data again when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
@@ -64,10 +77,6 @@ const MyProfileScreen = () => {
   if (!profile) {
     return <ActivityIndicator />;
   }
-  const openComments = (postId: string) => {
-    setSelectedPostId(postId);
-    setShowCommentsModal(true);
-  };
   const updateCommentCount = (postId: string, newCount: number) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
@@ -100,7 +109,7 @@ const MyProfileScreen = () => {
 
         {/* Profile card */}
         <View
-          className="bg-white px-6 p-6 -mt-16 flex-1"
+          className="bg-white -mt-16 flex-1"
           style={{
             borderTopLeftRadius: 44,
             borderTopRightRadius: 44,
@@ -116,7 +125,7 @@ const MyProfileScreen = () => {
             elevation: 10,
           }}
         >
-          <View>
+          <View className="p-6">
             <View
               className="flex-row items-center justify-between"
               style={{
@@ -175,8 +184,8 @@ const MyProfileScreen = () => {
             </View>
           </View>
 
-          <View className="mt-4">
-            <Text className="text-xl font-bold">Post</Text>
+          <View>
+            <Text className="text-xl font-bold p-6">Post</Text>
             {loading ? (
               <ActivityIndicator size="large" color="#6b21a8" />
             ) : posts.length !== 0 ? (
@@ -205,15 +214,6 @@ const MyProfileScreen = () => {
           </View>
         </View>
       </ScrollView>
-      {/* Comments Modal */}
-      {selectedPostId && (
-        <CommentModal
-          visible={showCommentsModal}
-          onClose={() => setShowCommentsModal(false)}
-          postId={selectedPostId}
-          onUpdateCommentCount={updateCommentCount}
-        />
-      )}
     </SafeAreaView>
   );
 };
