@@ -30,7 +30,9 @@ export default function TinderSwiper({
   onSwipeRight,
   onSwipeComplete,
 }: TinderSwiperProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // const [currentIndex, setCurrentIndex] = useState(0);
+  const [localIndex, setLocalIndex] = useState(0); // <--- giữ lại để reset animation
+
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
@@ -38,20 +40,20 @@ export default function TinderSwiper({
 
   const handleSwipeComplete = useCallback(
     (direction: "left" | "right") => {
-      const item = data[currentIndex];
+      const item = data[0];
       if (direction === "left" && onSwipeLeft) {
         onSwipeLeft(item);
       }
       if (direction === "right" && onSwipeRight) {
         onSwipeRight(item);
       }
-      const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex);
-      if (nextIndex >= data.length && onSwipeComplete) {
+      setLocalIndex((idx) => idx + 1); // chỉ để reset animation
+
+      if (data.length <= 1 && onSwipeComplete) {
         onSwipeComplete();
       }
     },
-    [currentIndex, data, onSwipeLeft, onSwipeRight, onSwipeComplete]
+    [data, onSwipeLeft, onSwipeRight, onSwipeComplete]
   );
 
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function TinderSwiper({
     translateY.value = 0;
     scale.value = 1;
     opacity.value = 1;
-  }, [currentIndex]);
+  }, [localIndex]);
 
   const panGesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -105,7 +107,7 @@ export default function TinderSwiper({
   });
 
   // Hiển thị tối đa 3 cards
-  const visibleCards = data.slice(currentIndex, currentIndex + 3);
+  const visibleCards = data.slice(0, 3);
 
   return (
     <View style={styles.container}>
@@ -123,7 +125,7 @@ export default function TinderSwiper({
 
         const CardComponent = (
           <Animated.View
-            key={item.id}
+            key={item._id}
             style={[
               styles.card,
               {
@@ -145,7 +147,7 @@ export default function TinderSwiper({
         );
 
         return isTopCard ? (
-          <GestureDetector key={item.id} gesture={panGesture}>
+          <GestureDetector key={item._id} gesture={panGesture}>
             {CardComponent}
           </GestureDetector>
         ) : (

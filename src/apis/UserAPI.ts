@@ -53,8 +53,10 @@ export const getDetailsUser = async (id: string) => {
   return res;
 };
 
-export const getUserRecommends = async () => {
-  const res: Response = await baseURL.get(`/user/recommend`);
+export const getUserRecommends = async (page: number, limit: number) => {
+  const res: Response = await baseURL.get(
+    `/user/recommend?page=${page}&limit=${limit}`
+  );
   return res;
 };
 
