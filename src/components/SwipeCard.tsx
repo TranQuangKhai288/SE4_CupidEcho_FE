@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
-// import Swiper from "react-native-deck-swiper";
+import TinderCard from "react-tinder-card";
 import DatingCard from "./DatingCard";
 import { getUserRecommends } from "../apis/UserAPI";
 import * as MatchingAPI from "../apis/MatchingAPI";
+
 type CardData = {
   _id: string;
   name: string;
@@ -14,13 +15,8 @@ type CardData = {
 };
 
 const SwipeCard = () => {
-  // const swiperRef = useRef<Swiper<CardData>>(null);
   const [cards, setCards] = useState<CardData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [swipeKey, setSwipeKey] = useState(0); // Force re-render Swiper
-
-  // const swipeLeft = () => swiperRef.current?.swipeLeft();
-  // const swipeRight = () => swiperRef.current?.swipeRight();
 
   const fetchUserRecommends = async () => {
     setIsLoading(true);
@@ -38,7 +34,6 @@ const SwipeCard = () => {
       }));
 
       setCards(formattedData);
-      setSwipeKey((prev) => prev + 1); // Reset swiper
     } catch (error) {
       console.error("Failed to load user recommends", error);
     } finally {
@@ -50,66 +45,68 @@ const SwipeCard = () => {
     fetchUserRecommends();
   }, []);
 
-  const renderCard = (card: CardData | undefined) => {
-    if (!card) {
-      return (
-        <View className="items-center justify-center h-96 w-72 bg-gray-100 rounded-xl">
-          <Text>Loading...</Text>
-        </View>
-      );
+  const handleSwipe = async (direction: string, card: CardData) => {
+    if (direction === "right") {
+      try {
+        // await MatchingAPI.createRelationship({
+        //   receiverId: card._id,
+        // });
+        console.log("Liked:", card.name);
+      } catch (err) {
+        console.log("Like error:", err);
+      }
+    } else if (direction === "left") {
+      try {
+        // await MatchingAPI.createRelationship({
+        //   receiverId: card._id,
+        //   status: "ignored",
+        // });
+        console.log("Disliked:", card.name);
+      } catch (err) {
+        console.log("Dislike error:", err);
+      }
     }
 
+    // Bỏ card vừa quẹt
+    setCards((prev) => prev.slice(1));
+  };
+
+  const renderCard = () => {
+    const currentCard = cards[0];
+    if (!currentCard) return null;
+
     return (
-      <DatingCard
-        name={card.name}
-        age={card.age}
-        zodiac={card.zodiac}
-        imageUrl={card.image}
-        distance={card.distance}
-        // onLike={swipeRight}
-        // onDislike={swipeLeft}
-        onRefresh={() => console.log("Refresh")}
-        onStar={() => console.log("Star")}
-      />
+      <TinderCard
+        key={currentCard._id}
+        onSwipe={(dir) => handleSwipe(dir, currentCard)}
+        preventSwipe={["up", "down"]}
+      >
+        <DatingCard
+          name={currentCard.name}
+          age={currentCard.age}
+          zodiac={currentCard.zodiac}
+          imageUrl={currentCard.image}
+          distance={currentCard.distance}
+          onRefresh={() => console.log("Refresh")}
+          onStar={() => console.log("Star")}
+        />
+      </TinderCard>
     );
   };
 
-  const handleSentRequest = async (data: CardData) => {
-    try {
-      const resSent = await MatchingAPI.createRelationship({
-        receiverId: data._id,
-      });
-      console.log(resSent, "resSent");
-    } catch (e) {
-      console.log(e, "error");
-    }
-  };
-
-  const handleDisliked = async (data: CardData) => {
-    try {
-      const resSent = await MatchingAPI.createRelationship({
-        receiverId: data._id,
-        status: "ignored",
-      });
-      console.log(resSent, "resSent");
-    } catch (e) {
-      console.log(e, "error");
-    }
-  };
-
   return (
-    <View className="flex-1 bg-white">
-      <View className="flex-1 items-center justify-center pb-12">
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#888" />
-        ) : cards.length === 0 ? (
-          <View className="items-center justify-center h-96 w-72 bg-gray-100 rounded-xl">
-            <Text>No more users. Fetching more...</Text>
-          </View>
-        ) : (
-          <View></View>
-        )}
-      </View>
+    <View className="flex-1 bg-white items-center justify-center">
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#888" />
+      ) : cards.length === 0 ? (
+        <View className="items-center justify-center h-96 w-72 bg-gray-100 rounded-xl">
+          <Text>No more users. Fetching more...</Text>
+        </View>
+      ) : (
+        <View className="absolute">
+          {renderCard()}
+        </View>
+      )}
     </View>
   );
 };
