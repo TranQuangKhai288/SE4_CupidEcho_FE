@@ -66,6 +66,7 @@ const BlindChatScreen: React.FC = () => {
     sendMessage,
     isConnected,
     sendExitSign,
+
     sendMatchRequest,
     respondMatchRequest,
   } = useSocketEvents({
