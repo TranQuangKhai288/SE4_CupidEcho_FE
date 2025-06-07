@@ -18,15 +18,24 @@ import { RootStackParamList } from "../../navigation/AppNavigation";
 import PostCard from "../../components/PostCard";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useCallback, useState } from "react";
-import { getAllPosts, getPostByUserId, Post } from "../../apis/PostAPI";
-import CommentModal from "../../components/CommentModal";
+import { getPostByUserId, Post } from "../../apis/PostAPI";
+import CommentSheet from "../../components/CommentSheet";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Colors } from "react-native/Libraries/NewAppScreen";
-import { ChevronLeft, MessageCircle, Heart } from "lucide-react-native";
+import {
+  ChevronLeft,
+  MessageCircle,
+  Heart,
+  SendHorizontal,
+  Check,
+  CheckCircle,
+  X,
+} from "lucide-react-native";
 import { getDetailsUser } from "../../apis/UserAPI";
 import * as ProfileAPI from "../../apis/ProfileAPI";
 import * as ConvAPI from "../../apis/ConversationAPI";
+import * as MatchingAPI from "../../apis/MatchingAPI";
+import { useBottomSheet } from "../../contexts/BottomSheetContext";
 
 type ProfileUserDetailProps = RouteProp<
   RootStackParamList,
@@ -39,18 +48,13 @@ const ProfileUserDetail: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [detailUser, setDetailUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-
+  const [matchStatus, setMatchStatus] = useState<any>(null);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
-  const openComments = (postId: string) => {
-    setSelectedPostId(postId);
-    setShowCommentsModal(true);
-  };
+
   const { state } = useAuth();
   const { user } = state;
-  const insets = useSafeAreaInsets();
 
   const updateCommentCount = (postId: string, newCount: number) => {
     setPosts((prevPosts) =>
@@ -59,6 +63,18 @@ const ProfileUserDetail: React.FC = () => {
       )
     );
   };
+  const { openBottomSheet, closeBottomSheet } = useBottomSheet();
+  const openComments = (postId: string) => {
+    openBottomSheet(
+      <CommentSheet
+        postId={postId}
+        onClose={closeBottomSheet}
+        onUpdateCommentCount={updateCommentCount}
+      />,
+      ["80%"]
+    );
+  };
+
   const fetchPosts = async () => {
     try {
       const data = await getPostByUserId(userId);
@@ -69,43 +85,51 @@ const ProfileUserDetail: React.FC = () => {
       setLoading(false);
     }
   };
+
   const fetchUserProfile = async () => {
     try {
       if (user?._id) {
         const response = await ProfileAPI.getDetailsProfile(userId);
-        console.log(response, "response");
         setProfile(response.data);
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
   };
+
   const getDetailUser = async () => {
     try {
       if (userId) {
         const response = await getDetailsUser(userId);
-        console.log(response, "response get de");
         setDetailUser(response.data);
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
   };
+
+  const getMatchStatus = async () => {
+    try {
+      const resStatus = await MatchingAPI.getRelationshipStatus(userId);
+      setMatchStatus(resStatus.data);
+    } catch (error) {
+      setMatchStatus(null);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchUserProfile();
       fetchPosts();
       getDetailUser();
+      getMatchStatus();
     }, [])
   );
 
   const handleMessage = async () => {
     try {
       const participants = [user?._id || "", userId];
-
       const resAccess = await ConvAPI.accessConv(participants);
-      console.log(resAccess, "resAccess");
-
       navigation.navigate("ChatDetail", {
         convId: resAccess.data._id,
         name: detailUser.name,
@@ -114,6 +138,114 @@ const ProfileUserDetail: React.FC = () => {
     } catch (e) {
       console.log(e, "err");
     }
+  };
+
+  const handleReject = async () => {
+    try {
+      await MatchingAPI.changeStatusRelationship(matchStatus._id, "rejected");
+      await getMatchStatus();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleAccept = async () => {
+    try {
+      await MatchingAPI.changeStatusRelationship(matchStatus._id, "accepted");
+      await getMatchStatus();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const renderMatchAndMessageButtons = () => {
+    if (matchStatus && matchStatus.status === "waiting") {
+      return (
+        <View className="w-full items-center">
+          <View className="flex-row gap-2 w-full justify-center mb-2">
+            <TouchableOpacity
+              className="py-4 px-4 bg-red-500 min-w-1/3 justify-center items-center rounded-2xl flex-row"
+              onPress={handleReject}
+            >
+              <X size={24} color="#fff" />
+              <Text className="text-xl font-bold ml-2 text-white">Reject</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="py-4 px-4 bg-green-500 min-w-1/3 justify-center items-center rounded-2xl flex-row"
+              onPress={handleAccept}
+            >
+              <CheckCircle size={24} color="#fff" />
+              <Text className="text-xl font-bold ml-2 text-white">Accept</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            className="py-3.5 px-4 min-w-1/3 justify-center items-center rounded-2xl flex-row border-2 border-purple-600"
+            onPress={handleMessage}
+          >
+            <MessageCircle size={24} color="#000" />
+            <Text className="text-xl font-bold ml-2">Message</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    // Các trạng thái còn lại
+    return (
+      <View className="w-full flex-row gap-2 justify-center items-center">
+        <View className="flex-1">{renderMatchButton()}</View>
+        <TouchableOpacity
+          className="py-3.5 px-4 flex-1 justify-center items-center rounded-2xl flex-row border-2 border-purple-600"
+          onPress={handleMessage}
+        >
+          <MessageCircle size={24} color="#000" />
+          <Text className="text-xl font-bold ml-2">Message</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  // Chỉ render các nút match, ngoài trạng thái waiting
+  const renderMatchButton = () => {
+    if (!matchStatus) {
+      return (
+        <TouchableOpacity className="py-4 px-4 bg-purple-500 justify-center items-center rounded-2xl flex-row opacity-60">
+          <Heart size={24} color="#fff" />
+          <Text className="text-xl font-bold ml-2 text-white">Sent Match</Text>
+        </TouchableOpacity>
+      );
+    }
+
+    if (matchStatus.status === "accepted" && matchStatus.type === "crush") {
+      return (
+        <TouchableOpacity
+          className="py-4 px-4 bg-green-500 justify-center items-center rounded-2xl flex-row"
+          disabled
+        >
+          <Check size={24} color="#fff" />
+          <Text className="text-xl font-bold ml-2 text-white">Matched</Text>
+        </TouchableOpacity>
+      );
+    }
+
+    if (matchStatus.status === "pending" && matchStatus.type === "crush") {
+      return (
+        <TouchableOpacity
+          className="py-4 px-4 bg-orange-400 justify-center items-center rounded-2xl flex-row"
+          disabled
+        >
+          <SendHorizontal size={24} color="#fff" />
+          <Text className="text-xl font-bold ml-2 text-white">Pending...</Text>
+        </TouchableOpacity>
+      );
+    }
+
+    // Trường hợp khác
+    return (
+      <TouchableOpacity className="py-4 px-4 bg-purple-500 justify-center items-center rounded-2xl flex-row opacity-60">
+        <Heart size={24} color="#fff" />
+        <Text className="text-xl font-bold ml-2 text-white">Sent Match</Text>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -130,7 +262,7 @@ const ProfileUserDetail: React.FC = () => {
             resizeMode="cover"
           />
           {/* Back button overlay */}
-          <View className="absolute flex-row top-2 left-2 w-full justify-between  ">
+          <View className="absolute flex-row top-2 left-2 w-full justify-between">
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               className="bg-white/70 p-2 rounded-full w-12 h-12 justify-center items-center"
@@ -149,12 +281,10 @@ const ProfileUserDetail: React.FC = () => {
             shadowColor: "#000",
             shadowOffset: {
               width: 0,
-              height: -5, // đổ bóng lên trên
+              height: -5,
             },
             shadowOpacity: 0.1,
             shadowRadius: 10,
-
-            // Android shadow
             elevation: 10,
           }}
         >
@@ -162,7 +292,7 @@ const ProfileUserDetail: React.FC = () => {
             <View
               className="flex-row items-center justify-between"
               style={{
-                shadowOffset: { width: 0, height: -6 }, // hướng bóng lên trên
+                shadowOffset: { width: 0, height: -6 },
                 shadowOpacity: 0.15,
                 shadowRadius: 12,
                 shadowColor: "#000",
@@ -181,21 +311,9 @@ const ProfileUserDetail: React.FC = () => {
                   </Text>
                 </View>
 
-                <View className="w-full gap-2 mt-4 justify-center items-center flex-row">
-                  <TouchableOpacity className="py-4 px-4 bg-purple-500 min-w-1/3 justify-center items-center rounded-2xl flex-row">
-                    <Heart size={24} color="#fff" />
-                    <Text className="text-xl font-bold ml-2 text-white">
-                      Sent Match
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    className="py-3.5 px-4  min-w-1/3 justify-center items-center rounded-2xl flex-row border-2 border-purple-600"
-                    onPress={handleMessage}
-                  >
-                    <MessageCircle size={24} color="#000" />
-                    <Text className="text-xl font-bold ml-2">Message</Text>
-                  </TouchableOpacity>
+                {/* Các nút Match và Message */}
+                <View className="w-full mt-4">
+                  {renderMatchAndMessageButtons()}
                 </View>
               </View>
             </View>
@@ -246,7 +364,6 @@ const ProfileUserDetail: React.FC = () => {
                   commentCount={post.commentCount}
                   isLiked={post.isLiked}
                   openComments={openComments}
-                  // onLikeToggle={handleLikeToggle}
                   userId={post.user._id}
                 />
               ))
@@ -258,15 +375,6 @@ const ProfileUserDetail: React.FC = () => {
           </View>
         </View>
       </ScrollView>
-      {/* Comments Modal */}
-      {selectedPostId && (
-        <CommentModal
-          visible={showCommentsModal}
-          onClose={() => setShowCommentsModal(false)}
-          postId={selectedPostId}
-          onUpdateCommentCount={updateCommentCount}
-        />
-      )}
     </SafeAreaView>
   );
 };

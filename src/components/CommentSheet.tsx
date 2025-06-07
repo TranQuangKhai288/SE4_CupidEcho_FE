@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Modal,
   View,
   Text,
   TouchableOpacity,
@@ -8,22 +7,17 @@ import {
   Image,
   ActivityIndicator,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
 } from "react-native";
-import { getCommentsByPostId } from "../apis/CommentAPI";
-import { createComment } from "../apis/CommentAPI"; // 👈 Nhớ import API tạo bình luận
+import { getCommentsByPostId, createComment } from "../apis/CommentAPI";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import { RootStackParamList } from "../navigation/AppNavigation";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-
-interface CommentModalProps {
-  visible: boolean;
-  onClose: () => void;
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+const screenHeight = Dimensions.get("window").height;
+interface CommentSheetProps {
   postId: string;
+  onClose: () => void;
   onUpdateCommentCount: (postId: string, newCount: number) => void;
 }
 
@@ -37,18 +31,17 @@ interface Comment {
   };
 }
 
-const CommentModal: React.FC<CommentModalProps> = ({
-  visible,
+const CommentSheet: React.FC<CommentSheetProps> = ({
   onClose,
   postId,
   onUpdateCommentCount,
 }) => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [commentInput, setCommentInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const insets = useSafeAreaInsets();
+
   const fetchComments = async () => {
     setLoading(true);
     try {
@@ -62,10 +55,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
   };
 
   useEffect(() => {
-    if (visible) {
-      fetchComments();
-    }
-  }, [visible, postId]);
+    fetchComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postId]);
 
   const handleSubmitComment = async () => {
     if (!commentInput.trim()) return;
@@ -73,7 +65,6 @@ const CommentModal: React.FC<CommentModalProps> = ({
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("Token is missing");
-
       await createComment({ postId, content: commentInput }, token);
       setCommentInput("");
       fetchComments();
@@ -86,28 +77,39 @@ const CommentModal: React.FC<CommentModalProps> = ({
   };
 
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 bg-white p-4" style = {{paddingTop:insets.top}}>
-        <TouchableOpacity onPress={onClose}>
-          <Text className="mt-3 text-right text-purple-600 font-semibold">Đóng</Text>
-        </TouchableOpacity>
-        <Text className="text-lg font-bold mt-4 mb-2">Bình luận</Text>
+    <KeyboardAvoidingView
+      style={{
+        flex: 1,
+        minHeight: screenHeight * 0.75,
+      }}
+      behavior="padding"
+      keyboardVerticalOffset={60}
+    >
+      <View className="flex-1 ">
+        <View className="flex flex-row justify-between items-center ">
+          <Text className="text-2xl font-bold ">Comments</Text>
+          <TouchableOpacity onPress={onClose}>
+            <Text className=" text-right text-purple-600 font-semibold">
+              Close
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {loading ? (
           <ActivityIndicator size="large" color="#9333ea" />
         ) : comments.length === 0 ? (
-          <Text className="text-gray-500">Chưa có bình luận nào.</Text>
+          <Text className="text-gray-500">There're no comments</Text>
         ) : (
           <ScrollView className="mb-20">
             {comments.map((c) => (
               <View key={c._id} className="mt-4 flex-row gap-3">
                 <Image
                   source={{ uri: c.user.avatar }}
-                  className="w-8 h-8 rounded-full"
+                  className="w-12 h-12 rounded-full"
                 />
                 <View className="flex-1">
-                  <Text className="font-semibold text-sm">{c.user.name}</Text>
-                  <Text className="text-sm text-black mt-1">{c.content}</Text>
+                  <Text className="font-semibold text-lg">{c.user.name}</Text>
+                  <Text className="text-base text-black mt-1">{c.content}</Text>
                   <Text className="text-xs text-gray-500 mt-1">
                     {new Date(c.createdAt).toLocaleString()}
                   </Text>
@@ -118,12 +120,12 @@ const CommentModal: React.FC<CommentModalProps> = ({
         )}
 
         {/* Ô nhập và nút gửi bình luận */}
-        <View className="absolute bottom-0 left-0 right-0 bg-white p-3 border-t border-gray-200 flex-row items-center">
+        <View className="absolute gap-4 bottom-0 left-0 right-0 justify-between py-2 border-t border-gray-200 flex-row items-center">
           <TextInput
-            placeholder="Nhập bình luận..."
+            placeholder="Comment something"
             value={commentInput}
             onChangeText={setCommentInput}
-            className="flex-1 border border-gray-300 rounded-xl px-4 py-3 mr-2 text-sm"
+            className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm"
             editable={!submitting}
           />
           <TouchableOpacity
@@ -132,13 +134,13 @@ const CommentModal: React.FC<CommentModalProps> = ({
             className="bg-purple-600 px-6 py-3 rounded-xl"
           >
             <Text className="text-white font-semibold text-sm">
-              {submitting ? "..." : "Gửi"}
+              {submitting ? "..." : "Sent"}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-    </Modal>
+    </KeyboardAvoidingView>
   );
 };
 
-export default CommentModal;
+export default CommentSheet;

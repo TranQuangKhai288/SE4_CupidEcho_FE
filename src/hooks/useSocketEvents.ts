@@ -36,6 +36,7 @@ export interface WebRTCSignal {
   roomId?: string;
 }
 export interface MatchRequest {
+  relationshipId: string;
   senderId: string;
   timestamp: number;
 }
@@ -107,6 +108,7 @@ export const useSocketEvents = ({
 
     // Lắng nghe sự kiện nhận phản hồi match
     socket.on("matchRequestResponse", (resp: MatchRequestResponse) => {
+      console.log("onMatchRequestResponse");
       if (onMatchRequestResponse) onMatchRequestResponse(resp);
     });
 
@@ -114,7 +116,11 @@ export const useSocketEvents = ({
       socket.off("newMessage");
       socket.off("newNotification");
       socket.off("errorMessage");
+      socket.off("receiveMatchRequest");
+      socket.off("matchRequestResponse");
+
       socket.off("matching:matched");
+
       socket.off("exitSignal");
       socket.off("webrtc:signal");
     };
@@ -186,6 +192,7 @@ export const useSocketEvents = ({
 
   // Thêm hàm gửi phản hồi match
   const respondMatchRequest = (
+    relationshipId: string,
     senderId: string,
     response: "accept" | "reject",
     callback?: (response: any) => void
@@ -194,7 +201,11 @@ export const useSocketEvents = ({
       console.error("Socket chưa kết nối");
       return;
     }
-    socket.emit("respondMatchRequest", { senderId, response }, callback);
+    socket.emit(
+      "respondMatchRequest",
+      { relationshipId, senderId, response },
+      callback
+    );
   };
 
   return {

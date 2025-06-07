@@ -89,3 +89,12 @@ export const changeStatusRelationship = async (
     throw error;
   }
 };
+
+export const getRelationshipStatus = async (targetUserId: string) => {
+  try {
+    const res: any = await baseURL.get(`/relationship/${targetUserId}`);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

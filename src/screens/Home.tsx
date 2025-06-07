@@ -16,9 +16,10 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigation";
 import { getAllPosts, Post } from "../apis/PostAPI";
 import { useFocusEffect } from "@react-navigation/native";
-import CommentModal from "../components/CommentModal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import NotificationListModal from "../components/NotificationListModal";
+import NotificationListSheet from "../components/NotificationListSheet";
+import { useBottomSheet } from "../contexts/BottomSheetContext";
+import CommentSheet from "../components/CommentSheet";
 
 const PAGE_SIZE = 20;
 const END_REACHED_THRESHOLD = 0.5; // Khi lướt tới 50% cuối danh sách sẽ fetch thêm
@@ -35,13 +36,17 @@ const HomeScreen: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false); // loading khi fetch thêm
   const [refreshing, setRefreshing] = useState(false); // loading khi pull to refresh
   const [hasMore, setHasMore] = useState(true); // còn dữ liệu để fetch tiếp không
-  const [showCommentsModal, setShowCommentsModal] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
-  const [modalNotification, setModalNotification] = useState(false);
 
+  const { openBottomSheet, closeBottomSheet } = useBottomSheet();
   const openComments = (postId: string) => {
-    setSelectedPostId(postId);
-    setShowCommentsModal(true);
+    openBottomSheet(
+      <CommentSheet
+        postId={postId}
+        onClose={closeBottomSheet}
+        onUpdateCommentCount={updateCommentCount}
+      />,
+      ["80%"]
+    );
   };
 
   const updateCommentCount = (postId: string, newCount: number) => {
@@ -102,11 +107,6 @@ const HomeScreen: React.FC = () => {
 
   // Pagination: Khi cuộn tới cuối
   const handleEndReached = () => {
-    console.log("handleEndReached");
-    console.log("loadingMore", loadingMore);
-    console.log("loading", loading);
-    console.log("hasMore", hasMore);
-
     if (!loadingMore && !loading && hasMore) {
       setPage((prev) => prev + 1);
     }
@@ -136,6 +136,11 @@ const HomeScreen: React.FC = () => {
     />
   );
 
+  const handleOpenNotification = () => {
+    openBottomSheet(<NotificationListSheet onClose={closeBottomSheet} />, [
+      "90%",
+    ]);
+  };
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
@@ -154,7 +159,7 @@ const HomeScreen: React.FC = () => {
           >
             <Feather name="plus-circle" size={20} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setModalNotification(true)}>
+          <TouchableOpacity onPress={handleOpenNotification}>
             <View className="relative">
               <Feather name="heart" size={20} color="black" />
               <View className="absolute bottom-4 left-4">
@@ -191,22 +196,6 @@ const HomeScreen: React.FC = () => {
           />
         }
         contentContainerStyle={{ paddingBottom: 16 }}
-      />
-
-      {/* Comments Modal */}
-      {selectedPostId && (
-        <CommentModal
-          visible={showCommentsModal}
-          onClose={() => setShowCommentsModal(false)}
-          postId={selectedPostId}
-          onUpdateCommentCount={updateCommentCount}
-        />
-      )}
-
-      <NotificationListModal
-        visible={modalNotification}
-        onClose={() => setModalNotification(false)}
-        notifications={[]}
       />
     </View>
   );

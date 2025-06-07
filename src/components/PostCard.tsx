@@ -74,16 +74,16 @@ const PostCard: React.FC<PostCardProps> = ({
       >
         <Image
           source={{ uri: avatarUrl }}
-          className="w-10 h-10 mr-2 rounded-full"
+          className="w-12 h-12 mr-2 rounded-full"
         />
         <View className="flex-col items-start justify-center">
-          <Text className="text-black font-semibold text-sm">{username}</Text>
-          <Text className="text-gray-500 text-xs ml-1">• {timeAgo}</Text>
+          <Text className="text-black font-semibold text-xl">{username}</Text>
+          <Text className="text-gray-500 text-sm ml-1">• {timeAgo}</Text>
         </View>
       </TouchableOpacity>
 
       {/* Caption */}
-      <Text className="text-black text-sm mb-3">{caption}</Text>
+      <Text className="text-black text-lg mb-3">{caption}</Text>
 
       {/* Media */}
       {media.map((item, index) => (
@@ -113,18 +113,18 @@ const PostCard: React.FC<PostCardProps> = ({
             onPress={handleLike}
           >
             {liked ? (
-              <Heart fill="#9333ea" color="#9333ea" size={20} />
+              <Heart fill="#9333ea" color="#9333ea" size={24} />
             ) : (
-              <Heart size={20} color="#000" />
+              <Heart size={24} color="#000" />
             )}
-            <Text className="text-black text-sm ml-1">{likesCount}</Text>
+            <Text className="text-black text-lg ml-1">{likesCount}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => openComments(_id)}
             className="flex-row items-center"
           >
-            <MessageCircle size={20} color="#000" />
-            <Text className="text-black text-sm ml-1">{commentCount}</Text>
+            <MessageCircle size={24} color="#000" />
+            <Text className="text-black text-lg ml-1">{commentCount}</Text>
           </TouchableOpacity>
         </View>
       </View>
