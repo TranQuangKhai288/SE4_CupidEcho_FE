@@ -44,7 +44,6 @@ const MyProfileScreen = () => {
   const fetchPosts = async () => {
     try {
       const data = await getPostByUserId(user?._id || "");
-      console.log(data, "post data");
       setPosts(data || []);
     } catch (err) {
       console.error("Failed to fetch posts", err);

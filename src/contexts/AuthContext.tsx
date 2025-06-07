@@ -243,9 +243,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   // THÊM PHƯƠNG THỨC UPDATE USER
-  const updateUser = async (user: IUser) => {
-    await AsyncStorage.setItem("user", JSON.stringify(user));
-    dispatch({ type: "UPDATE_USER", payload: user });
+  const updateUser = async (newUser: Partial<IUser>) => {
+    const currentUser = state.user;
+    const updatedUser = {
+      ...currentUser, // Giữ các trường hiện có
+      ...newUser,     // Cập nhật các trường mới
+    } as IUser;
+    await AsyncStorage.setItem("user", JSON.stringify(updatedUser));
+    dispatch({ type: "UPDATE_USER", payload: updatedUser });
   };
 
   return (

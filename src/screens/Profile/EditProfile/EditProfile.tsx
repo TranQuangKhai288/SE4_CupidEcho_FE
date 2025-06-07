@@ -36,6 +36,7 @@ const EditProfileScreen = () => {
   const [listInterest, setListInterest] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [avatar, setAvatar] = useState(user?.avatar?.toString() || "");
+  const [name, setName] = useState(user?.name?.toString() || "");
   // DatePicker states
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -101,15 +102,6 @@ const EditProfileScreen = () => {
   // Hàm chọn ảnh từ thư viện
   const handleSelectMedia = async () => {
     try {
-      const permissionResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (!permissionResult.granted) {
-        console.log("Permission to access media library was denied");
-        alert("Permission to access media library was denied");
-        return;
-      }
-
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 1,
@@ -184,19 +176,37 @@ const EditProfileScreen = () => {
           country: profile?.address.country,
         },
       };
-      if (avatar !== user?.avatar) {
-        const userPayload = {
-          avatar,
-        };
-        const resUpdate = await UserAPI.updateUser(userPayload);
-        await updateUser(resUpdate as IUser);
-      }
+  
+      // Cập nhật profile
       await ProfileAPI.updateProfile(payload);
-      alert("Profile updated successfully!");
-      await fetchUserDetails(); // Refresh after update
+  
+      // Nếu avatar hoặc name thay đổi, cập nhật user
+      if (avatar !== user?.avatar || name !== user?.name) {
+        if (!user || !user._id) {
+          throw new Error("User không hợp lệ hoặc thiếu _id");
+        }
+  
+        const userPayload = { avatar, name }; // Gửi cả avatar và name
+        const resUpdate = await UserAPI.updateUser(userPayload);
+  
+        // Hợp nhất dữ liệu, ưu tiên name từ state
+        const updatedUser: IUser = {
+          _id: user._id, // Đảm bảo _id không bị undefined
+          name: resUpdate.name || name || "", // Ưu tiên name từ state
+          email: user.email || "", // Đảm bảo email không undefined
+          bio: user.bio || "", // Đảm bảo bio không undefined
+          avatar: resUpdate.avatar || avatar, // Cập nhật avatar từ API hoặc state
+          isAdmin: user.isAdmin || false, // Đảm bảo isAdmin
+        };
+  
+        await updateUser(updatedUser); // Gọi updateUser với dữ liệu hợp lệ
+      }
+  
+      alert("Cập nhật hồ sơ thành công!");
+      await fetchUserDetails(); // Làm mới dữ liệu sau khi cập nhật
     } catch (error) {
-      console.error("Update profile failed:", error);
-      alert("Failed to update profile");
+      console.error("Cập nhật hồ sơ thất bại:", error);
+      alert("Cập nhật hồ sơ thất bại");
     } finally {
       setIsLoading(false);
     }
@@ -303,7 +313,8 @@ const EditProfileScreen = () => {
             </Text>
 
             <TextInput
-              value={user?.name || ""}
+              value={name}
+              onChangeText={(text) => setName(text)}
               className="text-black bg-gray-100 p-4 rounded-lg mb-5"
             />
             <TextInput
