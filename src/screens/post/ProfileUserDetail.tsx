@@ -202,7 +202,7 @@ const ProfileUserDetail: React.FC = () => {
             {/* About */}
             <Text className="text-xl font-bold mt-3">About</Text>
             <Text className="text-gray-700 mt-2 text-base font-semibold">
-              {detailUser?.bio || "No bio"}
+              {profile?.bio || "No bio"}
             </Text>
 
             <View>

@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import ProfileCard from "../../components/ProfileCard";
 import { FontAwesome, Feather, MaterialIcons } from "@expo/vector-icons";
@@ -30,30 +31,39 @@ const SeeAllMatches = () => {
   const { title } = route.params;
   const { state } = useAuth();
   const { user } = state;
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [data, setData] = useState<Relationship[]>([]);
   const handleBackPress = () => {
     navigation.goBack();
   };
 
   const getPendingMatches = async () => {
+    setLoading(true);
     const resMatches = await MatchingAPI.getRelationshipRequest({
       page: 1,
       limit: 20,
     });
     console.log(resMatches, "resMatches");
     setData(resMatches.data.relationship);
+    setLoading(false);
   };
 
   const getReceivedMatches = async () => {
+    setLoading(true);
+
     const resMatches = await MatchingAPI.getRelationshipRequest({
       page: 1,
       limit: 20,
       direction: "received",
     });
     setData(resMatches.data.relationship);
+    setLoading(false);
   };
 
   const getMatched = async () => {
+    setLoading(true);
+
     const resMatches = await MatchingAPI.getRelationshipRequest({
       page: 1,
       limit: 20,
@@ -61,6 +71,7 @@ const SeeAllMatches = () => {
       status: "accepted",
     });
     setData(resMatches.data.relationship);
+    setLoading(false);
   };
 
   const insets = useSafeAreaInsets();
@@ -106,44 +117,56 @@ const SeeAllMatches = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="flex-row flex-wrap px-2">
-          {data.map((item) => {
-            const matchedProfile =
-              item.sender._id === user?._id ? item.receiver : item.sender;
+      {loading ? (
+        <>
+          <ActivityIndicator size={64} />
+        </>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View className="flex-row flex-wrap px-2">
+            {data.map((item) => {
+              const matchedProfile =
+                item.sender._id === user?._id ? item.receiver : item.sender;
 
-            return (
-              <View key={item._id} className="p-2 w-1/2">
-                <ProfileCard
-                  _id={item._id}
-                  userId={matchedProfile._id}
-                  name={matchedProfile.name}
-                  age={matchedProfile.age}
-                  zodiac={matchedProfile.zodiac}
-                  imageUrl={matchedProfile.avatar}
-                  height={240}
-                  width={176}
-                  actions={
-                    title === "Someone Likes You" ? (
-                      <ActionButton
-                        onAccept={async () =>
-                          await changeStatusRelationship(item?._id, "accepted")
-                        }
-                        onReject={async () =>
-                          await changeStatusRelationship(item?._id, "rejected")
-                        }
-                        justIcon={true}
-                      />
-                    ) : (
-                      <></>
-                    )
-                  }
-                />
-              </View>
-            );
-          })}
-        </View>
-      </ScrollView>
+              return (
+                <View key={item._id} className="p-2 w-1/2">
+                  <ProfileCard
+                    _id={item._id}
+                    userId={matchedProfile._id}
+                    name={matchedProfile.name}
+                    age={matchedProfile.age}
+                    zodiac={matchedProfile.zodiac}
+                    imageUrl={matchedProfile.avatar}
+                    height={240}
+                    width={176}
+                    actions={
+                      title === "Someone Likes You" ? (
+                        <ActionButton
+                          onAccept={async () =>
+                            await changeStatusRelationship(
+                              item?._id,
+                              "accepted"
+                            )
+                          }
+                          onReject={async () =>
+                            await changeStatusRelationship(
+                              item?._id,
+                              "rejected"
+                            )
+                          }
+                          justIcon={true}
+                        />
+                      ) : (
+                        <></>
+                      )
+                    }
+                  />
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
+      )}
     </View>
   );
 };

@@ -79,24 +79,34 @@ const ChatScreen: React.FC = ({}) => {
         </View>
 
         <View className="flex-row gap-5 items-center">
-          {/* <TouchableOpacity>
+          <TouchableOpacity>
             <Feather name="search" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity>
             <Feather name="more-horizontal" size={20} color="black" />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <ActiveUserList /> */}
+        <ActiveUserList />
         {loading && (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         )}
-        {convData.map((conv, index) => (
-          <ChatItem key={index} {...conv} />
-        ))}
+        {convData.length !== 0 ? (
+          convData.map((conv, index) => <ChatItem key={index} {...conv} />)
+        ) : (
+          <View className="h-full justify-center items-center gap-4">
+            <Image
+              source={require("../../../assets/Logo.png")}
+              style={{ width: 100, height: 100 }}
+            />
+            <Text className="text-black text-xl font-semibold">
+              You have no conversations
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );

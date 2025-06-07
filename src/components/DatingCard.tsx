@@ -23,21 +23,21 @@ const DatingCard = ({
   zodiac,
   imageUrl,
   distance,
-  height = 580, // 👈 cao hơn để chứa nút
+  height = 580,
   width = 320,
   onRefresh,
   onLike,
   onDislike,
   onStar,
 }: DatingCardProps) => {
-  const cardHeight = height - 64; // Chiều cao phần card không tính phần nút
+  const cardHeight = height - 64;
 
   return (
     <View style={{ width, height }} className="relative items-center">
       {/* Card content */}
       <View
         style={{ width, height: cardHeight }}
-        className="rounded-[36px] overflow-hidden shadow-lg"
+        className="rounded-[36px] overflow-hidden shadow-lg bg-slate-400"
       >
         <Image
           source={{ uri: imageUrl }}
@@ -72,19 +72,20 @@ const DatingCard = ({
               <Text className="text-white text-3xl font-bold mb-1">
                 {name}, {age}
               </Text>
-              <Text className="text-white text-xl opacity-90 mb-1">
-                {zodiac}
-              </Text>
+              <View className="flex flex-row  gap-4 justify-start items-center">
+                <Text className="text-white text-xl opacity-90 mb-1">
+                  {zodiac}
+                </Text>
+                <View
+                  className="flex-row items-center px-4 py-2 rounded-full"
+                  style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+                >
+                  <Ionicons name="location-outline" size={14} color="white" />
+                  <Text className="text-white text-sm ml-1">{distance}</Text>
+                </View>
+              </View>
             </View>
             <View className="flex-row items-center gap-2">
-              <View
-                className="flex-row items-center px-4 py-2 rounded-full"
-                style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
-              >
-                <Ionicons name="location-outline" size={14} color="white" />
-                <Text className="text-white text-sm ml-1">{distance}</Text>
-              </View>
-
               <TouchableOpacity>
                 <Ionicons name="ellipsis-vertical" size={20} color="white" />
               </TouchableOpacity>
