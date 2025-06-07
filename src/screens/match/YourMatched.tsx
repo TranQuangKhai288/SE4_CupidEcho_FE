@@ -1,7 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import ProfileCard from "../../components/ProfileCard";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import {
+  NavigationProp,
+  useFocusEffect,
+  useNavigation,
+} from "@react-navigation/native";
 import * as MatchingAPI from "../../apis/MatchingAPI";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -35,6 +46,8 @@ export interface Relationship {
 const YourMatched = () => {
   const { state } = useAuth();
   const { user } = state;
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [AcceptedMatches, setAcceptedMatches] = useState<Relationship[]>([]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const handlePress = () => {
@@ -43,19 +56,29 @@ const YourMatched = () => {
     });
   };
   const getAcceptedMatches = async () => {
-    const resMatches = await MatchingAPI.getRelationshipRequest({
-      page: 1,
-      limit: 5,
-      status: "accepted",
-    });
-    console.log(resMatches, "resMatches");
-    setAcceptedMatches(resMatches.data.relationship);
+    try {
+      setLoading(true);
+      const resMatches = await MatchingAPI.getRelationshipRequest({
+        page: 1,
+        limit: 5,
+        status: "accepted",
+      });
+      console.log(resMatches, "resMatches");
+      setAcceptedMatches(resMatches.data.relationship);
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+      return;
+    }
   };
 
-  useEffect(() => {
-    getAcceptedMatches();
-  }, []);
-  const insets = useSafeAreaInsets();
+  useFocusEffect(
+    useCallback(() => {
+      getAcceptedMatches();
+    }, [])
+  );
+
   return (
     <View className="flex-1 pb-16">
       <View className="flex-row justify-between items-center mb-2">
@@ -64,27 +87,31 @@ const YourMatched = () => {
           <Text className="text-primary-main font-bold">See All</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        className="flex-row mt-3"
-      >
-        {AcceptedMatches.map((item) => {
-          const matchedProfile =
-            item.sender._id === user?._id ? item.receiver : item.sender;
-          return (
-            <View className="flex mr-3 items-center" key={item._id}>
-              <SimpleProfileCard
-                id={matchedProfile._id}
-                userId={matchedProfile._id}
-                name={matchedProfile.name}
-                age={matchedProfile.age}
-                imageUrl={matchedProfile.avatar}
-              />
-            </View>
-          );
-        })}
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator size={64} />
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="flex-row mt-3"
+        >
+          {AcceptedMatches.map((item) => {
+            const matchedProfile =
+              item.sender._id === user?._id ? item.receiver : item.sender;
+            return (
+              <View className="flex mr-3 items-center" key={item._id}>
+                <SimpleProfileCard
+                  id={matchedProfile._id}
+                  userId={matchedProfile._id}
+                  name={matchedProfile.name}
+                  age={matchedProfile.age}
+                  imageUrl={matchedProfile.avatar}
+                />
+              </View>
+            );
+          })}
+        </ScrollView>
+      )}
     </View>
   );
 };

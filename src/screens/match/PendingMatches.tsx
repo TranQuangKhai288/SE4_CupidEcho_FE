@@ -1,7 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import ProfileCard from "../../components/ProfileCard";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import {
+  NavigationProp,
+  useFocusEffect,
+  useNavigation,
+} from "@react-navigation/native";
 import * as MatchingAPI from "../../apis/MatchingAPI";
 import { RootStackParamList } from "../../navigation/AppNavigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,6 +41,8 @@ export interface Relationship {
 }
 
 const PendingMatches = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [pendingMatches, setPendingMatches] = useState<Relationship[]>([]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const handlePress = () => {
@@ -38,18 +51,28 @@ const PendingMatches = () => {
     });
   };
   const getPendingMatches = async () => {
-    const resMatches = await MatchingAPI.getRelationshipRequest({
-      page: 1,
-      limit: 5,
-    });
-    console.log(resMatches, "resMatches");
-    setPendingMatches(resMatches.data.relationship);
+    try {
+      setLoading(true);
+      const resMatches = await MatchingAPI.getRelationshipRequest({
+        page: 1,
+        limit: 5,
+      });
+      console.log(resMatches, "resMatches");
+      setLoading(false);
+      setPendingMatches(resMatches.data.relationship);
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+
+      return;
+    }
   };
 
-  useEffect(() => {
-    getPendingMatches();
-  }, []);
-  const insets = useSafeAreaInsets();
+  useFocusEffect(
+    useCallback(() => {
+      getPendingMatches();
+    }, [])
+  );
   return (
     <View className="flex-1 mt-4">
       <View className="flex-row justify-between items-center mb-2">
@@ -58,24 +81,28 @@ const PendingMatches = () => {
           <Text className="text-primary-main font-bold">See All</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        className="flex-row mt-3"
-      >
-        {pendingMatches.map((item) => (
-          <View className="flex mr-3 items-center" key={item._id}>
-            <ProfileCard
-              _id={item._id}
-              userId={item.receiver._id}
-              name={item.receiver.name}
-              age={item.receiver.age}
-              zodiac={item.receiver.zodiac}
-              imageUrl={item.receiver.avatar}
-            />
-          </View>
-        ))}
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator size={64} />
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="flex-row mt-3"
+        >
+          {pendingMatches.map((item) => (
+            <View className="flex mr-3 items-center" key={item._id}>
+              <ProfileCard
+                _id={item._id}
+                userId={item.receiver._id}
+                name={item.receiver.name}
+                age={item.receiver.age}
+                zodiac={item.receiver.zodiac}
+                imageUrl={item.receiver.avatar}
+              />
+            </View>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };

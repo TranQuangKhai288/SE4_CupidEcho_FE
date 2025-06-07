@@ -13,7 +13,7 @@ export interface IUser {
   _id: string;
   name: string;
   email: string;
-  bio: string;
+
   avatar?: string;
   isAdmin?: boolean;
 }
