@@ -125,20 +125,20 @@ const ProfileScreen: React.FC = () => {
               }
               text='Settings'
             />
-            <ProfileItem
+            {/* <ProfileItem
               icon={<Moon size={24} color='black' />}
               text='Dark Mode'
-            />
+            /> */}
             <ProfileItem
               icon={<Users size={24} color='black' />}
               text='Help Center'
               onPress={() => navigation.navigate("HelpCenter")}
             />
-            <ProfileItem
+            {/* <ProfileItem
               icon={<Users size={24} color='black' />}
               text='Invite Friends'
               onPress={() => navigation.navigate("InviteFriend")}
-            />
+            /> */}
             <ProfileItem
               icon={<LogOut size={24} color='red' />}
               text='Logout'

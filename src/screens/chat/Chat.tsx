@@ -79,16 +79,16 @@ const ChatScreen: React.FC = ({}) => {
         </View>
 
         <View className="flex-row gap-5 items-center">
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <Feather name="search" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity>
             <Feather name="more-horizontal" size={20} color="black" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <ActiveUserList />
+        {/* <ActiveUserList /> */}
         {loading && (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#0000ff" />
