@@ -32,7 +32,7 @@ export default function VideoCallScreen() {
       try {
         // Lấy token từ BE
         const response = await fetch(
-          `http://172.16.16.167:5000/stream-token?userId=${user?._id}`
+          `http://192.168.1.12:5000/stream-token?userId=${user?._id}`
         );
         const data = await response.json();
         console.log("Token data:", data);

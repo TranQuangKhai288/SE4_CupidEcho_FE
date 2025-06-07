@@ -48,14 +48,26 @@ export const createPost = async (
   }
 };
 
-export const getAllPosts = async (): Promise<Post[]> => {
+export const getAllPosts = async (
+  page: number,
+  limit: number
+): Promise<
+  | {
+      posts: Post[];
+      pagination: {
+        page: number;
+        limit: number;
+      };
+    }
+  | undefined
+> => {
   try {
-    const res = await baseURL.get("/post");
-    // 👇 đúng đường dẫn để lấy mảng posts
-    return res.data.posts;
+    console.log("");
+    const res = await baseURL.get(`/post?page=${page}&limit=${limit}`);
+    return res.data;
   } catch (error) {
     console.error("Get posts error:", error);
-    return [];
+    return;
   }
 };
 

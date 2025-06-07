@@ -20,7 +20,11 @@ export interface Notification {
 }
 
 export interface MatchSuccess {
-  partnerId: string;
+  partner: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
   conversationId: string;
   timestamp: number;
 }
@@ -31,13 +35,23 @@ export interface WebRTCSignal {
   to?: string;
   roomId?: string;
 }
+export interface MatchRequest {
+  senderId: string;
+  timestamp: number;
+}
+export interface MatchRequestResponse {
+  responderId: string;
+  response: "accept" | "reject";
+  timestamp: number;
+}
 
 export interface SocketEvents {
   onNewMessage?: (message: Message) => void;
   onNewNotification?: (notification: Notification) => void;
   onMatchSuccess?: (match: MatchSuccess) => void;
   onExitSign?: (convId: string) => void;
-  onWebRTCSignal?: (signal: WebRTCSignal) => void;
+  onReceiveMatchRequest?: (req: MatchRequest) => void;
+  onMatchRequestResponse?: (resp: MatchRequestResponse) => void;
 }
 
 export const useSocketEvents = ({
@@ -45,7 +59,8 @@ export const useSocketEvents = ({
   onNewNotification,
   onMatchSuccess,
   onExitSign,
-  onWebRTCSignal,
+  onReceiveMatchRequest,
+  onMatchRequestResponse,
 }: SocketEvents) => {
   const { state } = useAuth();
   const socket = socketService.getSocket();
@@ -53,11 +68,7 @@ export const useSocketEvents = ({
 
   useEffect(() => {
     if (!socket || !isConnected) return;
-    socket.on("webrtc:signal", (signal: WebRTCSignal) => {
-      if (onWebRTCSignal) {
-        onWebRTCSignal(signal);
-      }
-    });
+
     socket.on("newMessage", (message: Message) => {
       console.log("Tin nhắn mới:", message);
       if (onNewMessage) {
@@ -90,6 +101,15 @@ export const useSocketEvents = ({
       }
     });
 
+    socket.on("receiveMatchRequest", (req: MatchRequest) => {
+      if (onReceiveMatchRequest) onReceiveMatchRequest(req);
+    });
+
+    // Lắng nghe sự kiện nhận phản hồi match
+    socket.on("matchRequestResponse", (resp: MatchRequestResponse) => {
+      if (onMatchRequestResponse) onMatchRequestResponse(resp);
+    });
+
     return () => {
       socket.off("newMessage");
       socket.off("newNotification");
@@ -104,7 +124,8 @@ export const useSocketEvents = ({
     onNewMessage,
     onNewNotification,
     onMatchSuccess,
-    onWebRTCSignal,
+    onReceiveMatchRequest,
+    onMatchRequestResponse,
   ]);
 
   const sendMessage = (
@@ -152,11 +173,37 @@ export const useSocketEvents = ({
     socket.emit("webrtc:signal", signal);
   };
 
+  const sendMatchRequest = (
+    targetUserId: string,
+    callback?: (response: any) => void
+  ) => {
+    if (!socket || !isConnected) {
+      console.error("Socket chưa kết nối");
+      return;
+    }
+    socket.emit("sendMatchRequest", { targetUserId }, callback);
+  };
+
+  // Thêm hàm gửi phản hồi match
+  const respondMatchRequest = (
+    senderId: string,
+    response: "accept" | "reject",
+    callback?: (response: any) => void
+  ) => {
+    if (!socket || !isConnected) {
+      console.error("Socket chưa kết nối");
+      return;
+    }
+    socket.emit("respondMatchRequest", { senderId, response }, callback);
+  };
+
   return {
     sendMessage,
     sendNotification,
     sendExitSign,
     sendWebRTCSignal,
+    sendMatchRequest,
+    respondMatchRequest,
     isConnected,
   };
 };

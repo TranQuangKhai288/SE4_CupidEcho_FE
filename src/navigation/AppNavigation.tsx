@@ -62,7 +62,14 @@ export type RootStackParamList = {
   ExploreDetail: { title: string };
   Chat: undefined;
   ChatDetail: { convId: string; name: string; avatar: string };
-  BlindChat: { partnerId: string; conversationId: string };
+  BlindChat: {
+    partner: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+    conversationId: string;
+  };
   Splash: undefined;
   Onboarding: undefined;
 

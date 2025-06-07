@@ -101,7 +101,7 @@ const RandomMatch = () => {
       // Điều hướng đến trang Blind Chat
       console.log("navigate to Blind Chat");
       navigation.navigate("BlindChat", {
-        partnerId: match.partnerId,
+        partner: match.partner,
         conversationId: match.conversationId,
       });
     },

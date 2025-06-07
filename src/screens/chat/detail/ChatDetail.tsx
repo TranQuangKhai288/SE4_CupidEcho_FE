@@ -43,7 +43,8 @@ const ChatDetailScreen: React.FC = () => {
   const scrollViewRef = useRef<ScrollView>(null); // Thêm ref để cuộn xuống cuối
 
   const handleBackPress = () => {
-    navigation.goBack();
+    // navigation.goBack();
+    navigation.navigate("Main");
   };
   const { state } = useAuth();
   const { user } = state;
