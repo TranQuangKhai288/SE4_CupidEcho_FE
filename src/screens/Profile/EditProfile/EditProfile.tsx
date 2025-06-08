@@ -40,7 +40,7 @@ const EditProfileScreen = () => {
   // DatePicker states
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-
+  const [bio, setBio] = useState("");
   // Gender dropdown states
   const [gender, setGender] = useState("");
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
@@ -148,6 +148,10 @@ const EditProfileScreen = () => {
           setGender(response.data.gender);
         }
 
+        if (response.data.bio) {
+          setBio(response.data.bio);
+        }
+
         // Set zodiac from profile if available
         if (response.data.zodiac) {
           setZodiac(response.data.zodiac);
@@ -170,38 +174,39 @@ const EditProfileScreen = () => {
         birthDate: date.toISOString(),
         gender,
         zodiac,
-        address: {
-          formattedAddress: profile?.address.formattedAddress,
-          city: profile?.address.city,
-          country: profile?.address.country,
-        },
+        bio,
+        // address: {
+        //   formattedAddress: profile?.address.formattedAddress,
+        //   city: profile?.address.city,
+        //   country: profile?.address.country,
+        // },
       };
-  
+
       // Cập nhật profile
       await ProfileAPI.updateProfile(payload);
-  
+
       // Nếu avatar hoặc name thay đổi, cập nhật user
       if (avatar !== user?.avatar || name !== user?.name) {
         if (!user || !user._id) {
           throw new Error("User không hợp lệ hoặc thiếu _id");
         }
-  
+
         const userPayload = { avatar, name }; // Gửi cả avatar và name
         const resUpdate = await UserAPI.updateUser(userPayload);
-  
+
         // Hợp nhất dữ liệu, ưu tiên name từ state
         const updatedUser: IUser = {
           _id: user._id, // Đảm bảo _id không bị undefined
           name: resUpdate.name || name || "", // Ưu tiên name từ state
           email: user.email || "", // Đảm bảo email không undefined
-          bio: user.bio || "", // Đảm bảo bio không undefined
+
           avatar: resUpdate.avatar || avatar, // Cập nhật avatar từ API hoặc state
           isAdmin: user.isAdmin || false, // Đảm bảo isAdmin
         };
-  
+
         await updateUser(updatedUser); // Gọi updateUser với dữ liệu hợp lệ
       }
-  
+
       alert("Cập nhật hồ sơ thành công!");
       await fetchUserDetails(); // Làm mới dữ liệu sau khi cập nhật
     } catch (error) {
@@ -321,6 +326,13 @@ const EditProfileScreen = () => {
               value={user?.email || ""}
               className="text-black bg-gray-100 p-4 rounded-lg mb-5"
             />
+            <Text className="text-lg font-bold">Bio:</Text>
+
+            <TextInput
+              value={bio || "No bio"}
+              onChangeText={(text) => setBio(text)}
+              className="text-black bg-gray-100 p-4 rounded-lg mb-5"
+            />
 
             <View className="mb-5">
               {Platform.OS === "ios" ? (
@@ -433,7 +445,7 @@ const EditProfileScreen = () => {
               </Modal>
             </View>
 
-            <Text className="text-lg font-bold mt-3">Address</Text>
+            {/* <Text className="text-lg font-bold mt-3">Address</Text>
             <TextInput
               value={profile?.address?.formattedAddress}
               onChangeText={(text) =>
@@ -443,8 +455,8 @@ const EditProfileScreen = () => {
                 })
               }
               className="text-black bg-gray-100 p-4 rounded-lg mb-3"
-            />
-            <TextInput
+            /> */}
+            {/* <TextInput
               value={profile?.address?.city}
               onChangeText={(text) =>
                 setProfile({
@@ -463,7 +475,7 @@ const EditProfileScreen = () => {
                 })
               }
               className="text-black bg-gray-100 p-4 rounded-lg mb-3"
-            />
+            /> */}
           </View>
         </View>
         <View className="mb-5 p-4 bg-white border-t border-gray-200">
