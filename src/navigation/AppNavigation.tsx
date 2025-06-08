@@ -75,8 +75,14 @@ export type RootStackParamList = {
 
   //forgot password
   ForgotPassword: undefined;
-  VerifyCode: undefined;
-  CreateNewPassword: undefined;
+  VerifyCode: {
+    option: string;
+    info: string;
+  };
+  CreateNewPassword: {
+    option: string;
+    info: string;
+  };
 
   // Post
   CreateNewPost: undefined;
