@@ -48,6 +48,32 @@ export const forgotPassword = async (email: string) => {
   }
 };
 
+export const verifyOTP = async (email: string, OTP: string) => {
+  try {
+    const res: Response = await baseURL.post(`/user/verify-otp`, {
+      email: email,
+      otp: OTP,
+    });
+    return res;
+  } catch (error) {
+    console.error("API forgot password error", error);
+    throw error;
+  }
+};
+
+export const resetPass = async (email: string, newPassword: string) => {
+  try {
+    const res: Response = await baseURL.post(`/user/reset-password`, {
+      email: email,
+      newPassword: newPassword,
+    });
+    return res;
+  } catch (error) {
+    console.error("API forgot password error", error);
+    throw error;
+  }
+};
+
 export const getDetailsUser = async (id: string) => {
   const res: Response = await baseURL.get(`/user/${id}`);
   return res;
