@@ -113,7 +113,7 @@ Dự án **"Cupid Echo"** là một ứng dụng hẹn hò đa nền tảng (iOS
    - Truy cập kho mã nguồn: [https://github.com/TranQuangKhai288/SE4_CupidEcho_FE.git](https://github.com/TranQuangKhai288/SE4_CupidEcho_FE.git).
    - Sao chép liên kết:
      ```bash
-     git clone https://github.com/username/CupidEcho.git
+     git clone https://github.com/TranQuangKhai288/SE4_CupidEcho_FE.git
      ```
    - Mở terminal (yêu cầu đã cài Git) và chạy lệnh trên để clone dự án về máy.
 
