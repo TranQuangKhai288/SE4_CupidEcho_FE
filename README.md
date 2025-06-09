@@ -98,8 +98,8 @@ Dự án **"Cupid Echo"** là một ứng dụng hẹn hò đa nền tảng (iOS
 1. **Yêu cầu môi trường**:
    - **Hệ điều hành**: Windows 11 hoặc macOS.
    - **Công cụ phát triển**:
-     - NodeJS (phiên bản 16.x trở lên).
-     - React Native CLI.
+     - NodeJS (phiên bản 22.x trở lên).
+     - React Native Expo CLI.
      - Visual Studio Code (hoặc IDE tương tự).
      - Xcode (cho iOS, yêu cầu macOS).
      - Android Studio (cho Android).
