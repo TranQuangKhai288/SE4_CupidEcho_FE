@@ -100,7 +100,7 @@ const MyProfileScreen = () => {
           {/* Back button overlay */}
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            className="absolute top-2 left-2 bg-white/70 p-2 rounded-full"
+            className="absolute top-2 left-2 bg-white/70 p-2 rounded-full mt-6"
           >
             <ChevronLeft size={24} color="#000" />
           </TouchableOpacity>
@@ -206,7 +206,7 @@ const MyProfileScreen = () => {
                 />
               ))
             ) : (
-              <View className="justify-center items-center">
+              <View className="justify-center items-center pb-28">
                 <Text className="text-2xl font-bold">You have no post</Text>
               </View>
             )}

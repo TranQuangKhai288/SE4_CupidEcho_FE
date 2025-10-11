@@ -63,7 +63,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
           <Text className="text-gray-400 font-semibold">
             {lastMessage?.sender?._id?.toString() === user?._id.toString()
               ? "Bạn: "
-              : lastMessage?.sender.name}
+              : lastMessage?.sender.name + ": "}
             {lastMessage?.content || "You're now connected, let's say hi!"}
           </Text>
         </View>

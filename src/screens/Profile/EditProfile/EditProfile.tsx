@@ -257,7 +257,7 @@ const EditProfileScreen = () => {
     <View className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" />
 
-      <SafeAreaView className="bg-white">
+      <SafeAreaView className="bg-white pt-8">
         <View className="flex-row items-center justify-between px-4 py-2 border-b border-gray-200">
           <TouchableOpacity
             onPress={() => navigation.goBack()}
